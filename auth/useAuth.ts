@@ -2,7 +2,7 @@
 
 import { useEnokiFlow, useZkLogin } from '@mysten/enoki/react';
 import type { Signer } from '@mysten/sui/cryptography';
-import { APP_URL, GOOGLE_CLIENT_ID } from '@/config';
+import { APP_URL, GOOGLE_CLIENT_ID, NETWORK } from '@/config';
 
 export function useAuth() {
   const enokiFlow = useEnokiFlow();
@@ -13,7 +13,7 @@ export function useAuth() {
       provider: 'google',
       clientId: GOOGLE_CLIENT_ID,
       redirectUrl: `${APP_URL}/auth/callback`,
-      network: 'testnet',
+      network: NETWORK,
     });
     window.location.href = url;
   };
@@ -21,7 +21,7 @@ export function useAuth() {
   const logout = () => enokiFlow.logout();
 
   /** Get signer (EnokiKeypair extends Signer) — only callable when user is logged in */
-  const getSigner = (): Promise<Signer> => enokiFlow.getKeypair({ network: 'testnet' });
+  const getSigner = (): Promise<Signer> => enokiFlow.getKeypair({ network: NETWORK });
 
   return {
     address: address ?? null,

@@ -3,7 +3,7 @@
 import { EnokiFlowProvider } from '@mysten/enoki/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
-import { ENOKI_API_KEY } from '@/config';
+import { ENOKI_API_KEY, NETWORK } from '@/config';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,7 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <EnokiFlowProvider apiKey={ENOKI_API_KEY}>
       <QueryClientProvider client={queryClient}>
-        <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
+        <SuiClientProvider networks={networkConfig} defaultNetwork={NETWORK}>
           <WalletProvider>
             {children}
           </WalletProvider>
