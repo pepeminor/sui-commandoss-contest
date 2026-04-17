@@ -98,6 +98,7 @@ export async function decryptContent({
   const sessionKey = await getOrCreateSessionKey(userAddress, signer);
 
   const tx = buildSealApproveTx(nftObjectId, postObjectId);
+  tx.setSender(userAddress);
   const txBytes = await tx.build({ client: suiClient, onlyTransactionKind: true });
 
   const bytes =

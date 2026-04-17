@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/auth/useAuth';
 import { shortenAddress } from '@/lib/utils';
 
 export function LoginButton() {
   const { address, isLoggedIn, login, logout } = useAuth();
   const [copied, setCopied] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const handleCopy = () => {
     if (!address) return;
@@ -15,6 +18,9 @@ export function LoginButton() {
       setTimeout(() => setCopied(false), 2000);
     });
   };
+
+  // Prevent hydration mismatch: render nothing until client-side mounted
+  if (!mounted) return null;
 
   if (isLoggedIn && address) {
     return (

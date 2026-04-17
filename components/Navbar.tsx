@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LoginButton } from './LoginButton';
@@ -8,10 +9,13 @@ import { useAuth } from '@/auth/useAuth';
 export function Navbar() {
   const pathname = usePathname();
   const { isLoggedIn } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const links = [
     { href: '/', label: 'Feed' },
-    ...(isLoggedIn ? [
+    ...(mounted && isLoggedIn ? [
       { href: '/create', label: 'Publish' },
       { href: '/library', label: 'Library' },
     ] : []),
