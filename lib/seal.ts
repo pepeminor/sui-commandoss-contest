@@ -6,13 +6,8 @@ import { suiClient } from './sui-client';
 import { buildSealApproveTx } from './transactions';
 import { PACKAGE_ID } from '@/config';
 
-// Testnet Seal key servers
+// Testnet Seal key servers (from official docs: https://seal-docs.wal.app)
 const TESTNET_SERVER_CONFIGS = [
-  {
-    objectId: '0xb012378c9f3799fb5b1a7083da74a4069e3c3f1c93de0b27212a5799ce1e1e98',
-    weight: 1,
-    aggregatorUrl: 'https://seal-aggregator-testnet.mystenlabs.com',
-  },
   {
     objectId: '0x73d05d62c18d9374e3ea529e8e0ed6161da1a141a94d3f76ae3fe4e99356db75',
     weight: 1,
@@ -38,7 +33,7 @@ export function getSealClient(): SealClient {
   return _sealClient;
 }
 
-// ─── SessionKey cache (TTL 30 min per address) ────────────────────────────────
+// ─── SessionKey cache (TTL 10 min per address) ──────────────────────────────
 
 const sessionKeyCache = new Map<string, SessionKey>();
 
@@ -46,16 +41,22 @@ async function getOrCreateSessionKey(address: string, signer: Signer): Promise<S
   const cached = sessionKeyCache.get(address);
   if (cached && !cached.isExpired()) return cached;
 
+  // Two-step pattern: create WITHOUT signer, then sign manually
+  // This is required for Enoki zkLogin compatibility
   const sessionKey = await SessionKey.create({
     address,
     packageId: PACKAGE_ID,
-    ttlMin: 30,
-    signer,
+    ttlMin: 10,
     suiClient,
   });
 
+  // Get the personal message and sign it with Enoki keypair
+  const message = sessionKey.getPersonalMessage();
+  const { signature } = await signer.signPersonalMessage(message);
+  sessionKey.setPersonalMessageSignature(signature);
+
   sessionKeyCache.set(address, sessionKey);
-  setTimeout(() => sessionKeyCache.delete(address), 30 * 60 * 1000);
+  setTimeout(() => sessionKeyCache.delete(address), 10 * 60 * 1000);
   return sessionKey;
 }
 
