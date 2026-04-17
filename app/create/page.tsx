@@ -1,13 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { Navbar } from '@/components/Navbar';
 import { useCreatePost } from '@/hooks/useCreatePost';
 import { useAuth } from '@/auth/useAuth';
 
+const REDIRECT_DELAY = 8; // seconds to wait for indexer
+
 export default function CreatePage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { isLoggedIn, login } = useAuth();
   const { mutate: createPost, isPending, isError, error } = useCreatePost();
 
@@ -15,6 +19,27 @@ export default function CreatePage() {
   const [content, setContent] = useState('');
   const [priceStr, setPriceStr] = useState('0.01');
   const [supplyStr, setSupplyStr] = useState('100');
+
+  const [successTitle, setSuccessTitle] = useState('');
+  const [successDigest, setSuccessDigest] = useState('');
+  const [countdown, setCountdown] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (countdown <= 0) return;
+    timerRef.current = setInterval(() => {
+      setCountdown((c) => {
+        if (c <= 1) {
+          clearInterval(timerRef.current!);
+          queryClient.invalidateQueries({ queryKey: ['feed'] });
+          router.push('/');
+          return 0;
+        }
+        return c - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timerRef.current!);
+  }, [countdown > 0]);
 
   if (!isLoggedIn) {
     return (
@@ -31,6 +56,94 @@ export default function CreatePage() {
     );
   }
 
+  // Success modal
+  if (successTitle) {
+    return (
+      <div className="page">
+        <Navbar />
+        <div className="container" style={{ paddingTop: 60, paddingBottom: 60 }}>
+          <div style={{
+            background: 'rgba(93,202,165,0.06)',
+            border: '0.5px solid rgba(93,202,165,0.3)',
+            borderRadius: 14,
+            padding: '32px 24px',
+            textAlign: 'center',
+          }}>
+            <div style={{ fontSize: 40, marginBottom: 16 }}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" style={{ margin: '0 auto', display: 'block' }}>
+                <circle cx="12" cy="12" r="10" stroke="#5DCAA5" strokeWidth="1.5" />
+                <path d="M8 12l3 3 5-5" stroke="#5DCAA5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+
+            <div style={{ fontSize: 20, fontWeight: 800, color: '#ece9f8', marginBottom: 8 }}>
+              Đã publish lên chain!
+            </div>
+
+            <div style={{ fontSize: 14, color: 'rgba(236,233,248,0.6)', marginBottom: 20 }}>
+              "{successTitle}"
+            </div>
+
+            {successDigest && (
+              <div style={{
+                background: 'rgba(255,255,255,0.04)',
+                border: '0.5px solid rgba(255,255,255,0.08)',
+                borderRadius: 8,
+                padding: '10px 14px',
+                marginBottom: 24,
+                textAlign: 'left',
+              }}>
+                <div style={{ fontSize: 10, color: 'rgba(236,233,248,0.35)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
+                  Tx Digest
+                </div>
+                <div style={{ fontSize: 11, color: '#6FBCF0', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+                  {successDigest}
+                </div>
+              </div>
+            )}
+
+            <div style={{ fontSize: 13, color: 'rgba(236,233,248,0.45)', marginBottom: 20 }}>
+              Đang chờ blockchain index...
+            </div>
+
+            {/* Countdown bar */}
+            <div style={{
+              background: 'rgba(255,255,255,0.06)',
+              borderRadius: 99,
+              height: 4,
+              overflow: 'hidden',
+              marginBottom: 12,
+            }}>
+              <div style={{
+                height: '100%',
+                background: '#5DCAA5',
+                borderRadius: 99,
+                width: `${(countdown / REDIRECT_DELAY) * 100}%`,
+                transition: 'width 0.9s linear',
+              }} />
+            </div>
+
+            <div style={{ fontSize: 12, color: 'rgba(236,233,248,0.35)' }}>
+              Về Feed trong {countdown}s...
+            </div>
+
+            <button
+              className="btn btn--ghost"
+              onClick={() => {
+                clearInterval(timerRef.current!);
+                queryClient.invalidateQueries({ queryKey: ['feed'] });
+                router.push('/');
+              }}
+              style={{ marginTop: 20, fontSize: 13 }}
+            >
+              Về Feed ngay
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) return;
@@ -40,7 +153,14 @@ export default function CreatePage() {
 
     createPost(
       { title: title.trim(), content: content.trim(), price, maxSupply },
-      { onSuccess: () => router.push('/') },
+      {
+        onSuccess: (result: any) => {
+          const digest = result?.digest ?? result?.Digest ?? '';
+          setSuccessTitle(title.trim());
+          setSuccessDigest(digest);
+          setCountdown(REDIRECT_DELAY);
+        },
+      },
     );
   };
 
