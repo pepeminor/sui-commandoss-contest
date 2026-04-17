@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import type { FeedPost } from '@/hooks/useFeed';
 import { useHasAccess } from '@/hooks/useMyNFTs';
-import { formatSUI, avatarColor, addressInitials, timeAgo } from '@/lib/utils';
+import { formatSUI, shortenAddress, avatarColor, addressInitials, timeAgo } from '@/lib/utils';
 
 interface PostCardProps {
   post: FeedPost;
@@ -27,7 +27,7 @@ export function PostCard({ post }: PostCardProps) {
         <div className="post-card__content">
           <div className="post-card__header">
             <div className="post-card__meta">
-              <span>{post.author.slice(2, 8)}...</span>
+              <span>{shortenAddress(post.author)}</span>
               <span className="post-card__dot" />
               <span>{timeAgo(post.createdAt)}</span>
             </div>

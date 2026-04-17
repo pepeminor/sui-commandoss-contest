@@ -15,9 +15,9 @@ export interface FeedPost {
 
 const GET_POSTS_QUERY = `
   query GetPosts($eventType: String!) {
-    events(filter: { eventType: $eventType }, last: 50) {
+    events(filter: { type: $eventType }, last: 50) {
       nodes {
-        json
+        contents { json }
         timestamp
       }
     }
@@ -38,14 +38,14 @@ export function useFeed() {
       const nodes: any[] = (result.data as any)?.events?.nodes ?? [];
       return nodes
         .map((node: any) => {
-          const json = node.json ?? {};
+          const json = node.contents?.json ?? {};
           return {
             postId:    String(json.post_id ?? ''),
             author:    String(json.author ?? ''),
             title:     String(json.title ?? ''),
             price:     BigInt(json.price ?? 0),
             maxSupply: Number(json.max_supply ?? 0),
-            createdAt: node.timestamp ?? String(Date.now()),
+            createdAt: String(json.created_at ?? node.timestamp ?? Date.now()),
           } satisfies FeedPost;
         })
         .filter((p: FeedPost) => p.postId)

@@ -5,6 +5,8 @@
   min-height: 100vh;
   color: $text-primary;
   font-family: $font-base;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .app-layout {

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@mysten/dapp-kit": "^1.0.4",
@@ -21,11 +23,17 @@
     "sass": "^1.99.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.7.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
-    "typescript": "^5.9.3"
+    "happy-dom": "^20.9.0",
+    "jsdom": "^29.0.2",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
   }
 }

@@ -23,12 +23,10 @@ export function FeedClient() {
   }
 
   return (
-    <div style={{ maxWidth: 680, margin: '0 auto', padding: '24px' }}>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.5px', marginBottom: 4 }}>
-          Feed
-        </h1>
-        <p style={{ fontSize: 13, color: 'rgba(236,233,248,0.45)' }}>
+    <div className="container" style={{ paddingTop: 20, paddingBottom: 20 }}>
+      <div className="page-header">
+        <h1 className="page-header__title">Feed</h1>
+        <p className="page-header__sub">
           Nội dung exclusive từ các artist — mua NFT để đọc toàn bộ
         </p>
       </div>

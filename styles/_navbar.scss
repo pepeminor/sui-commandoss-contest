@@ -12,6 +12,9 @@
   top: 0;
   z-index: 100;
   backdrop-filter: blur(12px);
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 
   @media (min-width: 480px) {
     padding: 0 24px;
@@ -48,10 +51,8 @@
   &__links {
     display: flex;
     gap: 0;
-    // On mobile hide text, show icon-like compact links
-    @media (max-width: 479px) {
-      gap: 0;
-    }
+    min-width: 0;
+    flex-shrink: 1;
   }
 
   &__link {
@@ -85,7 +86,8 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    flex-shrink: 0;
+    flex-shrink: 1;
+    min-width: 0;
 
     @media (min-width: 480px) {
       gap: 10px;

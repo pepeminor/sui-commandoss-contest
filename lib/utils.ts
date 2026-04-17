@@ -19,15 +19,24 @@ export function avatarColor(seed: string): (typeof AVATAR_COLORS)[number] {
   return AVATAR_COLORS[hash % AVATAR_COLORS.length];
 }
 
-/** Get initials from an address (first 2 chars after 0x) */
+/** Get hex code display from an address (4 hex chars after 0x) */
 export function addressInitials(addr: string): string {
-  return addr.slice(2, 4).toUpperCase();
+  return addr.slice(2, 6).toLowerCase();
 }
 
-/** Format timestamp (ms) to relative time */
+/** Parse any timestamp (epoch ms number, numeric string, or ISO string) to ms */
+function parseTimestamp(ms: number | string): number {
+  if (typeof ms === 'number') return ms;
+  const num = Number(ms);
+  if (!isNaN(num)) return num;
+  return new Date(ms).getTime();
+}
+
+/** Format timestamp to relative time */
 export function timeAgo(ms: number | string): string {
-  const now = Date.now();
-  const diff = now - Number(ms);
+  const t = parseTimestamp(ms);
+  const diff = Date.now() - t;
+  if (isNaN(diff) || diff < 0) return 'just now';
   if (diff < 60_000) return 'just now';
   if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`;
   if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`;

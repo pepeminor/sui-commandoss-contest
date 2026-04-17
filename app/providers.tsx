@@ -21,7 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <EnokiFlowProvider apiKey={ENOKI_API_KEY}>
       <QueryClientProvider client={queryClient}>
-        <SuiClientProvider networks={networkConfig} defaultNetwork={NETWORK}>
+        <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
           <WalletProvider>
             {children}
           </WalletProvider>

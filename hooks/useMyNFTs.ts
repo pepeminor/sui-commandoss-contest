@@ -22,17 +22,17 @@ export function useMyNFTs() {
     queryFn: async () => {
       if (!address || !PACKAGE_ID) return [];
 
-      const resp = await suiClient.getOwnedObjects({
+      const resp = await suiClient.core.listOwnedObjects({
         owner: address,
-        filter: { StructType: `${PACKAGE_ID}::nft::ContentNFT` },
-        options: { showContent: true },
+        type: `${PACKAGE_ID}::nft::ContentNFT`,
+        include: { json: true },
       });
 
-      return (resp.data ?? []).flatMap((item) => {
-        if (item.data?.content?.dataType !== 'moveObject') return [];
-        const fields = item.data.content.fields as any;
+      return resp.objects.flatMap((obj) => {
+        const fields = obj.json as Record<string, unknown> | null;
+        if (!fields) return [];
         return [{
-          objectId:  item.data.objectId,
+          objectId:  obj.objectId,
           postId:    String(fields.post_id ?? ''),
           postTitle: String(fields.post_title ?? ''),
           author:    String(fields.author ?? ''),

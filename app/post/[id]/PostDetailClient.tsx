@@ -4,7 +4,7 @@ import { usePost } from '@/hooks/usePost';
 import { useHasAccess, useNFTForPost } from '@/hooks/useMyNFTs';
 import { MintButton } from '@/components/MintButton';
 import { ContentViewer } from '@/components/ContentViewer';
-import { formatSUI, avatarColor, addressInitials, timeAgo } from '@/lib/utils';
+import { formatSUI, shortenAddress, avatarColor, addressInitials, timeAgo } from '@/lib/utils';
 
 interface Props {
   postId: string;
@@ -57,7 +57,7 @@ export function PostDetailClient({ postId }: Props) {
               color: 'rgba(236,233,248,0.45)',
             }}
           >
-            <span>{post.author.slice(2, 10)}...</span>
+            <span>{shortenAddress(post.author)}</span>
             <span>·</span>
             <span>{timeAgo(post.createdAt)}</span>
           </div>

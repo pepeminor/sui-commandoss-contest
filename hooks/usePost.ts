@@ -20,20 +20,20 @@ export function usePost(postId: string | undefined) {
     queryFn: async () => {
       if (!postId) return null;
 
-      const obj = await suiClient.getObject({
-        id: postId,
-        options: { showContent: true },
+      const { object } = await suiClient.core.getObject({
+        objectId: postId,
+        include: { json: true },
       });
 
-      if (obj.data?.content?.dataType !== 'moveObject') return null;
-      const fields = obj.data.content.fields as any;
+      const fields = object.json as Record<string, unknown> | null;
+      if (!fields) return null;
 
       return {
         objectId: postId,
         author:           String(fields.author ?? ''),
         title:            String(fields.title ?? ''),
-        encryptedContent: Array.from(fields.encrypted_content ?? []),
-        price:            BigInt(fields.price ?? 0),
+        encryptedContent: Array.from((fields.encrypted_content as number[]) ?? []),
+        price:            BigInt(String(fields.price ?? 0)),
         maxSupply:        Number(fields.max_supply ?? 0),
         minted:           Number(fields.minted ?? 0),
         createdAt:        Number(fields.created_at ?? 0),
