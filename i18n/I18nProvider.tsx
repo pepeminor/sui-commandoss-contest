@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import en from './en.json';
 import vi from './vi.json';
 
@@ -22,12 +22,15 @@ const I18nContext = createContext<I18nContextValue>({
 });
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('locale') as Locale) || 'en';
+  // Always start with 'en' to match server render, then hydrate from localStorage
+  const [locale, setLocaleState] = useState<Locale>('en');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('locale') as Locale | null;
+    if (saved && saved !== 'en' && (saved === 'vi')) {
+      setLocaleState(saved);
     }
-    return 'en';
-  });
+  }, []);
 
   const setLocale = useCallback((l: Locale) => {
     setLocaleState(l);
