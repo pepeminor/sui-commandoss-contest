@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import type { FeedPost } from '@/hooks/useFeed';
 import { useHasAccess } from '@/hooks/useMyNFTs';
-import { formatSUI, shortenAddress, avatarColor, addressInitials, timeAgo } from '@/lib/utils';
+import { formatSUI, shortenAddress, timeAgo } from '@/lib/utils';
+import { AddressAvatar } from './AddressAvatar';
 
 interface PostCardProps {
   post: FeedPost;
@@ -13,8 +14,6 @@ const LOREM_PREVIEW = 'Nội dung được bảo vệ. Mua NFT để đọc toà
 
 export function PostCard({ post }: PostCardProps) {
   const hasAccess = useHasAccess(post.postId);
-  const color = avatarColor(post.author);
-  const initials = addressInitials(post.author);
 
   return (
     <Link
@@ -22,7 +21,7 @@ export function PostCard({ post }: PostCardProps) {
       className={`post-card${hasAccess ? ' post-card--owned' : ''}`}
     >
       <div className="post-card__inner">
-        <div className={`avatar avatar--${color}`}>{initials}</div>
+        <AddressAvatar address={post.author} size={38} />
 
         <div className="post-card__content">
           <div className="post-card__header">

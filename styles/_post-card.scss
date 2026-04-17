@@ -118,30 +118,6 @@
   }
 }
 
-// ─── Avatar ───────────────────────────────────────────────────────────────────
-
-.avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: $radius-sm;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 600;
-  font-family: 'Courier New', Courier, monospace;
-  letter-spacing: 0;
-  line-height: 1.2;
-  text-align: center;
-  flex-shrink: 0;
-  word-break: break-all;
-  padding: 2px;
-
-  &--purple { background: rgba(123, 110, 232, 0.2); color: #b3acf0; border: 0.5px solid rgba(123,110,232,0.25); }
-  &--teal   { background: rgba(29, 158, 117, 0.2);  color: #5DCAA5; border: 0.5px solid rgba(29,158,117,0.25); }
-  &--coral  { background: rgba(216, 90, 48, 0.2);   color: #F0997B; border: 0.5px solid rgba(216,90,48,0.25); }
-  &--pink   { background: rgba(212, 83, 126, 0.2);  color: #ED93B1; border: 0.5px solid rgba(212,83,126,0.25); }
-}
 
 // ─── Badge ────────────────────────────────────────────────────────────────────
 

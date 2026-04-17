@@ -4,7 +4,8 @@ import { usePost } from '@/hooks/usePost';
 import { useHasAccess, useNFTForPost } from '@/hooks/useMyNFTs';
 import { MintButton } from '@/components/MintButton';
 import { ContentViewer } from '@/components/ContentViewer';
-import { formatSUI, shortenAddress, avatarColor, addressInitials, timeAgo } from '@/lib/utils';
+import { formatSUI, shortenAddress, timeAgo } from '@/lib/utils';
+import { AddressAvatar } from '@/components/AddressAvatar';
 
 interface Props {
   postId: string;
@@ -33,17 +34,13 @@ export function PostDetailClient({ postId }: Props) {
     );
   }
 
-  const color = avatarColor(post.author);
-  const initials = addressInitials(post.author);
   const soldOut = post.minted >= post.maxSupply;
 
   return (
     <div className="container" style={{ paddingTop: 32, paddingBottom: 80 }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 20 }}>
-        <div className={`avatar avatar--${color}`} style={{ width: 44, height: 44 }}>
-          {initials}
-        </div>
+        <AddressAvatar address={post.author} size={44} />
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.4px', marginBottom: 4 }}>
             {post.title}
