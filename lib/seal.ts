@@ -41,19 +41,15 @@ async function getOrCreateSessionKey(address: string, signer: Signer): Promise<S
   const cached = sessionKeyCache.get(address);
   if (cached && !cached.isExpired()) return cached;
 
-  // Two-step pattern: create WITHOUT signer, then sign manually
-  // This is required for Enoki zkLogin compatibility
+  // Pass signer directly — the SDK signs lazily in getCertificate()
+  // without calling verifyPersonalMessageSignature (which fails with zkLogin).
   const sessionKey = await SessionKey.create({
     address,
     packageId: PACKAGE_ID,
     ttlMin: 10,
+    signer,
     suiClient,
   });
-
-  // Get the personal message and sign it with Enoki keypair
-  const message = sessionKey.getPersonalMessage();
-  const { signature } = await signer.signPersonalMessage(message);
-  sessionKey.setPersonalMessageSignature(signature);
 
   sessionKeyCache.set(address, sessionKey);
   setTimeout(() => sessionKeyCache.delete(address), 10 * 60 * 1000);
