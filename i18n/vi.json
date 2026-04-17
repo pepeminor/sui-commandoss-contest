@@ -3,8 +3,10 @@
   "nav.publish": "Publish",
   "nav.library": "Library",
   "nav.login": "Login",
-  "nav.logout": "Logout",
+  "nav.logout": "Đăng xuất",
   "nav.copied": "Đã copy!",
+  "nav.logoutConfirmTitle": "Xác nhận đăng xuất",
+  "nav.logoutConfirmDesc": "Bạn có chắc muốn ngắt kết nối ví?",
 
   "feed.title": "Feed",
   "feed.subtitle": "Nội dung exclusive từ các artist — mua NFT để đọc toàn bộ",

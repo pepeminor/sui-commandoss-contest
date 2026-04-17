@@ -5,6 +5,8 @@
   "nav.login": "Login",
   "nav.logout": "Logout",
   "nav.copied": "Copied!",
+  "nav.logoutConfirmTitle": "Confirm Logout",
+  "nav.logoutConfirmDesc": "Are you sure you want to disconnect your wallet?",
 
   "feed.title": "Feed",
   "feed.subtitle": "Exclusive content from creators — buy NFT to unlock",

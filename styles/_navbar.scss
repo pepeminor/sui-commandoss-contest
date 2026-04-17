@@ -158,7 +158,7 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 240px;
+  width: 260px;
   max-width: 80vw;
   height: 100%;
   background: #111118;
@@ -166,13 +166,34 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   animation: slide-in-right $duration-normal $ease-out-expo;
+
+  &__address {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: monospace;
+    color: $text-muted;
+    background: $bg-surface;
+    border: 0.5px solid $border;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    text-align: left;
+    transition: color $duration-fast, border-color $duration-fast;
+
+    &:hover {
+      color: $text-primary;
+      border-color: $border-hover;
+    }
+  }
 
   &__links {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
   }
 
   &__link {
@@ -196,12 +217,43 @@
   &__divider {
     height: 0.5px;
     background: $border;
+    margin: 4px 0;
   }
 
-  &__actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  &__lang {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-muted;
+    background: none;
+    border: 0.5px solid $border;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-family: $font-base;
+    text-align: left;
+    transition: all $duration-fast;
+
+    &:hover { color: $text-primary; border-color: $border-hover; }
+  }
+
+  &__logout {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ff7070;
+    background: rgba(255, 70, 70, 0.08);
+    border: 0.5px solid rgba(255, 70, 70, 0.15);
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-family: $font-base;
+    text-align: center;
+    transition: all $duration-fast;
+
+    &:hover { background: rgba(255, 70, 70, 0.14); }
   }
 }
 
