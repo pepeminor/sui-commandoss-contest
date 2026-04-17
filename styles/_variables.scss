@@ -1,32 +1,32 @@
 // ─── Color tokens ─────────────────────────────────────────────────────────────
 
 // Backgrounds
-$bg-base:         #09090f;
+$bg-base:         #0a0a0f;
 $bg-card:         rgba(255, 255, 255, 0.025);
-$bg-card-hover:   rgba(123, 110, 232, 0.04);
+$bg-card-hover:   rgba(232, 98, 58, 0.04);
 $bg-surface:      rgba(255, 255, 255, 0.05);
 $bg-surface-2:    rgba(255, 255, 255, 0.03);
 
-// Accent — purple
-$accent:          #7B6EE8;
-$accent-hover:    #8f84ef;
-$accent-soft:     rgba(123, 110, 232, 0.15);
-$accent-border:   rgba(123, 110, 232, 0.25);
+// Accent — orange-red
+$accent:          #E8623A;
+$accent-hover:    #EF7A55;
+$accent-soft:     rgba(232, 98, 58, 0.15);
+$accent-border:   rgba(232, 98, 58, 0.25);
 
 // Text
-$text-primary:    #ece9f8;
-$text-secondary:  rgba(236, 233, 248, 0.55);
-$text-muted:      rgba(236, 233, 248, 0.35);
-$text-hint:       rgba(236, 233, 248, 0.25);
+$text-primary:    #f0ebe4;
+$text-secondary:  rgba(240, 235, 228, 0.55);
+$text-muted:      rgba(240, 235, 228, 0.35);
+$text-hint:       rgba(240, 235, 228, 0.25);
 
 // Borders
 $border:          rgba(255, 255, 255, 0.06);
 $border-hover:    rgba(255, 255, 255, 0.1);
-$border-accent:   rgba(123, 110, 232, 0.3);
+$border-accent:   rgba(232, 98, 58, 0.3);
 
 // Semantic
 $color-owned:     #5DCAA5;
-$color-locked:    rgba(236, 233, 248, 0.3);
+$color-locked:    rgba(240, 235, 228, 0.3);
 $color-sui:       #6FBCF0;
 
 // ─── Spacing & Shape ──────────────────────────────────────────────────────────
@@ -49,8 +49,8 @@ $ease-out-expo:   cubic-bezier(0.16, 1, 0.3, 1);
 // ─── Avatar palette ──────────────────────────────────────────────────────────
 
 $avatar-colors: (
-  purple: (bg: rgba(123, 110, 232, 0.2), text: #b3acf0),
+  ember:  (bg: rgba(232, 98, 58, 0.2),   text: #F0997B),
   teal:   (bg: rgba(29, 158, 117, 0.2),  text: #5DCAA5),
   coral:  (bg: rgba(216, 90, 48, 0.2),   text: #F0997B),
-  pink:   (bg: rgba(212, 83, 126, 0.2),  text: #ED93B1),
+  amber:  (bg: rgba(212, 160, 50, 0.2),  text: #E8C56E),
 );

@@ -52,7 +52,7 @@ export default function LibraryPage() {
             <div className="empty-state__icon">📖</div>
             <div className="empty-state__title">Chưa có bài nào</div>
             <p className="empty-state__desc">
-              Vào <Link href="/" style={{ color: '#7B6EE8' }}>Feed</Link> để khám phá và mua NFT
+              Vào <Link href="/" style={{ color: '#E8623A' }}>Feed</Link> để khám phá và mua NFT
             </p>
           </div>
         )}

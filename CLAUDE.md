@@ -367,22 +367,23 @@ headers: [{ key: 'Content-Security-Policy', value: [
   "style-src 'self' 'unsafe-inline'",
 ].join('; ') }]
 UI/UX Design Tokens
-Direction: Dark Editorial Web3 — premium, tối, không neon, không gradient rẻ.
+Direction: Dark Editorial Web3 — cam đỏ chủ đạo, tối, không neon, không gradient rẻ.
+KHÔNG dùng purple (#7B6EE8) nữa. Accent là cam đỏ (#E8623A).
 
 // _variables.scss
-$bg-base:         #09090f;
+$bg-base:         #0a0a0f;
 $bg-card:         rgba(255,255,255,0.025);
-$bg-card-hover:   rgba(123,110,232,0.04);
+$bg-card-hover:   rgba(232,98,58,0.04);
 $bg-surface:      rgba(255,255,255,0.05);
 
-$accent:          #7B6EE8;
-$accent-hover:    #8f84ef;
-$accent-soft:     rgba(123,110,232,0.15);
-$accent-border:   rgba(123,110,232,0.25);
+$accent:          #E8623A;    // cam đỏ — KHÔNG dùng purple
+$accent-hover:    #EF7A55;
+$accent-soft:     rgba(232,98,58,0.15);
+$accent-border:   rgba(232,98,58,0.25);
 
-$text-primary:    #ece9f8;
-$text-secondary:  rgba(236,233,248,0.55);
-$text-muted:      rgba(236,233,248,0.35);
+$text-primary:    #f0ebe4;
+$text-secondary:  rgba(240,235,228,0.55);
+$text-muted:      rgba(240,235,228,0.35);
 
 $border:          rgba(255,255,255,0.06);
 $border-hover:    rgba(255,255,255,0.1);
@@ -398,15 +399,12 @@ Locked content blur:
 
 .content-locked { filter: blur(3px); user-select: none; pointer-events: none; }
 .post-card:hover .content-locked { filter: blur(2.5px); } // tăng FOMO
-Avatar colors (cycle 4):
+Avatar: AddressAvatar component — 5x5 symmetric SVG identicon (blockchain-style), hình tròn.
 
-purple: rgba(123,110,232,0.2) bg + #b3acf0 text
-teal: rgba(29,158,117,0.2) bg + #5DCAA5 text
-coral: rgba(216,90,48,0.2) bg + #F0997B text
-pink: rgba(212,83,126,0.2) bg + #ED93B1 text
 Anti-patterns:
 
-❌ #ffffff → ✅ #ece9f8
+❌ #ffffff → ✅ #f0ebe4
+❌ #7B6EE8 (purple) → ✅ #E8623A (cam đỏ)
 ❌ box-shadow: 0 10px 30px → ✅ border: 0.5px solid
 ❌ gradient nền → ✅ flat background
 ❌ neon glow → ✅ subtle border
