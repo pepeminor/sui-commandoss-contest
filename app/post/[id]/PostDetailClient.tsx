@@ -4,7 +4,8 @@ import { usePost } from '@/hooks/usePost';
 import { useHasAccess, useNFTForPost } from '@/hooks/useMyNFTs';
 import { MintButton } from '@/components/MintButton';
 import { ContentViewer } from '@/components/ContentViewer';
-import { formatSUI, shortenAddress, timeAgo } from '@/lib/utils';
+import { formatSUI, shortenAddress, timeAgo, explorerObjectUrl } from '@/lib/utils';
+import { NETWORK } from '@/config';
 import { AddressAvatar } from '@/components/AddressAvatar';
 import { useI18n } from '@/i18n/I18nProvider';
 
@@ -50,6 +51,28 @@ export function PostDetailClient({ postId }: Props) {
             <span>{shortenAddress(post.author)}</span>
             <span>·</span>
             <span>{timeAgo(post.createdAt)}</span>
+            <span>·</span>
+            <a
+              href={explorerObjectUrl(postId, NETWORK)}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: '#6FBCF0',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                fontSize: 11,
+                fontWeight: 500,
+              }}
+            >
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+              {t('post.viewOnChain')}
+            </a>
           </div>
         </div>
       </div>

@@ -116,6 +116,22 @@
     color: $text-hint;
     font-weight: 500;
   }
+
+  &__explorer {
+    color: $text-hint;
+    opacity: 0;
+    transition: opacity $duration-fast, color $duration-fast;
+    display: inline-flex;
+    align-items: center;
+
+    &:hover {
+      color: $color-sui;
+    }
+  }
+
+  &:hover &__explorer {
+    opacity: 1;
+  }
 }
 
 

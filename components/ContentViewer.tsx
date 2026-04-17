@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { decryptContent } from '@/lib/seal';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { decryptContent, clearSessionKey } from '@/lib/seal';
 import { useAuth } from '@/auth/useAuth';
 import { useI18n } from '@/i18n/I18nProvider';
 
@@ -17,24 +17,56 @@ export function ContentViewer({ encryptedContent, nftObjectId, postObjectId }: C
   const [content, setContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const decryptRequestIdRef = useRef(0);
 
-  useEffect(() => {
-    if (!address) return;
+  const attemptDecrypt = useCallback(async () => {
+    const requestId = decryptRequestIdRef.current + 1;
+    decryptRequestIdRef.current = requestId;
+    const isLatestRequest = () => decryptRequestIdRef.current === requestId;
+
+    if (!address) {
+      setIsLoading(false);
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
+    setContent(null);
 
-    getSigner()
-      .then((signer) =>
-        decryptContent({ encryptedContent, nftObjectId, postObjectId, userAddress: address, signer }),
-      )
-      .then(setContent)
-      .catch((err) => {
-        console.error('Decrypt failed:', err);
-        setError(t('decrypt.error'));
-      })
-      .finally(() => setIsLoading(false));
-  }, [address, nftObjectId, postObjectId]);
+    try {
+      const signer = await getSigner();
+      const result = await decryptContent({
+        encryptedContent, nftObjectId, postObjectId, userAddress: address, signer,
+      });
+      if (isLatestRequest()) setContent(result);
+    } catch (err) {
+      console.error('Decrypt failed (attempt 1):', err);
+
+      // Clear stale session key and retry once
+      clearSessionKey(address);
+      try {
+        const signer = await getSigner();
+        const result = await decryptContent({
+          encryptedContent, nftObjectId, postObjectId, userAddress: address, signer,
+        });
+        if (isLatestRequest()) setContent(result);
+      } catch (retryErr) {
+        console.error('Decrypt failed (attempt 2):', retryErr);
+        if (isLatestRequest()) setError(t('decrypt.error'));
+      }
+    } finally {
+      if (isLatestRequest()) setIsLoading(false);
+    }
+  }, [address, nftObjectId, postObjectId, encryptedContent, getSigner, t]);
+
+  useEffect(() => {
+    attemptDecrypt();
+  }, [attemptDecrypt]);
+
+  const handleRetry = () => {
+    if (address) clearSessionKey(address);
+    attemptDecrypt();
+  };
 
   if (isLoading) {
     return (
@@ -56,10 +88,19 @@ export function ContentViewer({ encryptedContent, nftObjectId, postObjectId }: C
         background: 'rgba(255,70,70,0.08)',
         border: '0.5px solid rgba(255,70,70,0.2)',
         borderRadius: 10,
-        color: '#ff7070',
-        fontSize: 13,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 12,
       }}>
-        {error}
+        <span style={{ color: '#ff7070', fontSize: 13 }}>{error}</span>
+        <button
+          className="btn btn--ghost"
+          onClick={handleRetry}
+          style={{ fontSize: 12, padding: '6px 14px', flexShrink: 0 }}
+        >
+          {t('decrypt.retry')}
+        </button>
       </div>
     );
   }

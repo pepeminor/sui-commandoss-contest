@@ -8,22 +8,21 @@ import { Modal } from './Modal';
 import { useAuth } from '@/auth/useAuth';
 import { useI18n } from '@/i18n/I18nProvider';
 import { shortenAddress } from '@/lib/utils';
+import { useIsClient } from '@/hooks/useIsClient';
 
 export function Navbar() {
   const pathname = usePathname();
   const { isLoggedIn, address, logout } = useAuth();
   const { t, locale, setLocale } = useI18n();
-  const [mounted, setMounted] = useState(false);
+  const isClient = useIsClient();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => setMounted(true), []);
   useEffect(() => setMenuOpen(false), [pathname]);
 
   const links = [
     { href: '/', label: t('nav.feed') },
-    ...(mounted && isLoggedIn ? [
+    ...(isClient && isLoggedIn ? [
       { href: '/create', label: t('nav.publish') },
       { href: '/library', label: t('nav.library') },
     ] : []),
@@ -101,7 +100,7 @@ export function Navbar() {
         <div className="mobile-menu-backdrop" onClick={() => setMenuOpen(false)}>
           <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
             {/* Address at top */}
-            {mounted && isLoggedIn && address && (
+            {isClient && isLoggedIn && address && (
               <>
                 <button className="mobile-menu__address" onClick={handleCopy} title={address}>
                   {copied ? `✓ ${t('nav.copied')}` : shortenAddress(address)}
@@ -138,7 +137,7 @@ export function Navbar() {
             <div style={{ flex: 1 }} />
 
             {/* Logout at bottom */}
-            {mounted && isLoggedIn && (
+            {isClient && isLoggedIn && (
               <>
                 <div className="mobile-menu__divider" />
                 <button
@@ -151,7 +150,7 @@ export function Navbar() {
             )}
 
             {/* Login button if not logged in */}
-            {mounted && !isLoggedIn && (
+            {isClient && !isLoggedIn && (
               <div style={{ marginTop: 8 }}>
                 <LoginButton />
               </div>

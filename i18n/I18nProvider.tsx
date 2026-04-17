@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useCallback, useSyncExternalStore, type ReactNode } from 'react';
 import en from './en.json';
 import vi from './vi.json';
 
@@ -21,20 +21,39 @@ const I18nContext = createContext<I18nContextValue>({
   t: (key) => key,
 });
 
-export function I18nProvider({ children }: { children: ReactNode }) {
-  // Always start with 'en' to match server render, then hydrate from localStorage
-  const [locale, setLocaleState] = useState<Locale>('en');
+const LOCALE_KEY = 'locale';
+const VALID_LOCALES: readonly Locale[] = ['en', 'vi'];
 
-  useEffect(() => {
-    const saved = localStorage.getItem('locale') as Locale | null;
-    if (saved && saved !== 'en' && (saved === 'vi')) {
-      setLocaleState(saved);
-    }
-  }, []);
+let listeners: Array<() => void> = [];
+
+function subscribeLocale(callback: () => void) {
+  listeners = [...listeners, callback];
+  return () => {
+    listeners = listeners.filter((l) => l !== callback);
+  };
+}
+
+function getLocaleSnapshot(): Locale {
+  const saved = localStorage.getItem(LOCALE_KEY);
+  return saved && VALID_LOCALES.includes(saved as Locale) ? (saved as Locale) : 'en';
+}
+
+function getLocaleServerSnapshot(): Locale {
+  return 'en';
+}
+
+function emitLocaleChange() {
+  for (const listener of listeners) {
+    listener();
+  }
+}
+
+export function I18nProvider({ children }: { children: ReactNode }) {
+  const locale = useSyncExternalStore(subscribeLocale, getLocaleSnapshot, getLocaleServerSnapshot);
 
   const setLocale = useCallback((l: Locale) => {
-    setLocaleState(l);
-    localStorage.setItem('locale', l);
+    localStorage.setItem(LOCALE_KEY, l);
+    emitLocaleChange();
   }, []);
 
   const t = useCallback(

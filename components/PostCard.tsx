@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import type { FeedPost } from '@/hooks/useFeed';
 import { useHasAccess } from '@/hooks/useMyNFTs';
-import { formatSUI, shortenAddress, timeAgo } from '@/lib/utils';
+import { formatSUI, shortenAddress, timeAgo, explorerObjectUrl } from '@/lib/utils';
+import { NETWORK } from '@/config';
 import { AddressAvatar } from './AddressAvatar';
 import { useI18n } from '@/i18n/I18nProvider';
 
@@ -50,9 +51,25 @@ export function PostCard({ post }: PostCardProps) {
               {formatSUI(post.price)} SUI
             </div>
 
-            <span className="post-card__supply">
-              {post.maxSupply > 0 ? `${post.maxSupply} max` : '∞'}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <a
+                href={explorerObjectUrl(post.postId, NETWORK)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="post-card__explorer"
+                title={t('post.viewOnChain')}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+              </a>
+              <span className="post-card__supply">
+                {post.maxSupply > 0 ? `${post.maxSupply} max` : '∞'}
+              </span>
+            </div>
           </div>
         </div>
       </div>

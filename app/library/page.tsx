@@ -1,21 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
 import { useMyNFTs } from '@/hooks/useMyNFTs';
 import { useAuth } from '@/auth/useAuth';
 import { timeAgo } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nProvider';
+import { useIsClient } from '@/hooks/useIsClient';
 
 export default function LibraryPage() {
   const { isLoggedIn, login } = useAuth();
   const { data: nfts, isLoading } = useMyNFTs();
   const { t } = useI18n();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const isClient = useIsClient();
 
-  if (!mounted) {
+  if (!isClient) {
     return (
       <div className="page">
         <Navbar />

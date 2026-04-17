@@ -37,19 +37,25 @@ export function getSealClient(): SealClient {
 
 const sessionKeyCache = new Map<string, SessionKey>();
 
+/** Clear cached session key for an address (call on decrypt failure to force fresh key) */
+export function clearSessionKey(address: string): void {
+  sessionKeyCache.delete(address);
+}
+
 async function getOrCreateSessionKey(address: string, signer: Signer): Promise<SessionKey> {
   const cached = sessionKeyCache.get(address);
   if (cached && !cached.isExpired()) return cached;
 
-  // Pass signer directly — the SDK signs lazily in getCertificate()
-  // without calling verifyPersonalMessageSignature (which fails with zkLogin).
+  // Initialize explicitly so the personal-message signature is verified before
+  // we call Seal key servers. This avoids caching an invalid certificate.
   const sessionKey = await SessionKey.create({
     address,
     packageId: PACKAGE_ID,
     ttlMin: 10,
-    signer,
     suiClient,
   });
+  const { signature } = await signer.signPersonalMessage(sessionKey.getPersonalMessage());
+  await sessionKey.setPersonalMessageSignature(signature);
 
   sessionKeyCache.set(address, sessionKey);
   setTimeout(() => sessionKeyCache.delete(address), 10 * 60 * 1000);

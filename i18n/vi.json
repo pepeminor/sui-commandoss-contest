@@ -75,6 +75,9 @@
 
   "decrypt.loading": "Đang giải mã nội dung...",
   "decrypt.error": "Không thể giải mã nội dung. Thử lại sau.",
+  "decrypt.retry": "Thử lại",
+
+  "post.viewOnChain": "On-chain",
 
   "common.cancel": "Hủy"
 }

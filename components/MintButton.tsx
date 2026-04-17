@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useMintNFT } from '@/hooks/useMintNFT';
 import { useAuth } from '@/auth/useAuth';
 import { formatSUI } from '@/lib/utils';
 import { Modal } from './Modal';
 import { useI18n } from '@/i18n/I18nProvider';
+import { useIsClient } from '@/hooks/useIsClient';
 
 const GAS_ESTIMATE_MIST = 5_500_000n; // ~0.0055 SUI
 
@@ -20,8 +21,7 @@ export function MintButton({ postId, price, soldOut }: MintButtonProps) {
   const { mutate: mint, isPending, isError, error } = useMintNFT();
   const { t } = useI18n();
   const [showConfirm, setShowConfirm] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const isClient = useIsClient();
 
   if (soldOut) {
     return (
@@ -31,7 +31,15 @@ export function MintButton({ postId, price, soldOut }: MintButtonProps) {
     );
   }
 
-  if (!mounted || !isLoggedIn) {
+  if (!isClient) {
+    return (
+      <button className="btn btn--primary loading-skeleton" disabled style={{ width: '100%', height: 44 }}>
+        {formatSUI(price)} SUI
+      </button>
+    );
+  }
+
+  if (!isLoggedIn) {
     return (
       <button className="btn btn--primary" onClick={login}>
         {t('mint.loginToBuy')} — {formatSUI(price)} SUI

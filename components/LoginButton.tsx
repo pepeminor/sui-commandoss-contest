@@ -1,17 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/auth/useAuth';
 import { shortenAddress } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nProvider';
+import { useIsClient } from '@/hooks/useIsClient';
 
 export function LoginButton() {
   const { address, isLoggedIn, login, logout } = useAuth();
   const { t } = useI18n();
   const [copied, setCopied] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const isClient = useIsClient();
 
   const handleCopy = () => {
     if (!address) return;
@@ -21,7 +20,15 @@ export function LoginButton() {
     });
   };
 
-  if (!mounted) return null;
+  if (!isClient) {
+    return (
+      <div
+        className="loading-skeleton"
+        aria-hidden="true"
+        style={{ width: 132, height: 32, borderRadius: 999 }}
+      />
+    );
+  }
 
   if (isLoggedIn && address) {
     return (

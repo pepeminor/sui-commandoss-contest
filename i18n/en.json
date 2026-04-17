@@ -75,6 +75,9 @@
 
   "decrypt.loading": "Decrypting content...",
   "decrypt.error": "Failed to decrypt content. Try again later.",
+  "decrypt.retry": "Try Again",
+
+  "post.viewOnChain": "On-chain",
 
   "common.cancel": "Cancel"
 }

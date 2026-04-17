@@ -9,6 +9,7 @@ import { useCreatePost } from '@/hooks/useCreatePost';
 import { useAuth } from '@/auth/useAuth';
 import { formatSUI } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nProvider';
+import { useIsClient } from '@/hooks/useIsClient';
 
 const REDIRECT_DELAY = 8;
 const GAS_ESTIMATE_MIST = 2_000_000n;
@@ -19,8 +20,7 @@ export default function CreatePage() {
   const { isLoggedIn, login } = useAuth();
   const { mutate: createPost, isPending, isError, error } = useCreatePost();
   const { t } = useI18n();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const isClient = useIsClient();
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -53,7 +53,7 @@ export default function CreatePage() {
   const maxSupply = parseInt(supplyStr || '1', 10);
   const contentSize = new TextEncoder().encode(content).length;
 
-  if (!mounted) {
+  if (!isClient) {
     return (
       <div className="page">
         <Navbar />

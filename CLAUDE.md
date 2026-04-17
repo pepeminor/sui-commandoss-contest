@@ -338,6 +338,14 @@ cd move/ && sui client publish --gas-budget 200000000 --network mainnet
 #    Redirect: http://localhost:3000/auth/callback
 
 # 8. pnpm install && pnpm dev
+
+# 9. Deploy to Vercel (production)
+npx vercel --prod
+# Project: thangnq666s-projects/sui-marketplace
+# Production URL: https://sui-marketplace-nu.vercel.app
+# Không cần git remote — deploy trực tiếp từ local bằng Vercel CLI.
+# Khi user nói "deploy" → chạy `npx vercel --prod`, không cần hỏi lại.
+
 Phases
 Phase 1 MVP (hiện tại): Enoki login, tạo Post, Feed, Mint NFT, Seal decrypt, PostDetail blur
 Phase 2: Artist dashboard, Buyer library, Kiosk resell, Pagination

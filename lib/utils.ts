@@ -42,3 +42,8 @@ export function timeAgo(ms: number | string): string {
   if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`;
   return `${Math.floor(diff / 86_400_000)}d ago`;
 }
+
+/** Build a SuiScan explorer URL for an object */
+export function explorerObjectUrl(objectId: string, network: string = 'testnet'): string {
+  return `https://suiscan.xyz/${network}/object/${objectId}`;
+}
