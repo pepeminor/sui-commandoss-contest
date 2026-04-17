@@ -10,14 +10,14 @@ Buyer mint NFT → tự trả gas + giá → SUI thẳng artist
 NFT = quyền đọc content, tradeable (ai giữ NFT là đọc được kể cả resale)
 Content Seal encrypt on-chain → không có NFT = không decrypt được
 Revenue (Phase 3): platform fee % từ primary sale
-Chi phí mainnet: Deploy ~0.05–0.1 SUI | Đăng bài ~0.002 SUI | Mint ~0.002 SUI + giá NFT
+Chi phí testnet: Deploy ~0.05–0.1 SUI | Đăng bài ~0.002 SUI | Mint ~0.002 SUI + giá NFT
 
 Tech Stack
 Layer	Công nghệ	Ghi chú
-Blockchain	SUI Mainnet	Object-centric
+Blockchain	SUI Testnet	Object-centric
 Smart contract	Move	4 modules
 Auth	Enoki (@mysten/enoki)	Managed zkLogin, không cần backend
-Encryption	Seal (@mysten/seal)	Mainnet từ Sep 2025
+Encryption	Seal (@mysten/seal)	Testnet (chuyển mainnet sau)
 NFT trading	Kiosk Protocol	Phase 2
 Storage	On-chain Move object	Text < vài KB
 Storage (file)	Walrus	Phase 3
@@ -109,12 +109,12 @@ hooks/
 ├── useHasAccess.ts, useMintNFT.ts
 
 lib/
-├── sui-client.ts   — SuiGrpcClient mainnet singleton
+├── sui-client.ts   — SuiGrpcClient testnet singleton
 ├── seal.ts         — SealClient + encrypt/decrypt
 ├── transactions.ts — PTB builders
 └── utils.ts        — formatSUI, shortenAddress
 
-config.ts           — PACKAGE_ID, network = mainnet
+config.ts           — PACKAGE_ID, network = testnet
 Key Implementations
 1. Providers
 // app/providers.tsx
@@ -224,7 +224,7 @@ export async function decryptPostContent({ encryptedContent, nftObjectId, postOb
 }
 6. Query Feed
 // hooks/useFeed.ts — Post là SHARED OBJECT → GraphQL events
-const graphqlClient = new SuiGraphQLClient({ url: 'https://sui-mainnet.mystenlabs.com/graphql' });
+const graphqlClient = new SuiGraphQLClient({ url: 'https://graphql.testnet.sui.io/graphql' });
 
 export function useFeed() {
   return useQuery({
@@ -276,13 +276,13 @@ Luôn gọi waitForTransaction({ result }) trước khi query lại
 Post = shared object → GraphQL events
 ContentNFT = address-owned → listOwnedObjects
 Clock object ID: 0x6 (cố định mọi network)
-Network: mainnet
+Network: testnet
 Enoki / Seal
 keypair từ useZkLogin() để sign — không tự manage
 tx.setSender(address) trước khi sign
 seal_approve phải là entry fun, tham số đầu LUÔN là id: vector<u8>
 onlyTransactionKind: true khi build txBytes cho decrypt
-Cache SessionKey (TTL 30 min)
+Cache SessionKey (TTL 10 min)
 Lỗi hay gặp
 // ❌ Query ngay sau tx — data cũ
 // ✅ Đợi index
@@ -303,9 +303,9 @@ tx.splitCoins(tx.gas, [10_000_000n]);
 // ❌ Quên setSender
 // ✅ tx.setSender(address); trước khi signAndExecuteTransaction
 Environment Variables
-NEXT_PUBLIC_SUI_NETWORK=mainnet
-NEXT_PUBLIC_SUI_RPC_URL=https://fullnode.mainnet.sui.io:443
-NEXT_PUBLIC_SUI_GRAPHQL_URL=https://sui-mainnet.mystenlabs.com/graphql
+NEXT_PUBLIC_SUI_NETWORK=testnet
+NEXT_PUBLIC_SUI_RPC_URL=https://fullnode.testnet.sui.io:443
+NEXT_PUBLIC_SUI_GRAPHQL_URL=https://graphql.testnet.sui.io/graphql
 NEXT_PUBLIC_PACKAGE_ID=0x...
 NEXT_PUBLIC_ENOKI_API_KEY=...
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=...
@@ -313,7 +313,7 @@ NEXT_PUBLIC_SEAL_PACKAGE_ID=0x...
 Deploy Checklist
 # 1. Sui CLI
 curl -sSf https://raw.githubusercontent.com/MystenLabs/suiup/main/install.sh | sh
-suiup install sui@mainnet
+suiup install sui@testnet
 
 # 2. Next.js
 npx create-next-app@latest verse --typescript --app --tailwind=false --eslint
@@ -328,10 +328,10 @@ sui keytool import <PRIVATE_KEY> ed25519
 sui client switch --address <ADDRESS>
 
 # 5. Deploy contract (~0.05–0.1 SUI)
-cd move/ && sui client publish --gas-budget 200000000 --network mainnet
+cd move/ && sui client publish --gas-budget 200000000 --network testnet
 # → Copy PackageID → NEXT_PUBLIC_PACKAGE_ID
 
-# 6. Enoki: enoki.mystenlabs.com → tạo app → mainnet → Google OAuth
+# 6. Enoki: enoki.mystenlabs.com → tạo app → testnet → Google OAuth
 #    Redirect URI: http://localhost:3000/auth/callback
 
 # 7. Google Cloud Console → OAuth 2.0 Client ID
@@ -424,4 +424,4 @@ TS SDK: https://sdk.mystenlabs.com/typescript
 Enoki: https://docs.enoki.mystenlabs.com
 Seal: https://docs.sui.io/guides/developer/seal
 SUI GraphQL: https://docs.sui.io/references/sui-graphql
-Mainnet explorer: https://suiscan.xyz/mainnet
+Testnet explorer: https://suiscan.xyz/testnet
