@@ -8,15 +8,17 @@ import { Modal } from '@/components/Modal';
 import { useCreatePost } from '@/hooks/useCreatePost';
 import { useAuth } from '@/auth/useAuth';
 import { formatSUI } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const REDIRECT_DELAY = 8;
-const GAS_ESTIMATE_MIST = 2_000_000n; // ~0.002 SUI
+const GAS_ESTIMATE_MIST = 2_000_000n;
 
 export default function CreatePage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { isLoggedIn, login } = useAuth();
   const { mutate: createPost, isPending, isError, error } = useCreatePost();
+  const { t } = useI18n();
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -55,7 +57,7 @@ export default function CreatePage() {
         <Navbar />
         <div className="container" style={{ paddingTop: 80, textAlign: 'center' }}>
           <div style={{ fontSize: 32, marginBottom: 12 }}>🔒</div>
-          <h2 style={{ marginBottom: 8 }}>Cần đăng nhập để publish</h2>
+          <h2 style={{ marginBottom: 8 }}>{t('create.loginRequired')}</h2>
           <button className="btn btn--primary" onClick={login} style={{ marginTop: 8 }}>
             Login with Google
           </button>
@@ -70,77 +72,28 @@ export default function CreatePage() {
         <Navbar />
         <div className="container" style={{ paddingTop: 60, paddingBottom: 60 }}>
           <div style={{
-            background: 'rgba(93,202,165,0.06)',
-            border: '0.5px solid rgba(93,202,165,0.3)',
-            borderRadius: 14,
-            padding: '32px 24px',
-            textAlign: 'center',
+            background: 'rgba(93,202,165,0.06)', border: '0.5px solid rgba(93,202,165,0.3)',
+            borderRadius: 14, padding: '32px 24px', textAlign: 'center',
           }}>
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" style={{ margin: '0 auto 16px', display: 'block' }}>
               <circle cx="12" cy="12" r="10" stroke="#5DCAA5" strokeWidth="1.5" />
               <path d="M8 12l3 3 5-5" stroke="#5DCAA5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-
-            <div style={{ fontSize: 20, fontWeight: 800, color: '#f0ebe4', marginBottom: 8 }}>
-              Đã publish lên chain!
-            </div>
-
-            <div style={{ fontSize: 14, color: 'rgba(240,235,228,0.6)', marginBottom: 20 }}>
-              &ldquo;{successTitle}&rdquo;
-            </div>
-
+            <div style={{ fontSize: 20, fontWeight: 800, color: '#f0ebe4', marginBottom: 8 }}>{t('create.success')}</div>
+            <div style={{ fontSize: 14, color: 'rgba(240,235,228,0.6)', marginBottom: 20 }}>&ldquo;{successTitle}&rdquo;</div>
             {successDigest && (
-              <div style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '0.5px solid rgba(255,255,255,0.08)',
-                borderRadius: 8,
-                padding: '10px 14px',
-                marginBottom: 24,
-                textAlign: 'left',
-              }}>
-                <div style={{ fontSize: 10, color: 'rgba(240,235,228,0.35)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>
-                  Tx Digest
-                </div>
-                <div style={{ fontSize: 11, color: '#6FBCF0', fontFamily: 'monospace', wordBreak: 'break-all' }}>
-                  {successDigest}
-                </div>
+              <div style={{ background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(255,255,255,0.08)', borderRadius: 8, padding: '10px 14px', marginBottom: 24, textAlign: 'left' }}>
+                <div style={{ fontSize: 10, color: 'rgba(240,235,228,0.35)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Tx Digest</div>
+                <div style={{ fontSize: 11, color: '#6FBCF0', fontFamily: 'monospace', wordBreak: 'break-all' }}>{successDigest}</div>
               </div>
             )}
-
-            <div style={{ fontSize: 13, color: 'rgba(240,235,228,0.45)', marginBottom: 20 }}>
-              Đang chờ blockchain index...
+            <div style={{ fontSize: 13, color: 'rgba(240,235,228,0.45)', marginBottom: 20 }}>{t('create.waitingIndex')}</div>
+            <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: 99, height: 4, overflow: 'hidden', marginBottom: 12 }}>
+              <div style={{ height: '100%', background: '#5DCAA5', borderRadius: 99, width: `${(countdown / REDIRECT_DELAY) * 100}%`, transition: 'width 0.9s linear' }} />
             </div>
-
-            <div style={{
-              background: 'rgba(255,255,255,0.06)',
-              borderRadius: 99,
-              height: 4,
-              overflow: 'hidden',
-              marginBottom: 12,
-            }}>
-              <div style={{
-                height: '100%',
-                background: '#5DCAA5',
-                borderRadius: 99,
-                width: `${(countdown / REDIRECT_DELAY) * 100}%`,
-                transition: 'width 0.9s linear',
-              }} />
-            </div>
-
-            <div style={{ fontSize: 12, color: 'rgba(240,235,228,0.35)' }}>
-              Về Feed trong {countdown}s...
-            </div>
-
-            <button
-              className="btn btn--ghost"
-              onClick={() => {
-                clearInterval(timerRef.current!);
-                queryClient.invalidateQueries({ queryKey: ['feed'] });
-                router.push('/');
-              }}
-              style={{ marginTop: 20, fontSize: 13 }}
-            >
-              Về Feed ngay
+            <div style={{ fontSize: 12, color: 'rgba(240,235,228,0.35)' }}>{t('create.redirecting', { count: countdown })}</div>
+            <button className="btn btn--ghost" onClick={() => { clearInterval(timerRef.current!); queryClient.invalidateQueries({ queryKey: ['feed'] }); router.push('/'); }} style={{ marginTop: 20, fontSize: 13 }}>
+              {t('create.backToFeed')}
             </button>
           </div>
         </div>
@@ -158,14 +111,7 @@ export default function CreatePage() {
     setShowConfirm(false);
     createPost(
       { title: title.trim(), content: content.trim(), price: priceMist, maxSupply: BigInt(maxSupply) },
-      {
-        onSuccess: (result: any) => {
-          const digest = result?.digest ?? result?.Digest ?? '';
-          setSuccessTitle(title.trim());
-          setSuccessDigest(digest);
-          setCountdown(REDIRECT_DELAY);
-        },
-      },
+      { onSuccess: (result: any) => { setSuccessTitle(title.trim()); setSuccessDigest(result?.digest ?? result?.Digest ?? ''); setCountdown(REDIRECT_DELAY); } },
     );
   };
 
@@ -174,168 +120,72 @@ export default function CreatePage() {
       <Navbar />
       <div className="container" style={{ paddingTop: 32, paddingBottom: 60 }}>
         <div className="page-header">
-          <div className="page-header__title">Publish bài mới</div>
-          <p className="page-header__sub">
-            Content sẽ được Seal encrypt và lưu on-chain. Buyer mint NFT để đọc.
-          </p>
+          <div className="page-header__title">{t('create.title')}</div>
+          <p className="page-header__sub">{t('create.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Tiêu đề</label>
-            <input
-              className="form-input"
-              placeholder="VD: Lyrics — Ngày Hôm Đó (exclusive)"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
+            <label className="form-label">{t('create.titleLabel')}</label>
+            <input className="form-input" placeholder={t('create.titlePlaceholder')} value={title} onChange={(e) => setTitle(e.target.value)} required />
           </div>
-
           <div className="form-group">
-            <label className="form-label">Nội dung</label>
-            <textarea
-              className="form-textarea"
-              placeholder="Nhập lyrics, story, hay bất kỳ nội dung nào..."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={10}
-              required
-            />
-            <span className="form-hint">
-              Nội dung sẽ bị encrypt — chỉ người có NFT mới đọc được
-            </span>
+            <label className="form-label">{t('create.contentLabel')}</label>
+            <textarea className="form-textarea" placeholder={t('create.contentPlaceholder')} value={content} onChange={(e) => setContent(e.target.value)} rows={10} required />
+            <span className="form-hint">{t('create.contentHint')}</span>
           </div>
-
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">Giá (SUI)</label>
-              <input
-                className="form-input"
-                type="number"
-                step="0.001"
-                min="0"
-                placeholder="0.01"
-                value={priceStr}
-                onChange={(e) => setPriceStr(e.target.value)}
-              />
+              <label className="form-label">{t('create.priceLabel')}</label>
+              <input className="form-input" type="number" step="0.001" min="0" placeholder="0.01" value={priceStr} onChange={(e) => setPriceStr(e.target.value)} />
             </div>
-
             <div className="form-group">
-              <label className="form-label">Số lượng NFT tối đa</label>
-              <input
-                className="form-input"
-                type="number"
-                min="1"
-                placeholder="100"
-                value={supplyStr}
-                onChange={(e) => setSupplyStr(e.target.value)}
-              />
+              <label className="form-label">{t('create.supplyLabel')}</label>
+              <input className="form-input" type="number" min="1" placeholder="100" value={supplyStr} onChange={(e) => setSupplyStr(e.target.value)} />
             </div>
           </div>
 
-          {/* Cost preview */}
-          <div style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '0.5px solid rgba(255,255,255,0.06)',
-            borderRadius: 10,
-            padding: '12px 16px',
-            marginBottom: 16,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-            <span style={{ fontSize: 12, color: 'rgba(240,235,228,0.45)' }}>
-              Chi phí ước tính
-            </span>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#6FBCF0' }}>
-              ~{formatSUI(GAS_ESTIMATE_MIST)} SUI
-            </span>
+          <div style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.06)', borderRadius: 10, padding: '12px 16px', marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 12, color: 'rgba(240,235,228,0.45)' }}>{t('create.estCost')}</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#6FBCF0' }}>~{formatSUI(GAS_ESTIMATE_MIST)} SUI</span>
           </div>
 
-          {isError && (
-            <p className="form-error" style={{ marginBottom: 12 }}>
-              {error instanceof Error ? error.message : 'Publish thất bại'}
-            </p>
-          )}
+          {isError && <p className="form-error" style={{ marginBottom: 12 }}>{error instanceof Error ? error.message : t('create.publishFailed')}</p>}
 
-          <button
-            type="submit"
-            className="btn btn--primary"
-            disabled={isPending || !title.trim() || !content.trim()}
-            style={{ width: '100%', height: 44, fontSize: 14 }}
-          >
-            {isPending ? 'Đang publish lên chain...' : 'Publish'}
+          <button type="submit" className="btn btn--primary" disabled={isPending || !title.trim() || !content.trim()} style={{ width: '100%', height: 44, fontSize: 14 }}>
+            {isPending ? t('create.publishing') : t('create.publish')}
           </button>
         </form>
       </div>
 
-      {/* Confirm Modal */}
-      <Modal
-        open={showConfirm}
-        onClose={() => setShowConfirm(false)}
-        title="Xác nhận Publish"
-        actions={
-          <>
-            <button className="btn btn--ghost" onClick={() => setShowConfirm(false)}>
-              Hủy
-            </button>
-            <button className="btn btn--primary" onClick={handleConfirmPublish}>
-              Publish lên chain
-            </button>
-          </>
-        }
+      <Modal open={showConfirm} onClose={() => setShowConfirm(false)} title={t('create.confirmTitle')}
+        actions={<>
+          <button className="btn btn--ghost" onClick={() => setShowConfirm(false)}>{t('common.cancel')}</button>
+          <button className="btn btn--primary" onClick={handleConfirmPublish}>{t('create.confirmPublish')}</button>
+        </>}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '0.5px solid rgba(255,255,255,0.06)',
-            borderRadius: 10,
-            padding: '12px 16px',
-          }}>
-            <div style={{ fontSize: 10, color: 'rgba(240,235,228,0.35)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
-              Bài viết
-            </div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#f0ebe4' }}>
-              {title}
-            </div>
-            <div style={{ fontSize: 12, color: 'rgba(240,235,228,0.45)', marginTop: 4 }}>
-              {contentSize.toLocaleString()} bytes &middot; {maxSupply} NFT &middot; {formatSUI(priceMist)} SUI/NFT
-            </div>
+          <div style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.06)', borderRadius: 10, padding: '12px 16px' }}>
+            <div style={{ fontSize: 10, color: 'rgba(240,235,228,0.35)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{t('create.postLabel')}</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: '#f0ebe4' }}>{title}</div>
+            <div style={{ fontSize: 12, color: 'rgba(240,235,228,0.45)', marginTop: 4 }}>{contentSize.toLocaleString()} bytes &middot; {maxSupply} NFT &middot; {formatSUI(priceMist)} SUI/NFT</div>
           </div>
-
-          <div style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '0.5px solid rgba(255,255,255,0.06)',
-            borderRadius: 10,
-            padding: '12px 16px',
-          }}>
-            <div style={{ fontSize: 10, color: 'rgba(240,235,228,0.35)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
-              Chi phí
-            </div>
+          <div style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.06)', borderRadius: 10, padding: '12px 16px' }}>
+            <div style={{ fontSize: 10, color: 'rgba(240,235,228,0.35)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>{t('create.costLabel')}</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-              <span style={{ fontSize: 13, color: 'rgba(240,235,228,0.55)' }}>Gas fee (ước tính)</span>
+              <span style={{ fontSize: 13, color: 'rgba(240,235,228,0.55)' }}>{t('create.gasFee')}</span>
               <span style={{ fontSize: 13, fontWeight: 600, color: '#6FBCF0' }}>~{formatSUI(GAS_ESTIMATE_MIST)} SUI</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: 13, color: 'rgba(240,235,228,0.55)' }}>Seal encrypt</span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#5DCAA5' }}>Miễn phí</span>
+              <span style={{ fontSize: 13, color: 'rgba(240,235,228,0.55)' }}>{t('create.sealEncrypt')}</span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#5DCAA5' }}>{t('create.free')}</span>
             </div>
-            <div style={{
-              borderTop: '0.5px solid rgba(255,255,255,0.06)',
-              marginTop: 10,
-              paddingTop: 10,
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}>
-              <span style={{ fontSize: 13, fontWeight: 700, color: '#f0ebe4' }}>Tổng</span>
+            <div style={{ borderTop: '0.5px solid rgba(255,255,255,0.06)', marginTop: 10, paddingTop: 10, display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: '#f0ebe4' }}>{t('create.total')}</span>
               <span style={{ fontSize: 14, fontWeight: 800, color: '#6FBCF0' }}>~{formatSUI(GAS_ESTIMATE_MIST)} SUI</span>
             </div>
           </div>
-
-          <p style={{ fontSize: 11, color: 'rgba(240,235,228,0.3)', margin: 0 }}>
-            Tiền bán NFT sẽ chuyển thẳng vào ví của bạn. Platform không thu phí.
-          </p>
+          <p style={{ fontSize: 11, color: 'rgba(240,235,228,0.3)', margin: 0 }}>{t('create.revenueNote')}</p>
         </div>
       </Modal>
     </div>

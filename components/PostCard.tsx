@@ -5,15 +5,15 @@ import type { FeedPost } from '@/hooks/useFeed';
 import { useHasAccess } from '@/hooks/useMyNFTs';
 import { formatSUI, shortenAddress, timeAgo } from '@/lib/utils';
 import { AddressAvatar } from './AddressAvatar';
+import { useI18n } from '@/i18n/I18nProvider';
 
 interface PostCardProps {
   post: FeedPost;
 }
 
-const LOREM_PREVIEW = 'Nội dung được bảo vệ. Mua NFT để đọc toàn bộ nội dung exclusive từ artist này...';
-
 export function PostCard({ post }: PostCardProps) {
   const hasAccess = useHasAccess(post.postId);
+  const { t } = useI18n();
 
   return (
     <Link
@@ -32,14 +32,14 @@ export function PostCard({ post }: PostCardProps) {
             </div>
 
             <span className={`badge badge--${hasAccess ? 'owned' : 'locked'}`}>
-              {hasAccess ? '✓ Owned' : '🔒 Locked'}
+              {hasAccess ? `✓ ${t('post.owned')}` : `🔒 ${t('post.locked')}`}
             </span>
           </div>
 
           <div className="post-card__title">{post.title}</div>
 
           <div className={`post-card__preview${hasAccess ? '' : ' post-card__preview--locked'}`}>
-            {LOREM_PREVIEW}
+            {t('post.preview')}
           </div>
 
           <div className="post-card__footer">

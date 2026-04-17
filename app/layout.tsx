@@ -11,17 +11,17 @@ const font = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: 'Verse — Own what you love',
-  description: 'Mua NFT của artist yêu thích, đọc lyrics exclusive, support trực tiếp không qua trung gian.',
+  description: 'Buy NFTs from your favorite creators. Read exclusive content. Support artists directly on-chain.',
   openGraph: {
     title: 'Verse',
-    description: 'NFT-gated content cho underground artists VN',
+    description: 'NFT-gated exclusive content platform on SUI',
     type: 'website',
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="vi">
+    <html lang="en">
       <body className={font.className}>
         <Providers>{children}</Providers>
       </body>

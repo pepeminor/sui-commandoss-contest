@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-  background: rgba(9, 9, 15, 0.98);
+  background: rgba(10, 10, 15, 0.98);
   border-bottom: 0.5px solid $border;
   position: sticky;
   top: 0;
@@ -14,7 +14,6 @@
   backdrop-filter: blur(12px);
   width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
 
   @media (min-width: 480px) {
     padding: 0 24px;
@@ -48,11 +47,14 @@
     color: $text-primary;
   }
 
-  &__links {
-    display: flex;
+  // Desktop links — hidden on mobile
+  &__links--desktop {
+    display: none;
     gap: 0;
-    min-width: 0;
-    flex-shrink: 1;
+
+    @media (min-width: 640px) {
+      display: flex;
+    }
   }
 
   &__link {
@@ -69,12 +71,7 @@
     text-decoration: none;
     white-space: nowrap;
 
-    @media (max-width: 479px) {
-      padding: 6px 8px;
-      font-size: 12px;
-    }
-
-    &:hover { color: rgba(236, 233, 248, 0.7); }
+    &:hover { color: rgba(240, 235, 228, 0.7); }
 
     &--active {
       color: $text-primary;
@@ -82,15 +79,32 @@
     }
   }
 
-  &__right {
-    display: flex;
+  // Desktop right section — hidden on mobile
+  &__right--desktop {
+    display: none;
     align-items: center;
-    gap: 6px;
-    flex-shrink: 1;
-    min-width: 0;
+    gap: 10px;
 
-    @media (min-width: 480px) {
-      gap: 10px;
+    @media (min-width: 640px) {
+      display: flex;
+    }
+  }
+
+  &__lang {
+    background: $bg-surface;
+    border: 0.5px solid $border;
+    border-radius: $radius-sm;
+    color: $text-muted;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-family: $font-base;
+    transition: color $duration-fast, border-color $duration-fast;
+
+    &:hover {
+      color: $text-primary;
+      border-color: $border-hover;
     }
   }
 
@@ -110,10 +124,88 @@
       color: $text-primary;
       border-color: $border-hover;
     }
+  }
 
-    @media (max-width: 479px) {
-      font-size: 10px;
-      padding: 4px 6px;
+  // Hamburger — visible only on mobile
+  &__hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: $text-muted;
+    cursor: pointer;
+    padding: 6px;
+
+    @media (min-width: 640px) {
+      display: none;
     }
   }
+}
+
+// ─── Mobile slide-out menu ───────────────────────────────────────────────────
+
+.mobile-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  top: 56px;
+  z-index: 99;
+  background: rgba(0, 0, 0, 0.5);
+  animation: modal-fade-in $duration-fast ease;
+}
+
+.mobile-menu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 240px;
+  max-width: 80vw;
+  height: 100%;
+  background: #111118;
+  border-left: 0.5px solid $border-hover;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: slide-in-right $duration-normal $ease-out-expo;
+
+  &__links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__link {
+    display: block;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: $text-muted;
+    text-decoration: none;
+    border-radius: $radius-sm;
+    transition: all $duration-fast;
+
+    &:hover { color: $text-primary; background: $bg-surface; }
+
+    &--active {
+      color: $text-primary;
+      background: $bg-surface;
+    }
+  }
+
+  &__divider {
+    height: 0.5px;
+    background: $border;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
 }
