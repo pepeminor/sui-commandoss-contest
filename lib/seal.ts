@@ -46,16 +46,16 @@ async function getOrCreateSessionKey(address: string, signer: Signer): Promise<S
   const cached = sessionKeyCache.get(address);
   if (cached && !cached.isExpired()) return cached;
 
-  // Initialize explicitly so the personal-message signature is verified before
-  // we call Seal key servers. This avoids caching an invalid certificate.
+  // Pass signer directly so SessionKey lazily signs via getCertificate().
+  // This avoids the local verifyPersonalMessageSignature call which can fail
+  // for zkLogin (Enoki) signers — the Seal key servers verify instead.
   const sessionKey = await SessionKey.create({
     address,
     packageId: PACKAGE_ID,
     ttlMin: 10,
+    signer,
     suiClient,
   });
-  const { signature } = await signer.signPersonalMessage(sessionKey.getPersonalMessage());
-  await sessionKey.setPersonalMessageSignature(signature);
 
   sessionKeyCache.set(address, sessionKey);
   setTimeout(() => sessionKeyCache.delete(address), 10 * 60 * 1000);
@@ -76,10 +76,7 @@ export async function encryptContent(content: string, packageId = PACKAGE_ID): P
     data,
   });
 
-  const obj = result.encryptedObject;
-  if (obj instanceof Uint8Array) return obj;
-  if (typeof (obj as any).toBytes === 'function') return (obj as any).toBytes();
-  return new Uint8Array(obj as any);
+  return result.encryptedObject;
 }
 
 // ─── Decrypt ─────────────────────────────────────────────────────────────────

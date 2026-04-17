@@ -40,7 +40,7 @@ export function ContentViewer({ encryptedContent, nftObjectId, postObjectId }: C
       });
       if (isLatestRequest()) setContent(result);
     } catch (err) {
-      console.error('Decrypt failed (attempt 1):', err);
+      console.error('Decrypt failed (attempt 1):', err instanceof Error ? err.message : err);
 
       // Clear stale session key and retry once
       clearSessionKey(address);
@@ -51,7 +51,7 @@ export function ContentViewer({ encryptedContent, nftObjectId, postObjectId }: C
         });
         if (isLatestRequest()) setContent(result);
       } catch (retryErr) {
-        console.error('Decrypt failed (attempt 2):', retryErr);
+        console.error('Decrypt failed (attempt 2):', retryErr instanceof Error ? retryErr.message : retryErr);
         if (isLatestRequest()) setError(t('decrypt.error'));
       }
     } finally {
