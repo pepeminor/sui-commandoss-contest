@@ -28,11 +28,22 @@ export function usePost(postId: string | undefined) {
       const fields = object.json as Record<string, unknown> | null;
       if (!fields) return null;
 
+      // vector<u8> may come back as base64 string or number[]
+      const raw = fields.encrypted_content;
+      let encryptedContent: number[];
+      if (typeof raw === 'string') {
+        // base64 → decode to bytes
+        const binary = atob(raw);
+        encryptedContent = Array.from(binary, (c) => c.charCodeAt(0));
+      } else {
+        encryptedContent = Array.from((raw as number[]) ?? []);
+      }
+
       return {
         objectId: postId,
         author:           String(fields.author ?? ''),
         title:            String(fields.title ?? ''),
-        encryptedContent: Array.from((fields.encrypted_content as number[]) ?? []),
+        encryptedContent,
         price:            BigInt(String(fields.price ?? 0)),
         maxSupply:        Number(fields.max_supply ?? 0),
         minted:           Number(fields.minted ?? 0),
