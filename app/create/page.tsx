@@ -19,6 +19,8 @@ export default function CreatePage() {
   const { isLoggedIn, login } = useAuth();
   const { mutate: createPost, isPending, isError, error } = useCreatePost();
   const { t } = useI18n();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -50,6 +52,17 @@ export default function CreatePage() {
   const priceMist = BigInt(Math.round(parseFloat(priceStr || '0') * 1e9));
   const maxSupply = parseInt(supplyStr || '1', 10);
   const contentSize = new TextEncoder().encode(content).length;
+
+  if (!mounted) {
+    return (
+      <div className="page">
+        <Navbar />
+        <div className="container" style={{ paddingTop: 80, textAlign: 'center' }}>
+          <div className="loading-skeleton" style={{ height: 200, borderRadius: 14 }} />
+        </div>
+      </div>
+    );
+  }
 
   if (!isLoggedIn) {
     return (

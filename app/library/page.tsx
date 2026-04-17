@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
 import { useMyNFTs } from '@/hooks/useMyNFTs';
@@ -11,6 +12,19 @@ export default function LibraryPage() {
   const { isLoggedIn, login } = useAuth();
   const { data: nfts, isLoading } = useMyNFTs();
   const { t } = useI18n();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) {
+    return (
+      <div className="page">
+        <Navbar />
+        <div className="container" style={{ paddingTop: 80, textAlign: 'center' }}>
+          <div className="loading-skeleton" style={{ height: 200, borderRadius: 14 }} />
+        </div>
+      </div>
+    );
+  }
 
   if (!isLoggedIn) {
     return (
