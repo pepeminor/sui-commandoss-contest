@@ -1,0 +1,164 @@
+@use 'variables' as *;
+
+.post-card {
+  background: $bg-card;
+  border: 0.5px solid $border;
+  border-radius: $radius-lg;
+  margin-bottom: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color $duration-fast, background $duration-fast, transform $duration-fast;
+  position: relative;
+  text-decoration: none;
+  display: block;
+
+  &:hover {
+    border-color: $border-accent;
+    background: $bg-card-hover;
+    transform: translateY(-1px);
+  }
+
+  // Owned — teal stripe on left
+  &--owned {
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 3px;
+      height: 100%;
+      background: $color-owned;
+      border-radius: $radius-lg 0 0 $radius-lg;
+    }
+  }
+
+  &__inner {
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  &__content { flex: 1; min-width: 0; }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: $text-muted;
+    font-weight: 500;
+  }
+
+  &__dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: $text-hint;
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-primary;
+    letter-spacing: -0.2px;
+    margin-bottom: 5px;
+    line-height: 1.3;
+  }
+
+  &__preview {
+    font-size: 13px;
+    line-height: 1.65;
+    color: $text-muted;
+    margin-bottom: 12px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+    &--locked {
+      filter: blur(3px);
+      user-select: none;
+      pointer-events: none;
+      color: rgba(236, 233, 248, 0.3);
+      transition: filter $duration-fast;
+    }
+  }
+
+  &:hover &__preview--locked {
+    filter: blur(2.5px);
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__price {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 700;
+    color: $color-sui;
+  }
+
+  &__supply {
+    font-size: 11px;
+    color: $text-hint;
+    font-weight: 500;
+  }
+}
+
+// ─── Avatar ───────────────────────────────────────────────────────────────────
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: $radius-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+
+  &--purple { background: rgba(123, 110, 232, 0.2); color: #b3acf0; }
+  &--teal   { background: rgba(29, 158, 117, 0.2);  color: #5DCAA5; }
+  &--coral  { background: rgba(216, 90, 48, 0.2);   color: #F0997B; }
+  &--pink   { background: rgba(212, 83, 126, 0.2);  color: #ED93B1; }
+}
+
+// ─── Badge ────────────────────────────────────────────────────────────────────
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  &--owned {
+    background: rgba(29, 158, 117, 0.12);
+    color: $color-owned;
+    border: 0.5px solid rgba(29, 158, 117, 0.2);
+  }
+
+  &--locked {
+    background: $bg-surface-2;
+    color: $text-hint;
+    border: 0.5px solid $border;
+  }
+}

@@ -1,0 +1,19 @@
+@use 'variables' as *;
+
+body {
+  font-family: $font-base;
+  font-size: 14px;
+  line-height: 1.6;
+  color: $text-primary;
+  background: $bg-base;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.6px; line-height: 1.2; margin: 0; }
+h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; margin: 0; }
+h3 { font-size: 16px; font-weight: 700; letter-spacing: -0.2px; margin: 0; }
+
+p { margin: 0; }
+a { color: inherit; text-decoration: none; }
+* { box-sizing: border-box; }

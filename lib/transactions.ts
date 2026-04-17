@@ -1,0 +1,57 @@
+import { Transaction } from '@mysten/sui/transactions';
+import { PACKAGE_ID, CLOCK_OBJECT_ID } from '@/config';
+
+export interface CreatePostParams {
+  title: string;
+  encryptedContent: Uint8Array;
+  price: bigint;       // in MIST
+  maxSupply: bigint;
+}
+
+export interface MintNFTParams {
+  postId: string;
+  price: bigint;       // in MIST — taken from Post object
+  senderAddress: string;
+}
+
+/** Build a PTB for creating a new Post (artist flow) */
+export function buildCreatePostTx({ title, encryptedContent, price, maxSupply }: CreatePostParams): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${PACKAGE_ID}::post::create_post`,
+    arguments: [
+      tx.pure.string(title),
+      tx.pure.vector('u8', Array.from(encryptedContent)),
+      tx.pure.u64(price),
+      tx.pure.u64(maxSupply),
+      tx.object(CLOCK_OBJECT_ID),
+    ],
+  });
+  return tx;
+}
+
+/** Build a PTB for minting a ContentNFT (buyer flow) */
+export function buildMintNFTTx({ postId, price, senderAddress }: MintNFTParams): Transaction {
+  const tx = new Transaction();
+  const [payment] = tx.splitCoins(tx.gas, [price]);
+  const [nft] = tx.moveCall({
+    target: `${PACKAGE_ID}::post::mint_nft`,
+    arguments: [tx.object(postId), payment, tx.object(CLOCK_OBJECT_ID)],
+  });
+  tx.transferObjects([nft], senderAddress);
+  return tx;
+}
+
+/** Build a PTB for Seal decrypt verification (seal_approve dry-run) */
+export function buildSealApproveTx(nftObjectId: string, postObjectId: string): Transaction {
+  const tx = new Transaction();
+  tx.moveCall({
+    target: `${PACKAGE_ID}::seal_policy::seal_approve`,
+    arguments: [
+      tx.pure.vector('u8', []),  // Seal fills this
+      tx.object(nftObjectId),
+      tx.object(postObjectId),
+    ],
+  });
+  return tx;
+}

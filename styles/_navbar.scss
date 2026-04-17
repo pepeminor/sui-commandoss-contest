@@ -1,0 +1,83 @@
+@use 'variables' as *;
+
+.navbar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: rgba(9, 9, 15, 0.98);
+  border-bottom: 0.5px solid $border;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  &__logo-icon {
+    width: 26px;
+    height: 26px;
+    background: $accent;
+    border-radius: $radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 8px rgba(123, 110, 232, 0.4);
+  }
+
+  &__logo-name {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    color: $text-primary;
+  }
+
+  &__links {
+    display: flex;
+    gap: 2px;
+  }
+
+  &__link {
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-muted;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition: all $duration-fast;
+    background: none;
+    border: none;
+    font-family: $font-base;
+    text-decoration: none;
+
+    &:hover { color: rgba(236, 233, 248, 0.7); }
+
+    &--active {
+      color: $text-primary;
+      background: $bg-surface;
+    }
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__address {
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-muted;
+    background: $bg-surface;
+    border: 0.5px solid $border;
+    border-radius: $radius-sm;
+    padding: 4px 10px;
+    font-family: monospace;
+  }
+}

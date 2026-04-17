@@ -1,0 +1,64 @@
+@use 'variables' as *;
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: $text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.form-input,
+.form-textarea {
+  background: $bg-surface-2;
+  border: 0.5px solid $border;
+  border-radius: $radius-md;
+  color: $text-primary;
+  font-family: $font-base;
+  font-size: 14px;
+  outline: none;
+  transition: border-color $duration-fast;
+  width: 100%;
+
+  &::placeholder { color: $text-hint; }
+
+  &:focus {
+    border-color: $border-accent;
+    background: rgba(123, 110, 232, 0.04);
+  }
+}
+
+.form-input {
+  height: 42px;
+  padding: 0 14px;
+}
+
+.form-textarea {
+  padding: 12px 14px;
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+.form-hint {
+  font-size: 11px;
+  color: $text-hint;
+}
+
+.form-error {
+  font-size: 12px;
+  color: #ff7070;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}

@@ -1,0 +1,77 @@
+@use 'variables' as *;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  cursor: pointer;
+  font-family: $font-base;
+  font-weight: 700;
+  border-radius: $radius-sm;
+  transition: all $duration-fast ease;
+  text-decoration: none;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  &--primary {
+    padding: 7px 16px;
+    background: $accent;
+    color: #fff;
+    font-size: 13px;
+
+    &:hover:not(:disabled) {
+      background: $accent-hover;
+      transform: translateY(-1px);
+    }
+    &:active:not(:disabled) { transform: scale(0.98); }
+  }
+
+  &--mint {
+    padding: 8px 18px;
+    background: $accent;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+
+    &:hover:not(:disabled) {
+      background: $accent-hover;
+      transform: translateY(-1px);
+    }
+    &:active:not(:disabled) { transform: scale(0.98); }
+  }
+
+  &--owned {
+    padding: 6px 12px;
+    background: rgba(29, 158, 117, 0.1);
+    border: 0.5px solid rgba(29, 158, 117, 0.25);
+    color: $color-owned;
+    font-size: 12px;
+    cursor: default;
+  }
+
+  &--ghost {
+    padding: 7px 14px;
+    background: $bg-surface;
+    border: 0.5px solid $border-hover;
+    color: $text-primary;
+    font-size: 13px;
+
+    &:hover:not(:disabled) { background: rgba(255, 255, 255, 0.08); }
+  }
+
+  &--danger {
+    padding: 7px 16px;
+    background: rgba(255, 70, 70, 0.12);
+    border: 0.5px solid rgba(255, 70, 70, 0.2);
+    color: #ff7070;
+    font-size: 13px;
+
+    &:hover:not(:disabled) { background: rgba(255, 70, 70, 0.18); }
+  }
+}

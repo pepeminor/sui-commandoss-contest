@@ -1,0 +1,6 @@
+[package]
+name = "verse"
+edition = "2024.beta"
+
+[addresses]
+verse = "0x0"
