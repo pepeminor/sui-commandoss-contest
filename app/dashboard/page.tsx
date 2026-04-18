@@ -12,6 +12,12 @@ import { useI18n } from '@/i18n/I18nProvider';
 
 type SortKey = 'newest' | 'mostSold' | 'revenue';
 
+const SORT_LABELS: Record<SortKey, string> = {
+  newest: 'dashboard.sortNewest',
+  mostSold: 'dashboard.sortMostSold',
+  revenue: 'dashboard.sortRevenue',
+};
+
 function DashboardContent() {
   const { data: posts, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useMyPosts();
   const { t } = useI18n();
@@ -81,7 +87,7 @@ function DashboardContent() {
                   className={`dashboard-sort__btn${sort === key ? ' dashboard-sort__btn--active' : ''}`}
                   onClick={() => setSort(key)}
                 >
-                  {t(`dashboard.sort${key.charAt(0).toUpperCase() + key.slice(1)}` as any)}
+                  {t(SORT_LABELS[key])}
                 </button>
               ))}
             </div>

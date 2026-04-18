@@ -15,7 +15,7 @@ interface MusicPlayerState {
   track: Track | null;
   isPlaying: boolean;
   isLoading: boolean;
-  isReady: boolean;       // track set but not yet loaded/played
+  isReady: boolean;
   progress: number;
   duration: number;
   currentTime: number;
@@ -31,7 +31,6 @@ interface MusicPlayerActions {
   seek: (time: number) => void;
   stop: () => void;
   setError: (err: string | null) => void;
-  /** Called by MusicPlayer when user presses play on a ready (not yet loaded) track */
   onRequestPlay: (() => Promise<void>) | null;
   setOnRequestPlay: (fn: (() => Promise<void>) | null) => void;
 }
@@ -46,21 +45,23 @@ export function useMusicPlayer() {
   return ctx;
 }
 
+const INITIAL_STATE: MusicPlayerState = {
+  track: null,
+  isPlaying: false,
+  isLoading: false,
+  isReady: false,
+  progress: 0,
+  duration: 0,
+  currentTime: 0,
+  error: null,
+};
+
 export function MusicPlayerProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<MusicPlayerState>({
-    track: null,
-    isPlaying: false,
-    isLoading: false,
-    isReady: false,
-    progress: 0,
-    duration: 0,
-    currentTime: 0,
-    error: null,
-  });
+  const [state, setState] = useState<MusicPlayerState>(INITIAL_STATE);
+  const [onRequestPlay, setOnRequestPlayRaw] = useState<(() => Promise<void>) | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const blobUrlRef = useRef<string | null>(null);
-  const onRequestPlayRef = useRef<(() => Promise<void>) | null>(null);
 
   const cleanupBlobUrl = useCallback(() => {
     if (blobUrlRef.current) {
@@ -76,18 +77,15 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       audioRef.current = null;
     }
     cleanupBlobUrl();
-    onRequestPlayRef.current = null;
-    setState({ track: null, isPlaying: false, isLoading: false, isReady: false, progress: 0, duration: 0, currentTime: 0, error: null });
+    setOnRequestPlayRaw(null);
+    setState(INITIAL_STATE);
   }, [cleanupBlobUrl]);
 
-  /** Show bottom bar with track info, but don't load audio yet */
   const setReadyTrack = useCallback((track: Track) => {
     setState((s) => {
-      // Don't overwrite if already playing/loading this or another track
       if (s.isPlaying || s.isLoading) return s;
-      // Don't re-set if already ready with same track
       if (s.track?.postId === track.postId && s.isReady) return s;
-      return { ...s, track, isReady: true, isPlaying: false, isLoading: false, error: null, progress: 0, duration: 0, currentTime: 0 };
+      return { ...INITIAL_STATE, track, isReady: true };
     });
   }, []);
 
@@ -115,17 +113,14 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     audio.addEventListener('loadedmetadata', () => {
       setState((s) => ({ ...s, duration: audio.duration }));
     });
-
     audio.addEventListener('timeupdate', () => {
       const ct = audio.currentTime;
       const dur = audio.duration || 1;
       setState((s) => ({ ...s, currentTime: ct, progress: ct / dur }));
     });
-
     audio.addEventListener('ended', () => {
       setState((s) => ({ ...s, isPlaying: false, progress: 1 }));
     });
-
     audio.addEventListener('error', () => {
       setState((s) => ({ ...s, isPlaying: false, error: 'Playback error' }));
     });
@@ -145,13 +140,12 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const seek = useCallback((time: number) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
-    }
+    if (audioRef.current) audioRef.current.currentTime = time;
   }, []);
 
+  // Wrap setter to accept a function value (useState quirk with function values)
   const setOnRequestPlay = useCallback((fn: (() => Promise<void>) | null) => {
-    onRequestPlayRef.current = fn;
+    setOnRequestPlayRaw(() => fn);
   }, []);
 
   useEffect(() => {
@@ -169,8 +163,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       ...state,
       setReadyTrack, setLoadingTrack, playTrack,
       pause, resume, seek, stop, setError,
-      onRequestPlay: onRequestPlayRef.current,
-      setOnRequestPlay,
+      onRequestPlay, setOnRequestPlay,
     }}>
       {children}
     </MusicPlayerContext.Provider>

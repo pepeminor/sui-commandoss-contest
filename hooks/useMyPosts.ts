@@ -1,8 +1,7 @@
 'use client';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { graphqlClient } from '@/lib/sui-client';
-import { suiClient } from '@/lib/sui-client';
+import { graphqlClient, suiClient } from '@/lib/sui-client';
 import { PACKAGE_ID } from '@/config';
 import { useAuth } from '@/auth/useAuth';
 
@@ -63,34 +62,46 @@ export function useMyPosts() {
       const nodes: any[] = data?.events?.nodes ?? [];
       const pageInfo = data?.events?.pageInfo;
 
-      // Fetch on-chain minted count for each post
-      const posts = await Promise.all(
-        nodes
-          .map((node: any) => {
-            const json = node.contents?.json ?? {};
-            return {
-              postId:    String(json.post_id ?? ''),
-              title:     String(json.title ?? ''),
-              price:     BigInt(json.price ?? 0),
-              maxSupply: Number(json.max_supply ?? 0),
-              createdAt: String(json.created_at ?? node.timestamp ?? Date.now()),
-            };
-          })
-          .filter((p) => p.postId)
-          .reverse()
-          .map(async (post) => {
-            try {
-              const { object } = await suiClient.core.getObject({
-                objectId: post.postId,
-                include: { json: true },
-              });
-              const fields = object.json as Record<string, unknown> | null;
-              return { ...post, minted: Number(fields?.minted ?? 0) };
-            } catch {
-              return { ...post, minted: 0 };
+      const parsedPosts = nodes
+        .map((node: any) => {
+          const json = node.contents?.json ?? {};
+          return {
+            postId:    String(json.post_id ?? ''),
+            title:     String(json.title ?? ''),
+            price:     BigInt(json.price ?? 0),
+            maxSupply: Number(json.max_supply ?? 0),
+            createdAt: String(json.created_at ?? node.timestamp ?? Date.now()),
+          };
+        })
+        .filter((p) => p.postId)
+        .reverse();
+
+      // Batch fetch minted counts (1 RPC call instead of N)
+      const postIds = parsedPosts.map((p) => p.postId);
+      const mintedMap = new Map<string, number>();
+
+      if (postIds.length > 0) {
+        try {
+          const { objects } = await suiClient.core.getObjects({
+            objectIds: postIds,
+            include: { json: true },
+          });
+          for (const obj of objects) {
+            if (obj instanceof Error || !('json' in obj)) continue;
+            const fields = obj.json as Record<string, unknown> | null;
+            if (fields && obj.objectId) {
+              mintedMap.set(obj.objectId, Number(fields.minted ?? 0));
             }
-          }),
-      );
+          }
+        } catch {
+          // fallback: all minted = 0
+        }
+      }
+
+      const posts = parsedPosts.map((post) => ({
+        ...post,
+        minted: mintedMap.get(post.postId) ?? 0,
+      }));
 
       return {
         posts,

@@ -14,10 +14,7 @@ export interface WalrusUploadResult {
  * Upload encrypted bytes to Walrus.
  * Returns the blob ID for retrieval.
  */
-export async function uploadToWalrus(
-  data: Uint8Array,
-  onProgress?: (loaded: number, total: number) => void,
-): Promise<WalrusUploadResult> {
+export async function uploadToWalrus(data: Uint8Array): Promise<WalrusUploadResult> {
   // Walrus publisher accepts PUT /v1/blobs with raw bytes
   const url = `${WALRUS_PUBLISHER}/v1/blobs`;
 

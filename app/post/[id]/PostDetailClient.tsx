@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { usePost } from '@/hooks/usePost';
 import { useHasAccess, useNFTForPost, useNFTsForPost } from '@/hooks/useMyNFTs';
 import { MintButton } from '@/components/MintButton';
@@ -11,9 +11,6 @@ import { AddressAvatar } from '@/components/AddressAvatar';
 import { useI18n } from '@/i18n/I18nProvider';
 import { TransferNFTModal } from '@/components/TransferNFTModal';
 import { useMusicPlayer } from '@/components/MusicPlayerProvider';
-import { decryptRaw } from '@/lib/seal';
-import { importKey, decryptMedia } from '@/lib/media-crypto';
-import { downloadFromWalrus } from '@/lib/walrus';
 import { useAuth } from '@/auth/useAuth';
 import { type NFTData } from '@/hooks/useMyNFTs';
 
@@ -33,9 +30,13 @@ export function PostDetailClient({ postId }: Props) {
 
   const isAudioPost = post?.mediaType === 1 && post.mediaBlobId;
 
-  // Decrypt + download + play handler for the bottom bar
+  // Stable ref for decrypt handler to avoid effect re-runs
+  const decryptDepsRef = useRef({ post, nft, address, postId, getSigner });
+  decryptDepsRef.current = { post, nft, address, postId, getSigner };
+
   const handleDecryptAndPlay = useCallback(async () => {
-    if (!post || !nft || !address || !isAudioPost) return;
+    const { post, nft, address, postId, getSigner } = decryptDepsRef.current;
+    if (!post || !nft || !address || post.mediaType !== 1 || !post.mediaBlobId) return;
 
     const track = {
       postId, title: post.title, author: post.author,
@@ -45,6 +46,13 @@ export function PostDetailClient({ postId }: Props) {
     player.setLoadingTrack(track);
 
     try {
+      // Lazy imports to reduce initial bundle
+      const [{ decryptRaw }, { importKey, decryptMedia }, { downloadFromWalrus }] = await Promise.all([
+        import('@/lib/seal'),
+        import('@/lib/media-crypto'),
+        import('@/lib/walrus'),
+      ]);
+
       const signer = await getSigner();
       const aesKeyBytes = await decryptRaw({
         encryptedData: new Uint8Array(post.encryptionKey),
@@ -60,9 +68,9 @@ export function PostDetailClient({ postId }: Props) {
       console.error('Audio playback failed:', err);
       player.setError('Playback failed');
     }
-  }, [post, nft, address, isAudioPost, postId, player, getSigner]);
+  }, [player]);
 
-  // Auto-show bottom bar with track info when user owns an audio post
+  // Auto-show bottom bar when user owns an audio post
   useEffect(() => {
     if (!post || !nft || !address || !isAudioPost || !hasAccess) return;
     if (player.isPlaying || player.isLoading) return;
@@ -74,7 +82,7 @@ export function PostDetailClient({ postId }: Props) {
     player.setOnRequestPlay(handleDecryptAndPlay);
 
     return () => { player.setOnRequestPlay(null); };
-  }, [post, nft, address, isAudioPost, hasAccess, postId, player, handleDecryptAndPlay]);
+  }, [post?.objectId, nft?.objectId, address, isAudioPost, hasAccess]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) {
     return (
@@ -116,12 +124,7 @@ export function PostDetailClient({ postId }: Props) {
             <span>·</span>
             <span>{timeAgo(post.createdAt)}</span>
             <span>·</span>
-            <a
-              href={explorerObjectUrl(postId, NETWORK)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="post-detail__chain-link"
-            >
+            <a href={explorerObjectUrl(postId, NETWORK)} target="_blank" rel="noopener noreferrer" className="post-detail__chain-link">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                 <polyline points="15 3 21 3 21 9" />
@@ -150,12 +153,7 @@ export function PostDetailClient({ postId }: Props) {
               <div className="post-detail__stat-label">{t('post.owned')}</div>
               <div className="post-detail__editions">
                 {ownedNfts.map((owned) => (
-                  <button
-                    key={owned.objectId}
-                    className="post-detail__edition-badge"
-                    onClick={() => setTransferNft(owned)}
-                    title={t('wallet.transferTitle')}
-                  >
+                  <button key={owned.objectId} className="post-detail__edition-badge" onClick={() => setTransferNft(owned)} title={t('wallet.transferTitle')}>
                     #{owned.edition}
                   </button>
                 ))}
