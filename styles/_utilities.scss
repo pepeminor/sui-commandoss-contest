@@ -289,6 +289,137 @@
   }
 }
 
+// ─── Artist carousel ────────────────────────────────────────────────────────
+
+.artist-carousel {
+  margin-bottom: 24px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    color: $text-primary;
+  }
+
+  &__clear {
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-secondary;
+    background: transparent;
+    border: 0.5px solid $border-hover;
+    border-radius: 99px;
+    cursor: pointer;
+    font-family: $font-base;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all $duration-fast;
+
+    &:hover {
+      border-color: $accent-border;
+      color: $accent;
+    }
+  }
+
+  &__track-wrap {
+    position: relative;
+  }
+
+  &__track {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+
+    // Hide scrollbar
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__arrow {
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    transform: translateY(-65%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(20, 20, 30, 0.85);
+    backdrop-filter: blur(8px);
+    border: 0.5px solid $border-hover;
+    color: $text-primary;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $duration-fast;
+    z-index: 2;
+
+    &:hover {
+      background: rgba(40, 40, 55, 0.95);
+      border-color: $accent-border;
+    }
+  }
+}
+
+.artist-card {
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  transition: transform $duration-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &--active &__art {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+
+  &__art {
+    width: 140px;
+    height: 140px;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    transition: outline-color $duration-fast;
+
+    svg {
+      display: block;
+    }
+  }
+
+  &__name {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-primary;
+    margin-top: 8px;
+    font-family: $font-base;
+    letter-spacing: -0.2px;
+  }
+
+  @media (max-width: 480px) {
+    &__art {
+      width: 110px;
+      height: 110px;
+    }
+  }
+}
+
 // ─── Load more ──────────────────────────────────────────────────────────────
 
 .load-more {

@@ -13,7 +13,7 @@ export interface FeedPost {
   createdAt: string;
 }
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 5;
 
 const GET_POSTS_QUERY = `
   query GetPosts($eventType: String!, $first: Int!, $after: String) {
