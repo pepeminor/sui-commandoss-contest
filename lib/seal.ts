@@ -1,6 +1,6 @@
 'use client';
 
-import { SealClient, SessionKey } from '@mysten/seal';
+import { SealClient, SessionKey, EncryptedObject } from '@mysten/seal';
 import type { Signer } from '@mysten/sui/cryptography';
 import { suiClient } from './sui-client';
 import { buildSealApproveTx } from './transactions';
@@ -97,12 +97,15 @@ export async function decryptContent({
   const sealClient = getSealClient();
   const sessionKey = await getOrCreateSessionKey(userAddress, signer);
 
-  const tx = buildSealApproveTx(nftObjectId, postObjectId);
-  tx.setSender(userAddress);
-  const txBytes = await tx.build({ client: suiClient, onlyTransactionKind: true });
-
   const bytes =
     encryptedContent instanceof Uint8Array ? encryptedContent : new Uint8Array(encryptedContent);
+
+  // Extract the inner ID baked into the encrypted blob during encrypt
+  const innerId = EncryptedObject.parse(bytes).id;
+
+  const tx = buildSealApproveTx(innerId, nftObjectId, postObjectId);
+  tx.setSender(userAddress);
+  const txBytes = await tx.build({ client: suiClient, onlyTransactionKind: true });
 
   const decryptedBytes = await sealClient.decrypt({ data: bytes, sessionKey, txBytes });
   return new TextDecoder().decode(decryptedBytes);

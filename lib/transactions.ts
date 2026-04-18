@@ -1,4 +1,5 @@
 import { Transaction } from '@mysten/sui/transactions';
+import { fromHex } from '@mysten/sui/utils';
 import { PACKAGE_ID, CLOCK_OBJECT_ID } from '@/config';
 
 export interface CreatePostParams {
@@ -43,12 +44,12 @@ export function buildMintNFTTx({ postId, price, senderAddress }: MintNFTParams):
 }
 
 /** Build a PTB for Seal decrypt verification (seal_approve dry-run) */
-export function buildSealApproveTx(nftObjectId: string, postObjectId: string): Transaction {
+export function buildSealApproveTx(innerId: string, nftObjectId: string, postObjectId: string): Transaction {
   const tx = new Transaction();
   tx.moveCall({
     target: `${PACKAGE_ID}::seal_policy::seal_approve`,
     arguments: [
-      tx.pure.vector('u8', []),  // Seal fills this
+      tx.pure.vector('u8', fromHex(innerId)),
       tx.object(nftObjectId),
       tx.object(postObjectId),
     ],
