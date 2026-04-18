@@ -110,19 +110,21 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     const audio = new Audio(url);
     audioRef.current = audio;
 
+    const isActive = () => audioRef.current === audio;
     audio.addEventListener('loadedmetadata', () => {
-      setState((s) => ({ ...s, duration: audio.duration }));
+      if (isActive()) setState((s) => ({ ...s, duration: audio.duration }));
     });
     audio.addEventListener('timeupdate', () => {
+      if (!isActive()) return;
       const ct = audio.currentTime;
       const dur = audio.duration || 1;
       setState((s) => ({ ...s, currentTime: ct, progress: ct / dur }));
     });
     audio.addEventListener('ended', () => {
-      setState((s) => ({ ...s, isPlaying: false, progress: 1 }));
+      if (isActive()) setState((s) => ({ ...s, isPlaying: false, progress: 1 }));
     });
     audio.addEventListener('error', () => {
-      setState((s) => ({ ...s, isPlaying: false, error: 'Playback error' }));
+      if (isActive()) setState((s) => ({ ...s, isPlaying: false, error: 'Playback error' }));
     });
 
     audio.play();
