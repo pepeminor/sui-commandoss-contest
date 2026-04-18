@@ -8,6 +8,8 @@ import { formatSUI, shortenAddress, timeAgo, explorerObjectUrl } from '@/lib/uti
 import { NETWORK } from '@/config';
 import { AddressAvatar } from '@/components/AddressAvatar';
 import { useI18n } from '@/i18n/I18nProvider';
+import { TransferNFTModal } from '@/components/TransferNFTModal';
+import { useState } from 'react';
 
 interface Props {
   postId: string;
@@ -18,6 +20,7 @@ export function PostDetailClient({ postId }: Props) {
   const hasAccess = useHasAccess(postId);
   const nft = useNFTForPost(postId);
   const { t } = useI18n();
+  const [transferOpen, setTransferOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -89,7 +92,16 @@ export function PostDetailClient({ postId }: Props) {
       </div>
 
       {hasAccess && nft ? (
-        <ContentViewer encryptedContent={post.encryptedContent} nftObjectId={nft.objectId} postObjectId={postId} />
+        <>
+          <button className="btn btn--ghost btn--sm post-detail__transfer-btn" onClick={() => setTransferOpen(true)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+            {t('wallet.transferTitle')}
+          </button>
+          <ContentViewer encryptedContent={post.encryptedContent} nftObjectId={nft.objectId} postObjectId={postId} />
+          <TransferNFTModal open={transferOpen} onClose={() => setTransferOpen(false)} nft={nft} />
+        </>
       ) : (
         <div>
           <div className="post-detail__blur-preview">

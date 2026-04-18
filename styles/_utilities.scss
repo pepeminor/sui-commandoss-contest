@@ -221,6 +221,14 @@
     background: $border;
   }
 
+  &__transfer-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 16px;
+    font-size: 12px;
+  }
+
   &__blur-preview {
     position: relative;
     overflow: hidden;
