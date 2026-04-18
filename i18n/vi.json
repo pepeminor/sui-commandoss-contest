@@ -110,6 +110,8 @@
   "wallet.transferSuccess": "Đã chuyển NFT! Bạn không còn quyền xem nội dung này nữa.",
   "wallet.transferWarning": "Sau khi chuyển, bạn sẽ mất quyền truy cập nội dung này vĩnh viễn.",
   "wallet.cannotSendSelf": "Không thể gửi cho chính mình",
+  "wallet.exceedsBalance": "Số lượng vượt quá số dư",
+  "wallet.exceedsBalanceGas": "Số lượng vượt quá số dư (đã trừ phí gas)",
 
   "error.insufficientGas": "Không đủ SUI để trả gas. Cần ít nhất {amount} SUI.",
   "error.insufficientBalance": "Không đủ SUI trong ví để trả phí giao dịch. Hãy nạp thêm SUI.",

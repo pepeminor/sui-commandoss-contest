@@ -110,6 +110,8 @@
   "wallet.transferSuccess": "NFT transferred! You no longer have access to this content.",
   "wallet.transferWarning": "After transfer, you will lose access to this content permanently.",
   "wallet.cannotSendSelf": "Cannot send to your own address",
+  "wallet.exceedsBalance": "Amount exceeds available balance",
+  "wallet.exceedsBalanceGas": "Amount exceeds available balance (gas reserved)",
 
   "error.insufficientGas": "Insufficient SUI for gas. Need at least {amount} SUI.",
   "error.insufficientBalance": "Insufficient SUI to pay transaction fee. Please top up.",

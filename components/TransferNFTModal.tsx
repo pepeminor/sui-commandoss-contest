@@ -35,7 +35,6 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
       const signer = await getSigner();
       const tx = new Transaction();
       tx.setSender(address);
-      tx.setGasBudget(10_000_000); // 0.01 SUI — actual cost ~0.002
       tx.transferObjects([tx.object(nft.objectId)], recipient);
 
       let result;

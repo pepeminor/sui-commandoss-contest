@@ -39,7 +39,6 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
 
       const tx = new Transaction();
       tx.setSender(address);
-      tx.setGasBudget(10_000_000); // 0.01 SUI — actual cost ~0.002
 
       if (selected.coinType === '0x2::sui::SUI') {
         const [coin] = tx.splitCoins(tx.gas, [amountMist]);
@@ -98,9 +97,12 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
     onClose();
   };
 
+  const GAS_RESERVE_SUI = 0.003; // ~3M MIST — typical gas for a transfer
   const isSelfSend = !!address && recipient === address;
   const parsedAmount = parseFloat(amount) || 0;
-  const availableBalance = selected ? Number(selected.totalBalance) / 10 ** selected.decimals : 0;
+  const rawBalance = selected ? Number(selected.totalBalance) / 10 ** selected.decimals : 0;
+  const isSuiSend = selected?.coinType === '0x2::sui::SUI';
+  const availableBalance = isSuiSend ? Math.max(rawBalance - GAS_RESERVE_SUI, 0) : rawBalance;
   const exceedsBalance = parsedAmount > availableBalance;
   const isValid = recipient.startsWith('0x') && recipient.length >= 42 && parsedAmount > 0 && !isSelfSend && !exceedsBalance;
 
@@ -150,7 +152,14 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
               />
               {selected && (
                 <span className="form-hint">
-                  {t('wallet.available')}: {formatTokenAmount(selected.totalBalance, selected.decimals)} {selected.symbol}
+                  {t('wallet.available')}: {isSuiSend
+                    ? `${availableBalance.toFixed(4)} ${selected.symbol} (${formatTokenAmount(selected.totalBalance, selected.decimals)} - ${GAS_RESERVE_SUI} gas)`
+                    : `${formatTokenAmount(selected.totalBalance, selected.decimals)} ${selected.symbol}`}
+                </span>
+              )}
+              {exceedsBalance && (
+                <span className="form-hint form-hint--error">
+                  {isSuiSend ? t('wallet.exceedsBalanceGas') : t('wallet.exceedsBalance')}
                 </span>
               )}
             </div>
