@@ -25,6 +25,10 @@ html, body {
 
 body {
   padding-top: 56px;
+
+  &.has-player {
+    padding-bottom: 72px;
+  }
 }
 
 // ─── Utilities ────────────────────────────────────────────────────────────────

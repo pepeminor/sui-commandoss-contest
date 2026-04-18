@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useMusicPlayer } from './MusicPlayerProvider';
 import { shortenAddress } from '@/lib/utils';
 
@@ -15,6 +16,13 @@ export function MusicPlayer() {
     track, isPlaying, isLoading, isReady, progress, duration, currentTime, error,
     pause, resume, seek, stop, onRequestPlay,
   } = useMusicPlayer();
+
+  // Add body padding when player is visible so content can scroll past it
+  useEffect(() => {
+    if (!track) return;
+    document.body.classList.add('has-player');
+    return () => { document.body.classList.remove('has-player'); };
+  }, [!!track]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!track) return null;
 
