@@ -29,6 +29,7 @@ export function PostDetailClient({ postId }: Props) {
   const player = useMusicPlayer();
 
   const isAudioPost = post?.mediaType === 1 && post.mediaBlobId;
+  const isCurrentTrack = player.track?.postId === postId;
 
   // Stable ref for decrypt handler to avoid effect re-runs
   const decryptDepsRef = useRef({ post, nft, address, postId, getSigner });
@@ -132,6 +133,33 @@ export function PostDetailClient({ postId }: Props) {
             </a>
           </div>
         </div>
+        {isAudioPost && hasAccess && nft && (
+          <button
+            className={`post-detail__play-btn${isCurrentTrack && player.isPlaying ? ' post-detail__play-btn--playing' : ''}`}
+            onClick={() => {
+              if (isCurrentTrack && player.isPlaying) {
+                player.pause();
+              } else {
+                handleDecryptAndPlay();
+              }
+            }}
+            disabled={player.isLoading && isCurrentTrack}
+            aria-label={isCurrentTrack && player.isPlaying ? 'Pause' : 'Play'}
+          >
+            {player.isLoading && isCurrentTrack ? (
+              <div className="post-detail__play-spinner" />
+            ) : isCurrentTrack && player.isPlaying ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" rx="1" />
+                <rect x="14" y="4" width="4" height="16" rx="1" />
+              </svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="8,4 20,12 8,20" />
+              </svg>
+            )}
+          </button>
+        )}
       </div>
 
       <div className="post-detail__stats">

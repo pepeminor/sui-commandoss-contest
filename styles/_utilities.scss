@@ -210,6 +210,55 @@
     color: $text-muted;
   }
 
+  &__play-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: $accent;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 150ms ease, transform 150ms ease;
+
+    &:hover {
+      background: $accent-hover;
+      transform: scale(1.06);
+    }
+
+    &:active {
+      transform: scale(0.96);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    &--playing {
+      background: rgba(255, 255, 255, 0.08);
+      color: $accent;
+      border: 1.5px solid $accent-border;
+
+      &:hover {
+        background: rgba(232, 98, 58, 0.1);
+      }
+    }
+  }
+
+  &__play-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
   &__chain-link {
     color: $color-sui;
     text-decoration: none;
