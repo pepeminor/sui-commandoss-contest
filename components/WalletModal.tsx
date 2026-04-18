@@ -10,7 +10,8 @@ import { useToast } from './Toast';
 import { useI18n } from '@/i18n/I18nProvider';
 import { shortenAddress, timeAgo } from '@/lib/utils';
 import { SendTokenModal } from './SendTokenModal';
-import Link from 'next/link';
+import { TransferNFTModal } from './TransferNFTModal';
+import { type NFTData } from '@/hooks/useMyNFTs';
 
 interface WalletModalProps {
   open: boolean;
@@ -28,6 +29,7 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
   const [tab, setTab] = useState<Tab>('tokens');
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const [sendOpen, setSendOpen] = useState(false);
+  const [transferNft, setTransferNft] = useState<NFTData | null>(null);
 
   useEffect(() => {
     if (!address || !open) return;
@@ -152,11 +154,10 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
                 </div>
               )}
               {nfts?.map((nft) => (
-                <Link
+                <button
                   key={nft.objectId}
-                  href={`/post/${nft.postId}`}
                   className="wallet__nft-row"
-                  onClick={onClose}
+                  onClick={() => setTransferNft(nft)}
                 >
                   <div className="wallet__nft-icon">🎵</div>
                   <div className="wallet__token-info">
@@ -166,7 +167,7 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="wallet__nft-arrow">
                     <path d="M9 18l6-6-6-6" />
                   </svg>
-                </Link>
+                </button>
               ))}
             </div>
           )}
@@ -177,6 +178,12 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
         open={sendOpen}
         onClose={() => setSendOpen(false)}
         balances={balances ?? []}
+      />
+
+      <TransferNFTModal
+        open={!!transferNft}
+        onClose={() => setTransferNft(null)}
+        nft={transferNft}
       />
     </>
   );

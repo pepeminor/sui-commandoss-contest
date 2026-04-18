@@ -98,5 +98,14 @@
   "wallet.reviewSend": "Xem lại",
   "wallet.confirmSend": "Xác nhận & Gửi",
   "wallet.sending": "Đang gửi...",
-  "wallet.sendSuccess": "Gửi token thành công!"
+  "wallet.sendSuccess": "Gửi token thành công!",
+
+  "wallet.transferTitle": "Chuyển NFT",
+  "wallet.nftName": "NFT",
+  "wallet.reviewTransfer": "Xem lại",
+  "wallet.confirmTransfer": "Xác nhận chuyển",
+  "wallet.transferring": "Đang chuyển...",
+  "wallet.transferSuccess": "Đã chuyển NFT! Bạn không còn quyền xem nội dung này nữa.",
+  "wallet.transferWarning": "Sau khi chuyển, bạn sẽ mất quyền truy cập nội dung này vĩnh viễn.",
+  "wallet.cannotSendSelf": "Không thể gửi cho chính mình"
 }

@@ -98,5 +98,14 @@
   "wallet.reviewSend": "Review Send",
   "wallet.confirmSend": "Confirm & Send",
   "wallet.sending": "Sending...",
-  "wallet.sendSuccess": "Token sent successfully!"
+  "wallet.sendSuccess": "Token sent successfully!",
+
+  "wallet.transferTitle": "Transfer NFT",
+  "wallet.nftName": "NFT",
+  "wallet.reviewTransfer": "Review Transfer",
+  "wallet.confirmTransfer": "Confirm Transfer",
+  "wallet.transferring": "Transferring...",
+  "wallet.transferSuccess": "NFT transferred! You no longer have access to this content.",
+  "wallet.transferWarning": "After transfer, you will lose access to this content permanently.",
+  "wallet.cannotSendSelf": "Cannot send to your own address"
 }
