@@ -105,6 +105,7 @@ export function PostDetailClient({ postId }: Props) {
   const soldOut = post.minted >= post.maxSupply;
 
   return (
+    <>
     <div className="container post-detail">
       <div className="post-detail__header">
         <AddressAvatar address={post.author} size={44} />
@@ -214,7 +215,9 @@ export function PostDetailClient({ postId }: Props) {
         </div>
       )}
 
-      <CommentsSection postId={postId} />
     </div>
+
+    <CommentsSection postId={postId} />
+  </>
   );
 }
