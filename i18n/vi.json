@@ -159,5 +159,11 @@
   "player.loading": "Đang tải...",
   "player.error": "Không thể phát. Thử lại.",
 
-  "post.blurPreviewAudio": "Đây là bài nhạc exclusive chỉ dành cho người có NFT. Mua NFT để nghe và đọc toàn bộ lyrics. Nội dung được bảo vệ bằng Seal encryption on-chain — chỉ ví của bạn mới có thể giải mã sau khi mua."
+  "post.blurPreviewAudio": "Đây là bài nhạc exclusive chỉ dành cho người có NFT. Mua NFT để nghe và đọc toàn bộ lyrics. Nội dung được bảo vệ bằng Seal encryption on-chain — chỉ ví của bạn mới có thể giải mã sau khi mua.",
+
+  "comments.title": "Binh luan",
+  "comments.placeholder": "Ban nghi gi ve bai nay?",
+  "comments.loginToComment": "Dang nhap de binh luan",
+  "comments.send": "Gui",
+  "comments.justNow": "vua xong"
 }

@@ -10,6 +10,7 @@
 @use 'wallet';
 @use 'utilities';
 @use 'music-player';
+@use 'comments';
 
 *, *::before, *::after {
   box-sizing: border-box;

@@ -13,6 +13,7 @@ import { TransferNFTModal } from '@/components/TransferNFTModal';
 import { useMusicPlayer } from '@/components/MusicPlayerProvider';
 import { useAuth } from '@/auth/useAuth';
 import { type NFTData } from '@/hooks/useMyNFTs';
+import { CommentsSection } from '@/components/comments/CommentsSection';
 
 interface Props {
   postId: string;
@@ -212,6 +213,8 @@ export function PostDetailClient({ postId }: Props) {
           <MintButton postId={postId} price={post.price} soldOut={soldOut} />
         </div>
       )}
+
+      <CommentsSection postId={postId} />
     </div>
   );
 }

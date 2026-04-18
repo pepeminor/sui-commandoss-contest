@@ -159,5 +159,11 @@
   "player.loading": "Loading...",
   "player.error": "Playback failed. Try again.",
 
-  "post.blurPreviewAudio": "This is an exclusive audio track for NFT holders only. Buy NFT to listen and read the full lyrics. Content is encrypted on-chain — only your wallet can decrypt after purchase."
+  "post.blurPreviewAudio": "This is an exclusive audio track for NFT holders only. Buy NFT to listen and read the full lyrics. Content is encrypted on-chain — only your wallet can decrypt after purchase.",
+
+  "comments.title": "Comments",
+  "comments.placeholder": "What do you think about this track?",
+  "comments.loginToComment": "Login to comment",
+  "comments.send": "Send",
+  "comments.justNow": "just now"
 }
