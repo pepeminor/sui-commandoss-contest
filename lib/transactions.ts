@@ -24,6 +24,7 @@ export interface MintNFTParams {
 /** Build a PTB for creating a new text-only Post (artist flow) */
 export function buildCreatePostTx({ title, encryptedContent, price, maxSupply }: CreatePostParams): Transaction {
   const tx = new Transaction();
+  tx.setGasBudget(20_000_000); // 0.02 SUI
   tx.moveCall({
     target: `${PACKAGE_ID}::post::create_post`,
     arguments: [
@@ -42,6 +43,7 @@ export function buildCreatePostWithMediaTx({
   title, encryptedContent, mediaType, mediaBlobId, encryptionKey, price, maxSupply,
 }: CreatePostWithMediaParams): Transaction {
   const tx = new Transaction();
+  tx.setGasBudget(20_000_000); // 0.02 SUI
   tx.moveCall({
     target: `${PACKAGE_ID}::post::create_post_with_media`,
     arguments: [
@@ -61,6 +63,7 @@ export function buildCreatePostWithMediaTx({
 /** Build a PTB for minting a ContentNFT (buyer flow) */
 export function buildMintNFTTx({ postId, price, senderAddress }: MintNFTParams): Transaction {
   const tx = new Transaction();
+  tx.setGasBudget(10_000_000); // 0.01 SUI
   const [payment] = tx.splitCoins(tx.gas, [price]);
   const [nft] = tx.moveCall({
     target: `${PACKAGE_ID}::post::mint_nft`,

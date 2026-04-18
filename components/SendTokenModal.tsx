@@ -39,6 +39,7 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
 
       const tx = new Transaction();
       tx.setSender(address);
+      tx.setGasBudget(10_000_000); // 0.01 SUI — actual cost ~0.002
 
       if (selected.coinType === '0x2::sui::SUI') {
         const [coin] = tx.splitCoins(tx.gas, [amountMist]);
