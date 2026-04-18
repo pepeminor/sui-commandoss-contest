@@ -2,17 +2,16 @@
 
 import { SealClient, SessionKey, EncryptedObject } from '@mysten/seal';
 import type { Signer } from '@mysten/sui/cryptography';
-import { suiClient, graphqlClient } from './sui-client';
+import { suiClient } from './sui-client';
 import { buildSealApproveTx } from './transactions';
 import { PACKAGE_ID } from '@/config';
 
-// Decentralized testnet key server (3-of-5 committee with aggregator)
-// Official Seal example uses this config: https://seal-docs.wal.app/Pricing
+// Independent testnet key server (Overclock — Open mode)
+// Docs: https://seal-docs.wal.app/Pricing
 const TESTNET_SERVER_CONFIGS = [
   {
     objectId: '0x9c949e53c36ab7a9c484ed9e8b43267a77d4b8d70e79aa6b39042e3d4c434105',
     weight: 1,
-    aggregatorUrl: 'https://seal-testnet-open.overclock.run',
   },
 ];
 
@@ -44,23 +43,16 @@ async function getOrCreateSessionKey(address: string, signer: Signer): Promise<S
   const cached = sessionKeyCache.get(address);
   if (cached && !cached.isExpired()) return cached;
 
-  // Official Seal example pattern: create WITHOUT signer, then manually sign
-  // and call setPersonalMessageSignature(). This ensures local verification
-  // of the zkLogin signature before sending to key servers.
+  // Pass signer directly — SessionKey.getCertificate() will lazy-sign
+  // the personal message when needed, avoiding the local
+  // verifyPersonalMessageSignature() call that can fail with zkLogin.
   const sessionKey = await SessionKey.create({
     address,
     packageId: PACKAGE_ID,
     ttlMin: 10,
-    suiClient: graphqlClient,
+    signer,
+    suiClient,
   });
-
-  // Sign the personal message with the Enoki keypair (zkLogin signer)
-  const personalMessage = sessionKey.getPersonalMessage();
-  const { signature } = await signer.signPersonalMessage(personalMessage);
-
-  // setPersonalMessageSignature verifies the signature locally first
-  // (uses graphqlClient for zkLogin proof verification on-chain)
-  await sessionKey.setPersonalMessageSignature(signature);
 
   sessionKeyCache.set(address, sessionKey);
   setTimeout(() => sessionKeyCache.delete(address), 10 * 60 * 1000);
