@@ -1,7 +1,7 @@
 'use client';
 
 import { usePost } from '@/hooks/usePost';
-import { useHasAccess, useNFTForPost } from '@/hooks/useMyNFTs';
+import { useHasAccess, useNFTForPost, useNFTsForPost } from '@/hooks/useMyNFTs';
 import { MintButton } from '@/components/MintButton';
 import { ContentViewer } from '@/components/ContentViewer';
 import { formatSUI, shortenAddress, timeAgo, explorerObjectUrl } from '@/lib/utils';
@@ -10,6 +10,7 @@ import { AddressAvatar } from '@/components/AddressAvatar';
 import { useI18n } from '@/i18n/I18nProvider';
 import { TransferNFTModal } from '@/components/TransferNFTModal';
 import { useState } from 'react';
+import { type NFTData } from '@/hooks/useMyNFTs';
 
 interface Props {
   postId: string;
@@ -19,8 +20,9 @@ export function PostDetailClient({ postId }: Props) {
   const { data: post, isLoading } = usePost(postId);
   const hasAccess = useHasAccess(postId);
   const nft = useNFTForPost(postId);
+  const ownedNfts = useNFTsForPost(postId);
   const { t } = useI18n();
-  const [transferOpen, setTransferOpen] = useState(false);
+  const [transferNft, setTransferNft] = useState<NFTData | null>(null);
 
   if (isLoading) {
     return (
@@ -68,14 +70,6 @@ export function PostDetailClient({ postId }: Props) {
             </a>
           </div>
         </div>
-        {hasAccess && nft && (
-          <button className="btn btn--ghost btn--sm post-detail__transfer-btn" onClick={() => setTransferOpen(true)}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M12 19V5M5 12l7-7 7 7" />
-            </svg>
-            {t('wallet.transferTitle')}
-          </button>
-        )}
       </div>
 
       <div className="post-detail__stats">
@@ -88,12 +82,23 @@ export function PostDetailClient({ postId }: Props) {
           <div className="post-detail__stat-value text-primary">{post.minted}/{post.maxSupply}</div>
           <div className="post-detail__stat-label">{t('post.sold')}</div>
         </div>
-        {hasAccess && nft && (
+        {ownedNfts.length > 0 && (
           <>
             <div className="post-detail__stat-divider" />
             <div className="post-detail__stat">
-              <div className="post-detail__stat-value text-owned">#{nft.edition}</div>
-              <div className="post-detail__stat-label">{t('post.edition')}</div>
+              <div className="post-detail__editions">
+                {ownedNfts.map((owned) => (
+                  <button
+                    key={owned.objectId}
+                    className="post-detail__edition-badge"
+                    onClick={() => setTransferNft(owned)}
+                    title={t('wallet.transferTitle')}
+                  >
+                    #{owned.edition}
+                  </button>
+                ))}
+              </div>
+              <div className="post-detail__stat-label">{t('post.owned')}</div>
             </div>
           </>
         )}
@@ -102,7 +107,7 @@ export function PostDetailClient({ postId }: Props) {
       {hasAccess && nft ? (
         <>
           <ContentViewer encryptedContent={post.encryptedContent} nftObjectId={nft.objectId} postObjectId={postId} />
-          <TransferNFTModal open={transferOpen} onClose={() => setTransferOpen(false)} nft={nft} />
+          <TransferNFTModal open={!!transferNft} onClose={() => setTransferNft(null)} nft={transferNft} />
         </>
       ) : (
         <div>

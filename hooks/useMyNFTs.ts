@@ -58,3 +58,9 @@ export function useNFTForPost(postId: string | undefined): NFTData | undefined {
   if (!postId || !data) return undefined;
   return data.find((nft) => nft.postId === postId);
 }
+
+export function useNFTsForPost(postId: string | undefined): NFTData[] {
+  const { data } = useMyNFTs();
+  if (!postId || !data) return [];
+  return data.filter((nft) => nft.postId === postId).sort((a, b) => a.edition - b.edition);
+}
