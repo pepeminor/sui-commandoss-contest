@@ -8,6 +8,7 @@ import { useAuth } from '@/auth/useAuth';
 import { useToast } from './Toast';
 import { useI18n } from '@/i18n/I18nProvider';
 import { suiClient } from '@/lib/sui-client';
+import { parseTransactionError } from '@/lib/errors';
 import { SUI_RPC_URL } from '@/config';
 import { type TokenBalance, formatTokenAmount } from '@/hooks/useTokenBalances';
 
@@ -44,7 +45,6 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
         const [coin] = tx.splitCoins(tx.gas, [amountMist]);
         tx.transferObjects([coin], recipient);
       } else {
-        // For non-SUI coins, get coins via JSON-RPC
         const res = await fetch(SUI_RPC_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -66,13 +66,18 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
         tx.transferObjects([splitCoin], recipient);
       }
 
-      const result = await suiClient.signAndExecuteTransaction({
-        transaction: tx,
-        signer,
-      });
+      let result;
+      try {
+        result = await suiClient.signAndExecuteTransaction({
+          transaction: tx,
+          signer,
+        });
+      } catch (e) {
+        throw new Error(parseTransactionError(e));
+      }
 
       if (result.$kind === 'FailedTransaction') {
-        throw new Error(result.FailedTransaction.status.error?.message || 'Transaction failed');
+        throw new Error(parseTransactionError(result.FailedTransaction?.status?.error));
       }
 
       await suiClient.core.waitForTransaction({ result });
@@ -103,7 +108,6 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
       <div className="send-token">
         {step === 'form' && (
           <>
-            {/* Coin selector */}
             <div className="form-group">
               <label className="form-label">{t('wallet.token')}</label>
               <select
@@ -119,7 +123,6 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
               </select>
             </div>
 
-            {/* Recipient */}
             <div className="form-group">
               <label className="form-label">{t('wallet.recipient')}</label>
               <input
@@ -130,7 +133,6 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
               />
             </div>
 
-            {/* Amount */}
             <div className="form-group">
               <label className="form-label">{t('wallet.amount')}</label>
               <input

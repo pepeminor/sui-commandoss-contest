@@ -114,3 +114,13 @@ body {
     color: $text-muted;
   }
 }
+
+.auth-callback {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $bg-base;
+  color: $text-primary;
+  font-family: system-ui, sans-serif;
+}

@@ -11,19 +11,6 @@ export function shortenAddress(addr: string | undefined, chars = 4): string {
   return `${addr.slice(0, 2 + chars)}...${addr.slice(-chars)}`;
 }
 
-/** Derive an avatar color class (cycles through 4) from a string */
-const AVATAR_COLORS = ['purple', 'teal', 'coral', 'pink'] as const;
-export function avatarColor(seed: string): (typeof AVATAR_COLORS)[number] {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
-  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
-}
-
-/** Get hex code display from an address (4 hex chars after 0x) */
-export function addressInitials(addr: string): string {
-  return addr.slice(2, 6).toLowerCase();
-}
-
 /** Parse any timestamp (epoch ms number, numeric string, or ISO string) to ms */
 function parseTimestamp(ms: number | string): number {
   if (typeof ms === 'number') return ms;

@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Transaction } from '@mysten/sui/transactions';
 import { Modal } from './Modal';
+import { WarningBanner } from './WarningBanner';
 import { useAuth } from '@/auth/useAuth';
 import { useToast } from './Toast';
 import { useI18n } from '@/i18n/I18nProvider';
 import { suiClient } from '@/lib/sui-client';
 import { shortenAddress } from '@/lib/utils';
+import { parseTransactionError } from '@/lib/errors';
 import { type NFTData } from '@/hooks/useMyNFTs';
 
 interface TransferNFTModalProps {
@@ -35,13 +37,18 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
       tx.setSender(address);
       tx.transferObjects([tx.object(nft.objectId)], recipient);
 
-      const result = await suiClient.signAndExecuteTransaction({
-        transaction: tx,
-        signer,
-      });
+      let result;
+      try {
+        result = await suiClient.signAndExecuteTransaction({
+          transaction: tx,
+          signer,
+        });
+      } catch (e) {
+        throw new Error(parseTransactionError(e));
+      }
 
       if (result.$kind === 'FailedTransaction') {
-        throw new Error(result.FailedTransaction.status.error?.message || 'Transaction failed');
+        throw new Error(parseTransactionError(result.FailedTransaction?.status?.error));
       }
 
       await suiClient.core.waitForTransaction({ result });
@@ -72,7 +79,6 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
       <div className="send-token">
         {step === 'form' && (
           <>
-            {/* NFT info */}
             <div className="info-panel">
               <div className="info-row">
                 <span className="info-row__label">{t('wallet.nftName')}</span>
@@ -84,7 +90,6 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
               </div>
             </div>
 
-            {/* Recipient */}
             <div className="form-group">
               <label className="form-label">{t('wallet.recipient')}</label>
               <input
@@ -98,14 +103,7 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
               )}
             </div>
 
-            <div className="transfer-warning">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-              <span>{t('wallet.transferWarning')}</span>
-            </div>
+            <WarningBanner message={t('wallet.transferWarning')} />
 
             <button
               className="btn btn--primary btn--full"
@@ -139,14 +137,7 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
               </div>
             </div>
 
-            <div className="transfer-warning">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-              <span>{t('wallet.transferWarning')}</span>
-            </div>
+            <WarningBanner message={t('wallet.transferWarning')} />
 
             <div className="send-token__actions">
               <button className="btn btn--ghost" onClick={() => setStep('form')}>

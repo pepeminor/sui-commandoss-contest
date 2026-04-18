@@ -107,5 +107,13 @@
   "wallet.transferring": "Đang chuyển...",
   "wallet.transferSuccess": "Đã chuyển NFT! Bạn không còn quyền xem nội dung này nữa.",
   "wallet.transferWarning": "Sau khi chuyển, bạn sẽ mất quyền truy cập nội dung này vĩnh viễn.",
-  "wallet.cannotSendSelf": "Không thể gửi cho chính mình"
+  "wallet.cannotSendSelf": "Không thể gửi cho chính mình",
+
+  "error.insufficientGas": "Không đủ SUI để trả gas. Cần ít nhất {amount} SUI.",
+  "error.insufficientBalance": "Không đủ SUI trong ví để trả phí giao dịch. Hãy nạp thêm SUI.",
+  "error.maxSupply": "Bài này đã bán hết NFT.",
+  "error.insufficientPayment": "Số tiền không đủ để mint NFT này.",
+  "error.wrongPost": "NFT không thuộc bài viết này.",
+  "error.txFailed": "Giao dịch thất bại. Vui lòng thử lại.",
+  "error.txFailedDetail": "Giao dịch thất bại: {detail}"
 }

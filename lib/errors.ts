@@ -13,51 +13,71 @@ function mistToSui(mist: string): string {
 
 interface ErrorPattern {
   test: RegExp;
-  message: (match: RegExpMatchArray) => string;
+  key: string;
+  params?: (match: RegExpMatchArray) => Record<string, string>;
 }
 
 const ERROR_PATTERNS: ErrorPattern[] = [
   {
     test: /insufficient SUI balance.*?budget\s+(\d+)/i,
-    message: (m) =>
-      `Khong du SUI de tra gas. Can it nhat ${mistToSui(m[1])} SUI trong vi de thuc hien giao dich.`,
+    key: 'error.insufficientGas',
+    params: (m) => ({ amount: mistToSui(m[1]) }),
   },
   {
     test: /insufficient SUI balance/i,
-    message: () =>
-      'Khong du SUI trong vi de tra phi giao dich. Hay nap them SUI.',
+    key: 'error.insufficientBalance',
   },
   {
     test: /EMaxSupplyReached/i,
-    message: () => 'Bai nay da ban het NFT.',
+    key: 'error.maxSupply',
   },
   {
     test: /EInsufficientPayment/i,
-    message: () => 'So tien khong du de mint NFT nay.',
+    key: 'error.insufficientPayment',
   },
   {
     test: /EWrongPost/i,
-    message: () => 'NFT khong thuoc bai viet nay.',
+    key: 'error.wrongPost',
   },
 ];
+
+export interface ParsedError {
+  key: string;
+  params?: Record<string, string>;
+}
+
+export function parseTransactionErrorI18n(err: unknown): ParsedError {
+  const raw = extractMessage(err);
+  if (!raw) return { key: 'error.txFailed' };
+
+  for (const pattern of ERROR_PATTERNS) {
+    const match = raw.match(pattern.test);
+    if (match) {
+      return { key: pattern.key, params: pattern.params?.(match) };
+    }
+  }
+
+  const detail = raw.length > 120 ? raw.slice(0, 120) + '...' : raw;
+  return { key: 'error.txFailedDetail', params: { detail } };
+}
+
+export function parseTransactionError(err: unknown): string {
+  const { key, params } = parseTransactionErrorI18n(err);
+  // Fallback for contexts without i18n — return the key with params inlined
+  let msg = key;
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      msg = msg.replace(`{${k}}`, v);
+    }
+  }
+  return msg;
+}
 
 export function formatGasEstimate(gasBudgetMist: bigint | string, balanceMist?: bigint | string): string {
   const gas = mistToSui(String(gasBudgetMist));
   if (balanceMist != null) {
     const bal = mistToSui(String(balanceMist));
-    return `Gas: ~${gas} SUI | Balance hien tai: ${bal} SUI`;
+    return `Gas: ~${gas} SUI | Balance: ${bal} SUI`;
   }
   return `Gas: ~${gas} SUI`;
-}
-
-export function parseTransactionError(err: unknown): string {
-  const raw = extractMessage(err);
-  if (!raw) return 'Giao dich that bai. Vui long thu lai.';
-
-  for (const pattern of ERROR_PATTERNS) {
-    const match = raw.match(pattern.test);
-    if (match) return pattern.message(match);
-  }
-
-  return `Giao dich that bai: ${raw.length > 120 ? raw.slice(0, 120) + '...' : raw}`;
 }

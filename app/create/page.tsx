@@ -5,22 +5,19 @@ import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { Navbar } from '@/components/Navbar';
 import { Modal } from '@/components/Modal';
+import { AuthGuard } from '@/components/AuthGuard';
 import { useCreatePost } from '@/hooks/useCreatePost';
-import { useAuth } from '@/auth/useAuth';
 import { formatSUI } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nProvider';
-import { useIsClient } from '@/hooks/useIsClient';
 
 const REDIRECT_DELAY = 8;
 const GAS_ESTIMATE_MIST = 2_000_000n;
 
-export default function CreatePage() {
+function CreateContent() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { isLoggedIn, login } = useAuth();
   const { mutate: createPost, isPending, isError, error } = useCreatePost();
   const { t } = useI18n();
-  const isClient = useIsClient();
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -47,37 +44,11 @@ export default function CreatePage() {
       });
     }, 1000);
     return () => clearInterval(timerRef.current!);
-  }, [countdown > 0]);
+  }, [countdown, queryClient, router]);
 
   const priceMist = BigInt(Math.round(parseFloat(priceStr || '0') * 1e9));
   const maxSupply = parseInt(supplyStr || '1', 10);
   const contentSize = new TextEncoder().encode(content).length;
-
-  if (!isClient) {
-    return (
-      <div className="page">
-        <Navbar />
-        <div className="container" style={{ paddingTop: 80, textAlign: 'center' }}>
-          <div className="loading-skeleton" style={{ height: 200, borderRadius: 14 }} />
-        </div>
-      </div>
-    );
-  }
-
-  if (!isLoggedIn) {
-    return (
-      <div className="page">
-        <Navbar />
-        <div className="container" style={{ paddingTop: 80, textAlign: 'center' }}>
-          <div style={{ fontSize: 32, marginBottom: 12 }}>🔒</div>
-          <h2 style={{ marginBottom: 8 }}>{t('create.loginRequired')}</h2>
-          <button className="btn btn--primary" onClick={login} style={{ marginTop: 8 }}>
-            Login with Google
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   if (successTitle) {
     return (
@@ -200,5 +171,13 @@ export default function CreatePage() {
         </div>
       </Modal>
     </div>
+  );
+}
+
+export default function CreatePage() {
+  return (
+    <AuthGuard icon="🔒" messageKey="create.loginRequired">
+      <CreateContent />
+    </AuthGuard>
   );
 }

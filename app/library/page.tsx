@@ -2,46 +2,16 @@
 
 import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
+import { AuthGuard } from '@/components/AuthGuard';
+import { EmptyState } from '@/components/EmptyState';
+import { SkeletonList } from '@/components/Skeleton';
 import { useMyNFTs } from '@/hooks/useMyNFTs';
-import { useAuth } from '@/auth/useAuth';
 import { timeAgo } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nProvider';
-import { useIsClient } from '@/hooks/useIsClient';
 
-export default function LibraryPage() {
-  const { isLoggedIn, login } = useAuth();
+function LibraryContent() {
   const { data: nfts, isLoading } = useMyNFTs();
   const { t } = useI18n();
-  const isClient = useIsClient();
-
-  if (!isClient) {
-    return (
-      <div className="page">
-        <Navbar />
-        <div className="container" style={{ paddingTop: 80, textAlign: 'center' }}>
-          <div className="loading-skeleton" style={{ height: 200, borderRadius: 14 }} />
-        </div>
-      </div>
-    );
-  }
-
-  if (!isLoggedIn) {
-    return (
-      <div className="page">
-        <Navbar />
-        <div className="container" style={{ paddingTop: 80, textAlign: 'center' }}>
-          <div style={{ fontSize: 32, marginBottom: 12 }}>📚</div>
-          <h2 style={{ marginBottom: 8 }}>{t('library.loginRequired')}</h2>
-          <p className="text-muted" style={{ marginBottom: 20, fontSize: 14 }}>
-            {t('library.loginDesc')}
-          </p>
-          <button className="btn btn--primary" onClick={login}>
-            Login with Google
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="page">
@@ -54,22 +24,14 @@ export default function LibraryPage() {
           </p>
         </div>
 
-        {isLoading && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="loading-skeleton" style={{ height: 80, borderRadius: 14 }} />
-            ))}
-          </div>
-        )}
+        {isLoading && <SkeletonList count={3} height={80} />}
 
         {!isLoading && nfts?.length === 0 && (
-          <div className="empty-state">
-            <div className="empty-state__icon">📖</div>
-            <div className="empty-state__title">{t('library.empty')}</div>
-            <p className="empty-state__desc">
-              <Link href="/" className="text-accent">{t('library.emptyDesc')}</Link>
-            </p>
-          </div>
+          <EmptyState
+            icon="📖"
+            title={t('library.empty')}
+            desc={<Link href="/" className="text-accent">{t('library.emptyDesc')}</Link>}
+          />
         )}
 
         {!isLoading &&
@@ -97,5 +59,13 @@ export default function LibraryPage() {
           ))}
       </div>
     </div>
+  );
+}
+
+export default function LibraryPage() {
+  return (
+    <AuthGuard icon="📚" messageKey="library.loginRequired" descKey="library.loginDesc">
+      <LibraryContent />
+    </AuthGuard>
   );
 }

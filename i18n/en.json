@@ -107,5 +107,13 @@
   "wallet.transferring": "Transferring...",
   "wallet.transferSuccess": "NFT transferred! You no longer have access to this content.",
   "wallet.transferWarning": "After transfer, you will lose access to this content permanently.",
-  "wallet.cannotSendSelf": "Cannot send to your own address"
+  "wallet.cannotSendSelf": "Cannot send to your own address",
+
+  "error.insufficientGas": "Insufficient SUI for gas. Need at least {amount} SUI.",
+  "error.insufficientBalance": "Insufficient SUI to pay transaction fee. Please top up.",
+  "error.maxSupply": "This post has sold out all NFTs.",
+  "error.insufficientPayment": "Insufficient amount to mint this NFT.",
+  "error.wrongPost": "NFT does not belong to this post.",
+  "error.txFailed": "Transaction failed. Please try again.",
+  "error.txFailedDetail": "Transaction failed: {detail}"
 }

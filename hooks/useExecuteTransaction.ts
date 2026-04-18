@@ -1,31 +1,28 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import type { Transaction } from '@mysten/sui/transactions';
 import { useAuth } from '@/auth/useAuth';
 import { suiClient } from '@/lib/sui-client';
-import { buildCreatePostTx } from '@/lib/transactions';
-import { encryptContent } from '@/lib/seal';
 import { parseTransactionError } from '@/lib/errors';
 
-export interface CreatePostInput {
-  title: string;
-  content: string;
-  price: bigint;        // MIST
-  maxSupply: bigint;
+interface ExecuteOptions {
+  buildTx: () => Transaction | Promise<Transaction>;
+  invalidateKeys?: string[][];
+  onSuccess?: (result: any) => void;
+  onError?: (err: Error) => void;
 }
 
-export function useCreatePost() {
+export function useExecuteTransaction() {
   const { address, getSigner } = useAuth();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ title, content, price, maxSupply }: CreatePostInput) => {
+    mutationFn: async ({ buildTx }: ExecuteOptions) => {
       if (!address) throw new Error('Not logged in');
 
-      const encryptedContent = await encryptContent(content);
       const signer = await getSigner();
-
-      const tx = buildCreatePostTx({ title, encryptedContent, price, maxSupply });
+      const tx = await buildTx();
       tx.setSender(address);
 
       let result;
@@ -45,8 +42,16 @@ export function useCreatePost() {
       await suiClient.core.waitForTransaction({ result });
       return result;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['feed'] });
+    onSuccess: (_data, variables) => {
+      if (variables.invalidateKeys) {
+        for (const key of variables.invalidateKeys) {
+          queryClient.invalidateQueries({ queryKey: key });
+        }
+      }
+      variables.onSuccess?.(_data);
+    },
+    onError: (err, variables) => {
+      variables.onError?.(err instanceof Error ? err : new Error(String(err)));
     },
   });
 }
