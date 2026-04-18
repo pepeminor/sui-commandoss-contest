@@ -80,8 +80,6 @@ export function PostDetailClient({ postId }: Props) {
       nftObjectId: nft.objectId, encryptionKey: post.encryptionKey, mediaBlobId: post.mediaBlobId,
     });
     player.setOnRequestPlay(handleDecryptAndPlay);
-
-    return () => { player.setOnRequestPlay(null); };
   }, [post?.objectId, nft?.objectId, address, isAudioPost, hasAccess]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) {
