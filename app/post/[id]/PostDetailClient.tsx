@@ -74,18 +74,19 @@ export function PostDetailClient({ postId }: Props) {
 
       <div className="post-detail__stats">
         <div className="post-detail__stat">
-          <div className="post-detail__stat-value text-sui">{formatSUI(post.price)} SUI</div>
           <div className="post-detail__stat-label">{t('post.price')}</div>
+          <div className="post-detail__stat-value text-sui">{formatSUI(post.price)} SUI</div>
         </div>
         <div className="post-detail__stat-divider" />
         <div className="post-detail__stat">
-          <div className="post-detail__stat-value text-primary">{post.minted}/{post.maxSupply}</div>
           <div className="post-detail__stat-label">{t('post.sold')}</div>
+          <div className="post-detail__stat-value text-primary">{post.minted}/{post.maxSupply}</div>
         </div>
         {ownedNfts.length > 0 && (
           <>
             <div className="post-detail__stat-divider" />
             <div className="post-detail__stat">
+              <div className="post-detail__stat-label">{t('post.owned')}</div>
               <div className="post-detail__editions">
                 {ownedNfts.map((owned) => (
                   <button
@@ -98,7 +99,6 @@ export function PostDetailClient({ postId }: Props) {
                   </button>
                 ))}
               </div>
-              <div className="post-detail__stat-label">{t('post.owned')}</div>
             </div>
           </>
         )}
