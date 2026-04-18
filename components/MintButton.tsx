@@ -33,7 +33,7 @@ export function MintButton({ postId, price, soldOut }: MintButtonProps) {
 
   if (!isClient) {
     return (
-      <button className="btn btn--primary loading-skeleton" disabled style={{ width: '100%', height: 44 }}>
+      <button className="btn btn--mint btn--full loading-skeleton" disabled>
         {formatSUI(price)} SUI
       </button>
     );
@@ -53,18 +53,17 @@ export function MintButton({ postId, price, soldOut }: MintButtonProps) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+    <div className="mint-action">
       <button
-        className="btn btn--mint"
+        className="btn btn--mint btn--full"
         onClick={() => setShowConfirm(true)}
         disabled={isPending}
-        style={{ width: '100%', height: 44, fontSize: 14 }}
       >
         {isPending ? t('mint.processing') : `${t('mint.buy')} — ${formatSUI(price)} SUI`}
       </button>
 
       {isError && (
-        <p style={{ fontSize: 12, color: '#ff7070', margin: 0 }}>
+        <p className="error-text">
           {error instanceof Error ? error.message : 'Transaction failed'}
         </p>
       )}
@@ -84,35 +83,25 @@ export function MintButton({ postId, price, soldOut }: MintButtonProps) {
           </>
         }
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <div style={{
-            background: 'rgba(255,255,255,0.03)',
-            border: '0.5px solid rgba(255,255,255,0.06)',
-            borderRadius: 10,
-            padding: '12px 16px',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-              <span style={{ fontSize: 13, color: 'rgba(240,235,228,0.55)' }}>{t('mint.nftPrice')}</span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#6FBCF0' }}>{formatSUI(price)} SUI</span>
+        <div className="mint-confirm">
+          <div className="info-panel">
+            <div className="info-row">
+              <span className="info-row__label">{t('mint.nftPrice')}</span>
+              <span className="info-row__value">{formatSUI(price)} SUI</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: 13, color: 'rgba(240,235,228,0.55)' }}>{t('mint.gasFee')}</span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#6FBCF0' }}>~{formatSUI(GAS_ESTIMATE_MIST)} SUI</span>
+            <div className="info-row">
+              <span className="info-row__label">{t('mint.gasFee')}</span>
+              <span className="info-row__value">~{formatSUI(GAS_ESTIMATE_MIST)} SUI</span>
             </div>
-            <div style={{
-              borderTop: '0.5px solid rgba(255,255,255,0.06)',
-              marginTop: 10,
-              paddingTop: 10,
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}>
-              <span style={{ fontSize: 13, fontWeight: 700, color: '#f0ebe4' }}>{t('mint.total')}</span>
-              <span style={{ fontSize: 14, fontWeight: 800, color: '#6FBCF0' }}>
+            <div className="info-divider" />
+            <div className="info-row">
+              <span className="info-row__value--primary">{t('mint.total')}</span>
+              <span className="info-row__value--lg">
                 ~{formatSUI(price + GAS_ESTIMATE_MIST)} SUI
               </span>
             </div>
           </div>
-          <p style={{ fontSize: 11, color: 'rgba(240,235,228,0.3)', margin: 0 }}>
+          <p className="hint-text">
             {t('mint.revenueNote')}
           </p>
         </div>

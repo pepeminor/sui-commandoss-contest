@@ -1,0 +1,240 @@
+@use 'variables' as *;
+
+// ─── Text colors ────────────────────────────────────────────────────────────
+
+.text-primary   { color: $text-primary; }
+.text-secondary { color: $text-secondary; }
+.text-muted     { color: $text-muted; }
+.text-hint      { color: $text-hint; }
+.text-sui       { color: $color-sui; }
+.text-owned     { color: $color-owned; }
+.text-accent    { color: $accent; }
+.text-error     { color: $color-error; }
+
+// ─── Info panel (price breakdowns, metadata) ────────────────────────────────
+
+.info-panel {
+  background: $bg-card;
+  border: 0.5px solid $border;
+  border-radius: $radius-md;
+  padding: 12px 16px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:not(:last-child) { margin-bottom: 6px; }
+
+  &__label {
+    font-size: 13px;
+    color: $text-secondary;
+  }
+
+  &__value {
+    font-size: 13px;
+    font-weight: 600;
+    color: $color-sui;
+  }
+
+  &__value--lg {
+    font-size: 14px;
+    font-weight: 800;
+    color: $color-sui;
+  }
+
+  &__value--primary {
+    font-size: 13px;
+    font-weight: 700;
+    color: $text-primary;
+  }
+}
+
+.info-divider {
+  border-top: 0.5px solid $border;
+  margin: 10px 0;
+}
+
+// ─── Error message ──────────────────────────────────────────────────────────
+
+.error-text {
+  font-size: 12px;
+  color: $color-error;
+  margin: 0;
+}
+
+.error-box {
+  background: $color-error-soft;
+  border: 0.5px solid $color-error-border;
+  border-radius: $radius-md;
+  padding: 12px 16px;
+}
+
+// ─── Hint / footnote ────────────────────────────────────────────────────────
+
+.hint-text {
+  font-size: 11px;
+  color: $text-hint;
+  margin: 0;
+}
+
+// ─── Success box ────────────────────────────────────────────────────────────
+
+.success-box {
+  background: $color-owned-soft;
+  border: 0.5px solid $color-owned-border;
+  border-radius: $radius-md;
+  padding: 12px 16px;
+}
+
+// ─── Mint action wrapper ────────────────────────────────────────────────────
+
+// ─── Create success ─────────────────────────────────────────────────────────
+
+.create-success {
+  &__title {
+    font-size: 20px;
+    font-weight: 800;
+    color: $text-primary;
+    margin-bottom: 8px;
+  }
+
+  &__progress {
+    background: $bg-surface;
+    border-radius: 99px;
+    height: 4px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  &__progress-bar {
+    height: 100%;
+    background: $color-owned;
+    border-radius: 99px;
+    transition: width 0.9s linear;
+  }
+}
+
+// ─── Content viewer ─────────────────────────────────────────────────────────
+
+.content-viewer {
+  &__loading {
+    padding: 24px 0;
+  }
+
+  &__error {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+  }
+
+  &__body {
+    font-size: 15px;
+    line-height: 1.75;
+    color: $text-primary;
+    white-space: pre-wrap;
+    padding: 24px 0;
+    border-top: 0.5px solid $border;
+    margin-top: 16px;
+  }
+}
+
+// ─── Mint action wrapper ────────────────────────────────────────────────────
+
+.mint-action {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mint-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ─── Post detail ────────────────────────────────────────────────────────────
+
+.post-detail {
+  padding-top: 32px;
+  padding-bottom: 80px;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    margin-bottom: 4px;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: $text-muted;
+  }
+
+  &__chain-link {
+    color: $color-sui;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  &__stats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 12px 16px;
+    background: $bg-card;
+    border: 0.5px solid $border;
+    border-radius: $radius-md;
+  }
+
+  &__stat-value {
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  &__stat-label {
+    font-size: 10px;
+    color: $text-hint;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  &__stat-divider {
+    width: 0.5px;
+    background: $border;
+  }
+
+  &__blur-preview {
+    position: relative;
+    overflow: hidden;
+    padding: 20px 0;
+    border-top: 0.5px solid $border;
+    margin-bottom: 20px;
+  }
+
+  &__blur-text {
+    font-size: 15px;
+    line-height: 1.75;
+    color: $text-hint;
+    filter: blur(3px);
+    user-select: none;
+    pointer-events: none;
+  }
+}

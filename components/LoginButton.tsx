@@ -37,11 +37,10 @@ export function LoginButton() {
           className="navbar__address"
           onClick={handleCopy}
           title={address}
-          style={{ cursor: 'pointer', border: 'none', background: 'rgba(255,255,255,0.05)' }}
         >
           {copied ? `✓ ${t('nav.copied')}` : shortenAddress(address)}
         </button>
-        <button className="btn btn--ghost" onClick={logout} style={{ fontSize: 12, padding: '4px 10px' }}>
+        <button className="btn btn--ghost btn--sm" onClick={logout}>
           {t('nav.logout')}
         </button>
       </div>

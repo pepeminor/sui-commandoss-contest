@@ -203,7 +203,7 @@ export function Navbar() {
           </>
         }
       >
-        <p style={{ fontSize: 13, color: 'rgba(240,235,228,0.55)', margin: 0 }}>
+        <p className="hint-text" style={{ fontSize: 13 }}>
           {t('nav.logoutConfirmDesc')}
         </p>
       </Modal>

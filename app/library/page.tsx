@@ -32,7 +32,7 @@ export default function LibraryPage() {
         <div className="container" style={{ paddingTop: 80, textAlign: 'center' }}>
           <div style={{ fontSize: 32, marginBottom: 12 }}>📚</div>
           <h2 style={{ marginBottom: 8 }}>{t('library.loginRequired')}</h2>
-          <p style={{ color: 'rgba(240,235,228,0.45)', marginBottom: 20, fontSize: 14 }}>
+          <p className="text-muted" style={{ marginBottom: 20, fontSize: 14 }}>
             {t('library.loginDesc')}
           </p>
           <button className="btn btn--primary" onClick={login}>
@@ -67,7 +67,7 @@ export default function LibraryPage() {
             <div className="empty-state__icon">📖</div>
             <div className="empty-state__title">{t('library.empty')}</div>
             <p className="empty-state__desc">
-              <Link href="/" style={{ color: '#E8623A' }}>{t('library.emptyDesc')}</Link>
+              <Link href="/" className="text-accent">{t('library.emptyDesc')}</Link>
             </p>
           </div>
         )}
@@ -83,7 +83,7 @@ export default function LibraryPage() {
               <div className="post-card__inner">
                 <div>
                   <div className="post-card__title">{nft.postTitle}</div>
-                  <div style={{ display: 'flex', gap: 8, marginTop: 6, fontSize: 12, color: 'rgba(240,235,228,0.35)' }}>
+                  <div className="text-muted" style={{ display: 'flex', gap: 8, marginTop: 6, fontSize: 12 }}>
                     <span>Edition #{nft.edition}</span>
                     <span>·</span>
                     <span>{timeAgo(nft.mintedAt)}</span>

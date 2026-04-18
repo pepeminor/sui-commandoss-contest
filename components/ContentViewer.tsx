@@ -70,11 +70,11 @@ export function ContentViewer({ encryptedContent, nftObjectId, postObjectId }: C
 
   if (isLoading) {
     return (
-      <div style={{ padding: '24px 0' }}>
+      <div className="content-viewer__loading">
         <div className="loading-skeleton" style={{ height: 16, marginBottom: 8 }} />
         <div className="loading-skeleton" style={{ height: 16, width: '80%', marginBottom: 8 }} />
         <div className="loading-skeleton" style={{ height: 16, width: '60%' }} />
-        <p style={{ fontSize: 12, color: 'rgba(240,235,228,0.3)', marginTop: 12 }}>
+        <p className="hint-text" style={{ marginTop: 12 }}>
           {t('decrypt.loading')}
         </p>
       </div>
@@ -83,22 +83,9 @@ export function ContentViewer({ encryptedContent, nftObjectId, postObjectId }: C
 
   if (error) {
     return (
-      <div style={{
-        padding: 16,
-        background: 'rgba(255,70,70,0.08)',
-        border: '0.5px solid rgba(255,70,70,0.2)',
-        borderRadius: 10,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 12,
-      }}>
-        <span style={{ color: '#ff7070', fontSize: 13 }}>{error}</span>
-        <button
-          className="btn btn--ghost"
-          onClick={handleRetry}
-          style={{ fontSize: 12, padding: '6px 14px', flexShrink: 0 }}
-        >
+      <div className="error-box content-viewer__error">
+        <span className="text-error">{error}</span>
+        <button className="btn btn--ghost btn--sm" onClick={handleRetry}>
           {t('decrypt.retry')}
         </button>
       </div>
@@ -106,11 +93,7 @@ export function ContentViewer({ encryptedContent, nftObjectId, postObjectId }: C
   }
 
   return (
-    <div style={{
-      fontSize: 15, lineHeight: 1.75, color: '#f0ebe4',
-      whiteSpace: 'pre-wrap', padding: '24px 0',
-      borderTop: '0.5px solid rgba(255,255,255,0.06)', marginTop: 16,
-    }}>
+    <div className="content-viewer__body">
       {content}
     </div>
   );

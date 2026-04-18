@@ -25,9 +25,17 @@ $border-hover:    rgba(255, 255, 255, 0.1);
 $border-accent:   rgba(232, 98, 58, 0.3);
 
 // Semantic
-$color-owned:     #5DCAA5;
-$color-locked:    rgba(240, 235, 228, 0.3);
-$color-sui:       #6FBCF0;
+$color-owned:       #5DCAA5;
+$color-owned-soft:  rgba(93, 202, 165, 0.06);
+$color-owned-border: rgba(93, 202, 165, 0.3);
+$color-locked:      rgba(240, 235, 228, 0.3);
+$color-sui:         #6FBCF0;
+$color-error:       #ff7070;
+$color-error-soft:  rgba(255, 70, 70, 0.08);
+$color-error-border: rgba(255, 70, 70, 0.2);
+
+// Surfaces
+$bg-menu:           #111118;
 
 // ─── Spacing & Shape ──────────────────────────────────────────────────────────
 

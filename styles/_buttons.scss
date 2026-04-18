@@ -19,6 +19,17 @@
     transform: none !important;
   }
 
+  &--full {
+    width: 100%;
+    height: 44px;
+    font-size: 14px;
+  }
+
+  &--sm {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
   &--primary {
     padding: 7px 16px;
     background: $accent;
@@ -68,8 +79,8 @@
   &--danger {
     padding: 7px 16px;
     background: rgba(255, 70, 70, 0.12);
-    border: 0.5px solid rgba(255, 70, 70, 0.2);
-    color: #ff7070;
+    border: 0.5px solid $color-error-border;
+    color: $color-error;
     font-size: 13px;
 
     &:hover:not(:disabled) { background: rgba(255, 70, 70, 0.18); }
