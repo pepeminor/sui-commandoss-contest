@@ -4,8 +4,9 @@ import { useRef } from 'react';
 import { shortenAddress } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nProvider';
 
-interface Artist {
+export interface Artist {
   address: string;
+  name?: string;
   postCount: number;
 }
 
@@ -213,7 +214,7 @@ export function ArtistCarousel({ artists, selected, onSelect }: ArtistCarouselPr
               <div className="artist-card__art">
                 <ArtistArt address={artist.address} size={200} />
               </div>
-              <div className="artist-card__name">{shortenAddress(artist.address)}</div>
+              <div className="artist-card__name">{artist.name ?? shortenAddress(artist.address)}</div>
             </button>
           ))}
         </div>
