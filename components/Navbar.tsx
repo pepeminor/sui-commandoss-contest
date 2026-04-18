@@ -23,10 +23,11 @@ export function Navbar() {
   const links = [
     { href: '/', label: t('nav.feed') },
     ...(isClient && isLoggedIn ? [
-      { href: '/create', label: t('nav.publish') },
       { href: '/library', label: t('nav.library') },
     ] : []),
   ];
+
+  const showPublish = isClient && isLoggedIn;
 
   const handleCopy = () => {
     if (!address) return;
@@ -70,6 +71,17 @@ export function Navbar() {
         </div>
 
         <div className="navbar__right navbar__right--desktop">
+          {showPublish && (
+            <Link
+              href="/create"
+              className={`navbar__publish${pathname === '/create' ? ' navbar__publish--active' : ''}`}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="navbar__publish-icon">
+                <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              </svg>
+              {t('nav.publish')}
+            </Link>
+          )}
           <button
             className="navbar__lang"
             onClick={() => setLocale(locale === 'en' ? 'vi' : 'en')}
@@ -179,6 +191,15 @@ export function Navbar() {
           {t('nav.logoutConfirmDesc')}
         </p>
       </Modal>
+
+      {/* Mobile FAB — Publish */}
+      {showPublish && pathname !== '/create' && (
+        <Link href="/create" className="fab-publish" aria-label={t('nav.publish')}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+          </svg>
+        </Link>
+      )}
     </>
   );
 }
