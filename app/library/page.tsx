@@ -10,7 +10,7 @@ import { timeAgo } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nProvider';
 
 function LibraryContent() {
-  const { data: nfts, isLoading } = useMyNFTs();
+  const { data: nfts, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useMyNFTs();
   const { t } = useI18n();
 
   return (
@@ -20,13 +20,13 @@ function LibraryContent() {
         <div className="page-header">
           <div className="page-header__title">{t('library.title')}</div>
           <p className="page-header__sub">
-            {t('library.subtitle', { count: nfts?.length ?? 0 })}
+            {t('library.subtitle', { count: nfts.length })}
           </p>
         </div>
 
         {isLoading && <SkeletonList count={3} height={80} />}
 
-        {!isLoading && nfts?.length === 0 && (
+        {!isLoading && nfts.length === 0 && (
           <EmptyState
             icon="📖"
             title={t('library.empty')}
@@ -35,7 +35,7 @@ function LibraryContent() {
         )}
 
         {!isLoading &&
-          nfts?.map((nft) => (
+          nfts.map((nft) => (
             <Link
               key={nft.objectId}
               href={`/post/${nft.postId}`}
@@ -57,6 +57,20 @@ function LibraryContent() {
               </div>
             </Link>
           ))}
+
+        {hasNextPage && (
+          <div className="load-more">
+            <button
+              className="btn btn--ghost load-more__btn"
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+            >
+              {isFetchingNextPage ? t('library.loading') : t('library.loadMore')}
+            </button>
+          </div>
+        )}
+
+        {isFetchingNextPage && <SkeletonList count={2} height={80} />}
       </div>
     </div>
   );

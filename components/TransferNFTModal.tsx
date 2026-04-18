@@ -10,7 +10,7 @@ import { useToast } from './Toast';
 import { useI18n } from '@/i18n/I18nProvider';
 import { suiClient } from '@/lib/sui-client';
 import { shortenAddress } from '@/lib/utils';
-import { parseTransactionError } from '@/lib/errors';
+import { parseTransactionErrorI18n } from '@/lib/errors';
 import { type NFTData } from '@/hooks/useMyNFTs';
 
 interface TransferNFTModalProps {
@@ -44,11 +44,13 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
           signer,
         });
       } catch (e) {
-        throw new Error(parseTransactionError(e));
+        const { key, params } = parseTransactionErrorI18n(e);
+        throw new Error(t(key, params));
       }
 
       if (result.$kind === 'FailedTransaction') {
-        throw new Error(parseTransactionError(result.FailedTransaction?.status?.error));
+        const { key, params } = parseTransactionErrorI18n(result.FailedTransaction?.status?.error);
+        throw new Error(t(key, params));
       }
 
       await suiClient.core.waitForTransaction({ result });

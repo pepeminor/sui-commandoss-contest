@@ -64,7 +64,9 @@ export function MintButton({ postId, price, soldOut }: MintButtonProps) {
 
       {isError && (
         <p className="error-text">
-          {error instanceof Error ? error.message : 'Transaction failed'}
+          {error && 'i18n' in error
+            ? t((error as any).i18n.key, (error as any).i18n.params)
+            : error instanceof Error ? error.message : t('error.txFailed')}
         </p>
       )}
 

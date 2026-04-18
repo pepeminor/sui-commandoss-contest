@@ -72,6 +72,8 @@
   "library.loginDesc": "Login to see your purchased posts",
   "library.empty": "No posts yet",
   "library.emptyDesc": "Visit the Feed to discover and buy NFTs",
+  "library.loadMore": "Load more",
+  "library.loading": "Loading...",
 
   "decrypt.loading": "Decrypting content...",
   "decrypt.error": "Failed to decrypt content. Try again later.",

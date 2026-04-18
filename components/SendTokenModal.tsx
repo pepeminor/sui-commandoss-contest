@@ -8,7 +8,7 @@ import { useAuth } from '@/auth/useAuth';
 import { useToast } from './Toast';
 import { useI18n } from '@/i18n/I18nProvider';
 import { suiClient } from '@/lib/sui-client';
-import { parseTransactionError } from '@/lib/errors';
+import { parseTransactionErrorI18n } from '@/lib/errors';
 import { type TokenBalance, formatTokenAmount } from '@/hooks/useTokenBalances';
 
 interface SendTokenModalProps {
@@ -67,11 +67,13 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
           signer,
         });
       } catch (e) {
-        throw new Error(parseTransactionError(e));
+        const { key, params } = parseTransactionErrorI18n(e);
+        throw new Error(t(key, params));
       }
 
       if (result.$kind === 'FailedTransaction') {
-        throw new Error(parseTransactionError(result.FailedTransaction?.status?.error));
+        const { key, params } = parseTransactionErrorI18n(result.FailedTransaction?.status?.error);
+        throw new Error(t(key, params));
       }
 
       await suiClient.core.waitForTransaction({ result });
@@ -168,8 +170,8 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
               </div>
               <div className="info-divider" />
               <div className="info-row">
-                <span className="info-row__label">{t('wallet.to')}</span>
-                <span className="wallet__token-type" style={{ fontSize: 11 }}>{recipient}</span>
+                <span className="info-row__label" style={{ flexShrink: 0, marginRight: 10 }}>{t('wallet.to')}</span>
+                <span className="info-row__value--mono" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{recipient}</span>
               </div>
             </div>
 

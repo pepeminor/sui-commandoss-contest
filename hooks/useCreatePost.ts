@@ -7,7 +7,7 @@ import { buildCreatePostTx, buildCreatePostWithMediaTx } from '@/lib/transaction
 import { encryptContent, encryptRaw } from '@/lib/seal';
 import { generateAESKey, exportKey, encryptMedia } from '@/lib/media-crypto';
 import { uploadToWalrus } from '@/lib/walrus';
-import { parseTransactionError } from '@/lib/errors';
+import { parseTransactionErrorI18n } from '@/lib/errors';
 
 export interface CreatePostInput {
   title: string;
@@ -69,11 +69,13 @@ export function useCreatePost() {
         try {
           result = await suiClient.signAndExecuteTransaction({ transaction: tx, signer });
         } catch (e) {
-          throw new Error(parseTransactionError(e));
+          const parsed = parseTransactionErrorI18n(e);
+          throw Object.assign(new Error(parsed.key), { i18n: parsed });
         }
 
         if (result.$kind === 'FailedTransaction') {
-          throw new Error(parseTransactionError(result.FailedTransaction?.status?.error));
+          const parsed = parseTransactionErrorI18n(result.FailedTransaction?.status?.error);
+          throw Object.assign(new Error(parsed.key), { i18n: parsed });
         }
 
         await suiClient.core.waitForTransaction({ result });
@@ -91,11 +93,13 @@ export function useCreatePost() {
         try {
           result = await suiClient.signAndExecuteTransaction({ transaction: tx, signer });
         } catch (e) {
-          throw new Error(parseTransactionError(e));
+          const parsed = parseTransactionErrorI18n(e);
+          throw Object.assign(new Error(parsed.key), { i18n: parsed });
         }
 
         if (result.$kind === 'FailedTransaction') {
-          throw new Error(parseTransactionError(result.FailedTransaction?.status?.error));
+          const parsed = parseTransactionErrorI18n(result.FailedTransaction?.status?.error);
+          throw Object.assign(new Error(parsed.key), { i18n: parsed });
         }
 
         await suiClient.core.waitForTransaction({ result });

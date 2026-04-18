@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Transaction } from '@mysten/sui/transactions';
 import { useAuth } from '@/auth/useAuth';
 import { suiClient } from '@/lib/sui-client';
-import { parseTransactionError } from '@/lib/errors';
+import { parseTransactionErrorI18n } from '@/lib/errors';
 
 interface ExecuteOptions {
   buildTx: () => Transaction | Promise<Transaction>;
@@ -32,11 +32,13 @@ export function useExecuteTransaction() {
           signer,
         });
       } catch (e) {
-        throw new Error(parseTransactionError(e));
+        const parsed = parseTransactionErrorI18n(e);
+        throw Object.assign(new Error(parsed.key), { i18n: parsed });
       }
 
       if (result.$kind === 'FailedTransaction') {
-        throw new Error(parseTransactionError(result.FailedTransaction?.status?.error));
+        const parsed = parseTransactionErrorI18n(result.FailedTransaction?.status?.error);
+        throw Object.assign(new Error(parsed.key), { i18n: parsed });
       }
 
       await suiClient.core.waitForTransaction({ result });
