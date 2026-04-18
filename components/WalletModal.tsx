@@ -12,6 +12,7 @@ import { shortenAddress, timeAgo } from '@/lib/utils';
 import { SendTokenModal } from './SendTokenModal';
 import { TransferNFTModal } from './TransferNFTModal';
 import { type NFTData } from '@/hooks/useMyNFTs';
+import { useRouter } from 'next/navigation';
 
 interface WalletModalProps {
   open: boolean;
@@ -28,6 +29,7 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
   const { t } = useI18n();
   const [tab, setTab] = useState<Tab>('tokens');
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
+  const router = useRouter();
   const [sendOpen, setSendOpen] = useState(false);
   const [transferNft, setTransferNft] = useState<NFTData | null>(null);
 
@@ -154,20 +156,22 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
                 </div>
               )}
               {nfts?.map((nft) => (
-                <button
-                  key={nft.objectId}
-                  className="wallet__nft-row"
-                  onClick={() => setTransferNft(nft)}
-                >
+                <div key={nft.objectId} className="wallet__nft-row" onClick={() => { onClose(); router.push(`/post/${nft.postId}`); }}>
                   <div className="wallet__nft-icon">🎵</div>
                   <div className="wallet__token-info">
                     <span className="wallet__token-symbol">{nft.postTitle}</span>
                     <span className="wallet__token-type">Edition #{nft.edition} · {timeAgo(nft.mintedAt)}</span>
                   </div>
+                  <button
+                    className="wallet__nft-transfer"
+                    onClick={(e) => { e.stopPropagation(); setTransferNft(nft); }}
+                  >
+                    {t('wallet.transferTitle')}
+                  </button>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="wallet__nft-arrow">
                     <path d="M9 18l6-6-6-6" />
                   </svg>
-                </button>
+                </div>
               ))}
             </div>
           )}
