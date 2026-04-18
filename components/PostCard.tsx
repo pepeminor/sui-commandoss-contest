@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import type { FeedPost } from '@/hooks/useFeed';
 import { useHasAccess } from '@/hooks/useMyNFTs';
-import { formatSUI, shortenAddress, timeAgo } from '@/lib/utils';
-import { PostArt } from './PostArt';
+import { formatSUI, shortenAddress, timeAgo, explorerObjectUrl } from '@/lib/utils';
+import { NETWORK } from '@/config';
+import { AddressAvatar } from './AddressAvatar';
 import { useI18n } from '@/i18n/I18nProvider';
 
 interface PostCardProps {
@@ -20,24 +21,56 @@ export function PostCard({ post }: PostCardProps) {
       href={`/post/${post.postId}`}
       className={`post-card${hasAccess ? ' post-card--owned' : ''}`}
     >
-      <div className="post-card__art">
-        <PostArt postId={post.postId} />
-        {hasAccess && (
-          <span className="post-card__owned-dot" title={t('post.owned')} />
-        )}
-      </div>
+      <div className="post-card__inner">
+        <AddressAvatar address={post.author} size={38} />
 
-      <div className="post-card__body">
-        <div className="post-card__title">{post.title}</div>
-        <div className="post-card__author">{shortenAddress(post.author)}</div>
-        <div className="post-card__row">
-          <span className="post-card__price">
-            {formatSUI(post.price)} SUI
-          </span>
-          <span className="post-card__meta">
-            {timeAgo(post.createdAt)}
-            {post.maxSupply > 0 && <> &middot; {post.maxSupply} max</>}
-          </span>
+        <div className="post-card__content">
+          <div className="post-card__header">
+            <div className="post-card__meta">
+              <span>{shortenAddress(post.author)}</span>
+              <span className="post-card__dot" />
+              <span>{timeAgo(post.createdAt)}</span>
+            </div>
+
+            <span className={`badge badge--${hasAccess ? 'owned' : 'locked'}`}>
+              {hasAccess ? `✓ ${t('post.owned')}` : `🔒 ${t('post.locked')}`}
+            </span>
+          </div>
+
+          <div className="post-card__title">{post.title}</div>
+
+          <div className={`post-card__preview${hasAccess ? '' : ' post-card__preview--locked'}`}>
+            {t('post.preview')}
+          </div>
+
+          <div className="post-card__footer">
+            <div className="post-card__price">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="10" />
+              </svg>
+              {formatSUI(post.price)} SUI
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <a
+                href={explorerObjectUrl(post.postId, NETWORK)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="post-card__explorer"
+                title={t('post.viewOnChain')}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+              </a>
+              <span className="post-card__supply">
+                {post.maxSupply > 0 ? `${post.maxSupply} max` : '∞'}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </Link>
