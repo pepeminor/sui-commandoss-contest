@@ -4,8 +4,8 @@
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,14 +14,16 @@
 }
 
 .modal {
-  background: #111118;
-  border: 0.5px solid $border-hover;
+  background: $bg-menu;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
   border-radius: $radius-lg;
   width: 100%;
   max-width: 420px;
   max-height: 90vh;
   overflow-y: auto;
   animation: modal-slide-up $duration-normal $ease-out-expo;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5),
+              0 0 0 0.5px rgba(255, 255, 255, 0.05);
 
   &__header {
     display: flex;
