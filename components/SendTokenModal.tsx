@@ -98,7 +98,11 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
     onClose();
   };
 
-  const isValid = recipient.startsWith('0x') && recipient.length >= 42 && parseFloat(amount) > 0;
+  const isSelfSend = !!address && recipient === address;
+  const parsedAmount = parseFloat(amount) || 0;
+  const availableBalance = selected ? Number(selected.totalBalance) / 10 ** selected.decimals : 0;
+  const exceedsBalance = parsedAmount > availableBalance;
+  const isValid = recipient.startsWith('0x') && recipient.length >= 42 && parsedAmount > 0 && !isSelfSend && !exceedsBalance;
 
   return (
     <Modal open={open} onClose={handleClose} title={t('wallet.sendTitle')}>
@@ -128,6 +132,9 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value.trim())}
               />
+              {isSelfSend && (
+                <span className="form-hint form-hint--error">{t('wallet.cannotSendSelf')}</span>
+              )}
             </div>
 
             <div className="form-group">
