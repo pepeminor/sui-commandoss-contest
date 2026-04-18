@@ -115,5 +115,27 @@
   "error.insufficientPayment": "Số tiền không đủ để mint NFT này.",
   "error.wrongPost": "NFT không thuộc bài viết này.",
   "error.txFailed": "Giao dịch thất bại. Vui lòng thử lại.",
-  "error.txFailedDetail": "Giao dịch thất bại: {detail}"
+  "error.txFailedDetail": "Giao dịch thất bại: {detail}",
+
+  "feed.loadMore": "Xem thêm",
+  "feed.loading": "Đang tải...",
+
+  "nav.dashboard": "Dashboard",
+
+  "dashboard.title": "Dashboard",
+  "dashboard.subtitle": "Quản lý bài viết và theo dõi doanh thu",
+  "dashboard.loginRequired": "Artist Dashboard",
+  "dashboard.loginDesc": "Đăng nhập để quản lý bài viết",
+  "dashboard.totalPosts": "Bài viết",
+  "dashboard.totalSold": "Đã bán",
+  "dashboard.totalRevenue": "Doanh thu",
+  "dashboard.empty": "Chưa có bài nào",
+  "dashboard.emptyDesc": "Publish bài đầu tiên để bắt đầu kiếm tiền",
+  "dashboard.sortNewest": "Mới nhất",
+  "dashboard.sortMostSold": "Bán nhiều nhất",
+  "dashboard.sortRevenue": "Doanh thu",
+  "dashboard.sold": "đã bán",
+  "dashboard.revenue": "doanh thu",
+  "dashboard.loadMore": "Xem thêm",
+  "dashboard.loading": "Đang tải..."
 }

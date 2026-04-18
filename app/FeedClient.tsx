@@ -8,7 +8,7 @@ import { PACKAGE_ID } from '@/config';
 import { useI18n } from '@/i18n/I18nProvider';
 
 export function FeedClient() {
-  const { data: posts, isLoading, isError } = useFeed();
+  const { data: posts, isLoading, isError, hasNextPage, isFetchingNextPage, fetchNextPage } = useFeed();
   const { t } = useI18n();
 
   if (!PACKAGE_ID) {
@@ -35,6 +35,20 @@ export function FeedClient() {
       )}
 
       {!isLoading && posts?.map((post) => <PostCard key={post.postId} post={post} />)}
+
+      {hasNextPage && (
+        <div className="load-more">
+          <button
+            className="btn btn--ghost load-more__btn"
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+          >
+            {isFetchingNextPage ? t('feed.loading') : t('feed.loadMore')}
+          </button>
+        </div>
+      )}
+
+      {isFetchingNextPage && <SkeletonList count={2} height={120} />}
     </div>
   );
 }

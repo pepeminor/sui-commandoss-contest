@@ -115,5 +115,27 @@
   "error.insufficientPayment": "Insufficient amount to mint this NFT.",
   "error.wrongPost": "NFT does not belong to this post.",
   "error.txFailed": "Transaction failed. Please try again.",
-  "error.txFailedDetail": "Transaction failed: {detail}"
+  "error.txFailedDetail": "Transaction failed: {detail}",
+
+  "feed.loadMore": "Load more",
+  "feed.loading": "Loading...",
+
+  "nav.dashboard": "Dashboard",
+
+  "dashboard.title": "Dashboard",
+  "dashboard.subtitle": "Manage your posts and track revenue",
+  "dashboard.loginRequired": "Artist Dashboard",
+  "dashboard.loginDesc": "Login to manage your posts",
+  "dashboard.totalPosts": "Posts",
+  "dashboard.totalSold": "Sold",
+  "dashboard.totalRevenue": "Revenue",
+  "dashboard.empty": "No posts yet",
+  "dashboard.emptyDesc": "Publish your first post to start earning",
+  "dashboard.sortNewest": "Newest",
+  "dashboard.sortMostSold": "Most sold",
+  "dashboard.sortRevenue": "Revenue",
+  "dashboard.sold": "sold",
+  "dashboard.revenue": "revenue",
+  "dashboard.loadMore": "Load more",
+  "dashboard.loading": "Loading..."
 }

@@ -27,6 +27,7 @@ export function Navbar() {
     { href: '/', label: t('nav.feed') },
     ...(isClient && isLoggedIn ? [
       { href: '/library', label: t('nav.library') },
+      { href: '/dashboard', label: t('nav.dashboard') },
     ] : []),
   ];
 

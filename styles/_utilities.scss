@@ -288,3 +288,131 @@
     pointer-events: none;
   }
 }
+
+// ─── Load more ──────────────────────────────────────────────────────────────
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0 8px;
+
+  &__btn {
+    min-width: 140px;
+  }
+}
+
+// ─── Dashboard ──────────────────────────────────────────────────────────────
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.dashboard-sort {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+
+  &__btn {
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    border: 0.5px solid $border;
+    border-radius: 99px;
+    background: transparent;
+    color: $text-muted;
+    cursor: pointer;
+    transition: all $duration-fast;
+    font-family: $font-base;
+
+    &:hover {
+      border-color: $border-hover;
+      color: $text-secondary;
+    }
+
+    &--active {
+      background: $accent-soft;
+      border-color: $accent-border;
+      color: $accent;
+    }
+  }
+}
+
+.dashboard-post {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: $bg-card;
+  border: 0.5px solid $border;
+  border-radius: $radius-lg;
+  margin-bottom: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color $duration-fast, background $duration-fast, transform $duration-fast;
+
+  &:hover {
+    border-color: $border-accent;
+    background: $bg-card-hover;
+    transform: translateY(-1px);
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-primary;
+    letter-spacing: -0.2px;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: $text-muted;
+  }
+
+  &__meta-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: $text-hint;
+  }
+
+  &__stats {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+
+  &__stat {
+    text-align: right;
+  }
+
+  &__stat-value {
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  &__stat-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $text-hint;
+  }
+}
