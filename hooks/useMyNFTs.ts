@@ -28,7 +28,7 @@ export function useMyNFTs() {
         include: { json: true },
       });
 
-      return resp.objects.flatMap((obj) => {
+      const nfts = resp.objects.flatMap((obj) => {
         const fields = obj.json as Record<string, unknown> | null;
         if (!fields) return [];
         return [{
@@ -40,6 +40,7 @@ export function useMyNFTs() {
           mintedAt:  Number(fields.minted_at ?? 0),
         }];
       });
+      return nfts.sort((a, b) => b.mintedAt - a.mintedAt);
     },
     enabled: !!address && !!PACKAGE_ID,
     staleTime: 15_000,
