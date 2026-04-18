@@ -41,7 +41,7 @@ export function AuthGuard({ children, icon, messageKey, descKey }: AuthGuardProp
             </p>
           )}
           <button className="btn btn--primary" onClick={login}>
-            Login with Google
+            {t('nav.login')}
           </button>
         </div>
       </PageLayout>

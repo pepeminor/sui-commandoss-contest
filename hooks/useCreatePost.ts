@@ -2,12 +2,11 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/auth/useAuth';
-import { suiClient } from '@/lib/sui-client';
+import { signAndExecute } from '@/lib/sui-client';
 import { buildCreatePostTx, buildCreatePostWithMediaTx } from '@/lib/transactions';
 import { encryptContent, encryptRaw } from '@/lib/seal';
 import { generateAESKey, exportKey, encryptMedia } from '@/lib/media-crypto';
 import { uploadToWalrus } from '@/lib/walrus';
-import { parseTransactionErrorI18n } from '@/lib/errors';
 
 export interface CreatePostInput {
   title: string;
@@ -27,84 +26,35 @@ export function useCreatePost() {
       if (!address) throw new Error('Not logged in');
 
       const signer = await getSigner();
+      const encryptedContent = await encryptContent(content);
 
+      let tx;
       if (audioFile) {
-        // ── Audio post flow ──────────────────────────────────────────────
         onUploadProgress?.('encrypt', 0);
-
-        // 1. Generate AES key & encrypt audio
         const aesKey = await generateAESKey();
         const audioBuffer = await audioFile.arrayBuffer();
         const encryptedAudio = await encryptMedia(audioBuffer, aesKey);
 
         onUploadProgress?.('upload', 0.2);
-
-        // 2. Upload encrypted audio to Walrus
         const { blobId } = await uploadToWalrus(encryptedAudio);
 
         onUploadProgress?.('seal', 0.6);
-
-        // 3. Seal-encrypt the AES key (32 bytes — fast)
         const rawKey = await exportKey(aesKey);
         const sealedKey = await encryptRaw(rawKey);
 
-        // 4. Encrypt text content with Seal (lyrics/description)
-        const encryptedContent = await encryptContent(content);
-
         onUploadProgress?.('chain', 0.8);
-
-        // 5. Build and submit transaction
-        const tx = buildCreatePostWithMediaTx({
-          title,
-          encryptedContent,
-          mediaType: 1, // audio
-          mediaBlobId: blobId,
-          encryptionKey: sealedKey,
-          price,
-          maxSupply,
+        tx = buildCreatePostWithMediaTx({
+          title, encryptedContent,
+          mediaType: 1, mediaBlobId: blobId, encryptionKey: sealedKey,
+          price, maxSupply,
         });
-        tx.setSender(address);
-
-        let result;
-        try {
-          result = await suiClient.signAndExecuteTransaction({ transaction: tx, signer });
-        } catch (e) {
-          const parsed = parseTransactionErrorI18n(e);
-          throw Object.assign(new Error(parsed.key), { i18n: parsed });
-        }
-
-        if (result.$kind === 'FailedTransaction') {
-          const parsed = parseTransactionErrorI18n(result.FailedTransaction?.status?.error);
-          throw Object.assign(new Error(parsed.key), { i18n: parsed });
-        }
-
-        await suiClient.core.waitForTransaction({ result });
-        onUploadProgress?.('done', 1);
-        return result;
-
       } else {
-        // ── Text-only post flow (unchanged) ──────────────────────────────
-        const encryptedContent = await encryptContent(content);
-
-        const tx = buildCreatePostTx({ title, encryptedContent, price, maxSupply });
-        tx.setSender(address);
-
-        let result;
-        try {
-          result = await suiClient.signAndExecuteTransaction({ transaction: tx, signer });
-        } catch (e) {
-          const parsed = parseTransactionErrorI18n(e);
-          throw Object.assign(new Error(parsed.key), { i18n: parsed });
-        }
-
-        if (result.$kind === 'FailedTransaction') {
-          const parsed = parseTransactionErrorI18n(result.FailedTransaction?.status?.error);
-          throw Object.assign(new Error(parsed.key), { i18n: parsed });
-        }
-
-        await suiClient.core.waitForTransaction({ result });
-        return result;
+        tx = buildCreatePostTx({ title, encryptedContent, price, maxSupply });
       }
+
+      const result = await signAndExecute(tx, signer, address);
+      if (audioFile) onUploadProgress?.('done', 1);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feed'] });

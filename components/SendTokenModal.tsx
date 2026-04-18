@@ -7,8 +7,7 @@ import { Modal } from './Modal';
 import { useAuth } from '@/auth/useAuth';
 import { useToast } from './Toast';
 import { useI18n } from '@/i18n/I18nProvider';
-import { suiClient } from '@/lib/sui-client';
-import { parseTransactionErrorI18n } from '@/lib/errors';
+import { signAndExecute } from '@/lib/sui-client';
 import { type TokenBalance, formatTokenAmount } from '@/hooks/useTokenBalances';
 
 interface SendTokenModalProps {
@@ -38,7 +37,6 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
       const amountMist = BigInt(Math.round(parseFloat(amount) * 10 ** selected.decimals));
 
       const tx = new Transaction();
-      tx.setSender(address);
 
       // coinWithBalance auto-resolves coin lookup, merging, and splitting.
       // For SUI it uses the gas coin; for other types it finds owned coins.
@@ -49,24 +47,7 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
       });
       tx.transferObjects([coin], recipient);
 
-      let result;
-      try {
-        result = await suiClient.signAndExecuteTransaction({
-          transaction: tx,
-          signer,
-        });
-      } catch (e) {
-        const { key, params } = parseTransactionErrorI18n(e);
-        throw new Error(t(key, params));
-      }
-
-      if (result.$kind === 'FailedTransaction') {
-        const { key, params } = parseTransactionErrorI18n(result.FailedTransaction?.status?.error);
-        throw new Error(t(key, params));
-      }
-
-      await suiClient.core.waitForTransaction({ result });
-      return result;
+      return signAndExecute(tx, signer, address);
     },
     onSuccess: () => {
       toast(t('wallet.sendSuccess'), 'success');

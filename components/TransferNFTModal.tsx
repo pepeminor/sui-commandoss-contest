@@ -8,9 +8,8 @@ import { WarningBanner } from './WarningBanner';
 import { useAuth } from '@/auth/useAuth';
 import { useToast } from './Toast';
 import { useI18n } from '@/i18n/I18nProvider';
-import { suiClient } from '@/lib/sui-client';
+import { signAndExecute } from '@/lib/sui-client';
 import { shortenAddress } from '@/lib/utils';
-import { parseTransactionErrorI18n } from '@/lib/errors';
 import { type NFTData } from '@/hooks/useMyNFTs';
 
 interface TransferNFTModalProps {
@@ -34,27 +33,9 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
 
       const signer = await getSigner();
       const tx = new Transaction();
-      tx.setSender(address);
       tx.transferObjects([tx.object(nft.objectId)], recipient);
 
-      let result;
-      try {
-        result = await suiClient.signAndExecuteTransaction({
-          transaction: tx,
-          signer,
-        });
-      } catch (e) {
-        const { key, params } = parseTransactionErrorI18n(e);
-        throw new Error(t(key, params));
-      }
-
-      if (result.$kind === 'FailedTransaction') {
-        const { key, params } = parseTransactionErrorI18n(result.FailedTransaction?.status?.error);
-        throw new Error(t(key, params));
-      }
-
-      await suiClient.core.waitForTransaction({ result });
-      return result;
+      return signAndExecute(tx, signer, address);
     },
     onSuccess: () => {
       toast(t('wallet.transferSuccess'), 'success');

@@ -34,3 +34,19 @@ export function timeAgo(ms: number | string): string {
 export function explorerObjectUrl(objectId: string, network: string = 'testnet'): string {
   return `https://suiscan.xyz/${network}/object/${objectId}`;
 }
+
+/** Hash a string to a 32-bit unsigned integer (deterministic) */
+export function hashCode(str: string): number {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = (h * 31 + str.charCodeAt(i)) >>> 0;
+  }
+  return h;
+}
+
+/** Get a deterministic byte (0-255) from a hex address at a given index */
+export function getByte(address: string, index: number): number {
+  const hex = address.replace(/^0x/, '');
+  const pos = (index * 2) % hex.length;
+  return parseInt(hex.slice(pos, pos + 2) || '00', 16);
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { shortenAddress } from '@/lib/utils';
+import { shortenAddress, hashCode, getByte } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nProvider';
 
 export interface Artist {
@@ -28,20 +28,6 @@ const COLORS = [
   ['#6EE8B7', '#06D6A0', '#118AB2'],
   ['#F0997B', '#E63946', '#A8DADC'],
 ] as const;
-
-function hashCode(str: string): number {
-  let h = 0;
-  for (let i = 0; i < str.length; i++) {
-    h = (h * 31 + str.charCodeAt(i)) >>> 0;
-  }
-  return h;
-}
-
-function getByte(address: string, index: number): number {
-  const hex = address.replace(/^0x/, '');
-  const pos = (index * 2) % hex.length;
-  return parseInt(hex.slice(pos, pos + 2) || '00', 16);
-}
 
 function ArtistArt({ address, size }: { address: string; size: number }) {
   const hash = hashCode(address);

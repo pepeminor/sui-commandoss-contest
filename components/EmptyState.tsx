@@ -14,9 +14,7 @@ export function EmptyState({ icon, title, desc }: EmptyStateProps) {
       {icon && <div className="empty-state__icon">{icon}</div>}
       <div className="empty-state__title">{title}</div>
       {desc && (
-        <p className="empty-state__desc">
-          {typeof desc === 'string' ? desc : desc}
-        </p>
+        <p className="empty-state__desc">{desc}</p>
       )}
     </div>
   );

@@ -1,3 +1,5 @@
+import { hashCode } from '@/lib/utils';
+
 export interface MockComment {
   id: string;
   address: string;
@@ -64,14 +66,6 @@ const FAKE_ADDRESSES = [
   '0xfa9d5c0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c',
   '0xfaae6d1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d',
 ];
-
-function hashCode(str: string): number {
-  let h = 0;
-  for (let i = 0; i < str.length; i++) {
-    h = (h * 31 + str.charCodeAt(i)) >>> 0;
-  }
-  return h;
-}
 
 export function getSeededComments(postId: string, count = 6): MockComment[] {
   const hash = hashCode(postId);
