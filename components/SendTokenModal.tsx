@@ -41,6 +41,23 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
       tx.setSender(address);
 
       if (selected.coinType === '0x2::sui::SUI') {
+        // Fetch all SUI coins and provide them as gas payment so the SDK
+        // merges fragmented coins into a single gas coin. Without this,
+        // the SDK picks one coin which may not cover amount + gas.
+        const { objects: suiCoins } = await suiClient.core.listCoins({
+          owner: address,
+          coinType: '0x2::sui::SUI',
+          limit: 50,
+        });
+
+        if (suiCoins.length) {
+          tx.setGasPayment(suiCoins.map((c) => ({
+            objectId: c.objectId,
+            version: c.version,
+            digest: c.digest,
+          })));
+        }
+
         const [coin] = tx.splitCoins(tx.gas, [amountMist]);
         tx.transferObjects([coin], recipient);
       } else {
