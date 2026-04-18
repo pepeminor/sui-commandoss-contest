@@ -241,6 +241,33 @@
     font-size: 13px;
     color: $text-muted;
   }
+
+  &__logout-section {
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 0.5px solid $border;
+  }
+
+  &__logout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 12px;
+    background: none;
+    border: 0.5px solid $color-error-border;
+    border-radius: $radius-sm;
+    color: $color-error;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: $font-base;
+    cursor: pointer;
+    transition: background $duration-fast ease;
+
+    &:hover {
+      background: $color-error-soft;
+    }
+  }
 }
 
 // ─── Transfer Warning ────────────────────────────────────────────────────────

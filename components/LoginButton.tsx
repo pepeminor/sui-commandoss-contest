@@ -7,7 +7,7 @@ import { useIsClient } from '@/hooks/useIsClient';
 import { useWalletModal } from './WalletModalProvider';
 
 export function LoginButton() {
-  const { address, isLoggedIn, login, logout } = useAuth();
+  const { address, isLoggedIn, login } = useAuth();
   const { t } = useI18n();
   const isClient = useIsClient();
   const { openWallet } = useWalletModal();
@@ -24,18 +24,13 @@ export function LoginButton() {
 
   if (isLoggedIn && address) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <button
-          className="navbar__address"
-          onClick={openWallet}
-          title={address}
-        >
-          {shortenAddress(address)}
-        </button>
-        <button className="btn btn--ghost btn--sm" onClick={logout}>
-          {t('nav.logout')}
-        </button>
-      </div>
+      <button
+        className="navbar__address"
+        onClick={openWallet}
+        title={address}
+      >
+        {shortenAddress(address)}
+      </button>
     );
   }
 

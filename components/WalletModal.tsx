@@ -22,7 +22,7 @@ interface WalletModalProps {
 type Tab = 'tokens' | 'nfts';
 
 export function WalletModal({ open, onClose }: WalletModalProps) {
-  const { address } = useAuth();
+  const { address, logout } = useAuth();
   const { data: balances, isLoading: balancesLoading } = useTokenBalances();
   const { data: nfts, isLoading: nftsLoading } = useMyNFTs();
   const { toast } = useToast();
@@ -32,6 +32,13 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
   const router = useRouter();
   const [sendOpen, setSendOpen] = useState(false);
   const [transferNft, setTransferNft] = useState<NFTData | null>(null);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const handleLogout = () => {
+    setShowLogoutConfirm(false);
+    onClose();
+    logout();
+  };
 
   useEffect(() => {
     if (!address || !open) return;
@@ -175,7 +182,40 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
               ))}
             </div>
           )}
+
+          {/* Logout */}
+          <div className="wallet__logout-section">
+            <button className="wallet__logout" onClick={() => setShowLogoutConfirm(true)}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              {t('nav.logout')}
+            </button>
+          </div>
         </div>
+      </Modal>
+
+      {/* Logout confirm */}
+      <Modal
+        open={showLogoutConfirm}
+        onClose={() => setShowLogoutConfirm(false)}
+        title={t('nav.logoutConfirmTitle')}
+        actions={
+          <>
+            <button className="btn btn--ghost" onClick={() => setShowLogoutConfirm(false)}>
+              {t('common.cancel')}
+            </button>
+            <button className="btn btn--danger" onClick={handleLogout}>
+              {t('nav.logout')}
+            </button>
+          </>
+        }
+      >
+        <p className="hint-text" style={{ fontSize: 13 }}>
+          {t('nav.logoutConfirmDesc')}
+        </p>
       </Modal>
 
       <SendTokenModal
