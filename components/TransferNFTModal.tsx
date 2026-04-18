@@ -60,6 +60,7 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
     onSuccess: () => {
       toast(t('wallet.transferSuccess'), 'success');
       queryClient.invalidateQueries({ queryKey: ['myNFTs'] });
+      queryClient.invalidateQueries({ queryKey: ['myNFTs:all'] });
       handleClose();
     },
     onError: (err) => {

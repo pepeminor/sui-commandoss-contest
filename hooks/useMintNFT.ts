@@ -39,6 +39,7 @@ export function useMintNFT() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myNFTs'] });
+      queryClient.invalidateQueries({ queryKey: ['myNFTs:all'] });
       queryClient.invalidateQueries({ queryKey: ['post'] });
     },
   });
