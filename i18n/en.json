@@ -165,5 +165,6 @@
   "comments.placeholder": "What do you think about this track?",
   "comments.loginToComment": "Login to comment",
   "comments.send": "Send",
-  "comments.justNow": "just now"
+  "comments.justNow": "just now",
+  "comments.empty": "No comments yet. Be the first!"
 }

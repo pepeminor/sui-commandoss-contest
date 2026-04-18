@@ -137,7 +137,7 @@
   &__text {
     font-size: 13px;
     font-weight: 500;
-    color: #fff;
+    color: $text-primary;
     line-height: 1.55;
     margin: 0;
     word-break: break-word;
@@ -172,7 +172,7 @@
     padding: 9px 12px;
     font-size: 13px;
     font-family: $font-base;
-    color: #fff;
+    color: $text-primary;
     outline: none;
     transition: border-color $duration-fast ease;
 
@@ -201,6 +201,26 @@
     }
 
     &:disabled { opacity: 0.3; cursor: not-allowed; }
+  }
+
+  &__submit-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: comments-spin 0.6s linear infinite;
+  }
+
+  // ─── Empty / Loading states ─────────────────────────────────────────────
+
+  &__empty,
+  &__loading {
+    padding: 32px 18px;
+    text-align: center;
+    font-size: 13px;
+    color: $text-muted;
+    font-style: italic;
   }
 }
 
@@ -383,4 +403,8 @@
 @keyframes comments-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes comments-spin {
+  to { transform: rotate(360deg); }
 }
