@@ -210,11 +210,15 @@
   .comments-panel--desktop {
     position: fixed;
     right: -340px;
-    top: 56px;
+    top: 72px;
+    bottom: 86px; // above music player
     width: 320px;
-    height: calc(100vh - 56px);
+    height: auto;
     z-index: 50;
-    border-left: 0.5px solid $border;
+    border: 0.5px solid $border;
+    border-radius: $radius-lg;
+    margin-right: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     transition: right $duration-normal $ease-out-expo;
 
     &.comments-panel--open {
