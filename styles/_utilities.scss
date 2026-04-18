@@ -245,15 +245,18 @@
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
+    min-height: 24px;
+    align-items: center;
   }
 
   &__edition-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 2px 8px;
-    font-size: 13px;
+    padding: 1px 8px;
+    font-size: 14px;
     font-weight: 800;
+    line-height: 22px;
     font-family: $font-base;
     color: $color-owned;
     background: rgba(93, 202, 165, 0.1);
