@@ -80,10 +80,7 @@ function CreateContent() {
         <Navbar />
         <div className="container" style={{ paddingTop: 60, paddingBottom: 60 }}>
           <div className="success-box" style={{ borderRadius: 14, padding: '32px 24px', textAlign: 'center' }}>
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" style={{ margin: '0 auto 16px', display: 'block' }}>
-              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" className="text-owned" />
-              <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-owned" />
-            </svg>
+            <i className="ri-checkbox-circle-line text-owned" style={{ fontSize: 48, display: 'block', textAlign: 'center', marginBottom: 16 }} />
             <div className="create-success__title">{t('create.success')}</div>
             <div className="text-secondary" style={{ fontSize: 14, marginBottom: 20 }}>&ldquo;{successTitle}&rdquo;</div>
             {successDigest && (
@@ -170,20 +167,14 @@ function CreateContent() {
             {audioFile ? (
               <div className="audio-file-preview">
                 <div className="audio-file-preview__icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                    <path d="M9 18V5l12-2v13" />
-                    <circle cx="6" cy="18" r="3" fill="currentColor" />
-                    <circle cx="18" cy="16" r="3" fill="currentColor" />
-                  </svg>
+                  <i className="ri-music-2-fill" style={{ fontSize: 20 }} />
                 </div>
                 <div className="audio-file-preview__info">
                   <div className="audio-file-preview__name">{audioFile.name}</div>
                   <div className="audio-file-preview__size">{(audioFile.size / (1024 * 1024)).toFixed(1)} MB</div>
                 </div>
                 <button type="button" className="audio-file-preview__remove" onClick={removeAudio} aria-label="Remove">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                    <path d="M18 6L6 18M6 6l12 12" />
-                  </svg>
+                  <i className="ri-close-line" style={{ fontSize: 14 }} />
                 </button>
               </div>
             ) : (
@@ -195,11 +186,7 @@ function CreateContent() {
                   onChange={handleAudioSelect}
                   style={{ display: 'none' }}
                 />
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-muted">
-                  <path d="M9 18V5l12-2v13" />
-                  <circle cx="6" cy="18" r="3" />
-                  <circle cx="18" cy="16" r="3" />
-                </svg>
+                <i className="ri-music-2-line text-muted" style={{ fontSize: 24 }} />
                 <span className="text-muted" style={{ fontSize: 13 }}>{t('create.audioUploadHint')}</span>
                 <span className="text-hint" style={{ fontSize: 11 }}>{t('create.audioMaxSize')}</span>
               </label>

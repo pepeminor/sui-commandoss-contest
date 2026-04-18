@@ -77,10 +77,7 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
             )}
             <button className="wallet__address-btn" onClick={handleCopy} title={address}>
               {shortenAddress(address)}
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <rect x="9" y="9" width="13" height="13" rx="2" />
-                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-              </svg>
+              <i className="ri-file-copy-line" style={{ fontSize: 14 }} />
             </button>
           </div>
 
@@ -88,17 +85,13 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
           <div className="wallet__actions">
             <button className="wallet__action" onClick={() => setSendOpen(true)}>
               <div className="wallet__action-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M12 19V5M5 12l7-7 7 7" />
-                </svg>
+                <i className="ri-arrow-up-line" style={{ fontSize: 18 }} />
               </div>
               <span>{t('wallet.send')}</span>
             </button>
             <button className="wallet__action" onClick={handleCopy}>
               <div className="wallet__action-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M12 5v14M19 12l-7 7-7-7" />
-                </svg>
+                <i className="ri-arrow-down-line" style={{ fontSize: 18 }} />
               </div>
               <span>{t('wallet.receive')}</span>
             </button>
@@ -175,9 +168,7 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
                   >
                     {t('wallet.transferTitle')}
                   </button>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="wallet__nft-arrow">
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
+                  <i className="ri-arrow-right-s-line wallet__nft-arrow" style={{ fontSize: 16 }} />
                 </div>
               ))}
             </div>
@@ -186,11 +177,7 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
           {/* Logout */}
           <div className="wallet__logout-section">
             <button className="wallet__logout" onClick={() => setShowLogoutConfirm(true)}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>
+              <i className="ri-logout-box-r-line" style={{ fontSize: 16 }} />
               {t('nav.logout')}
             </button>
           </div>

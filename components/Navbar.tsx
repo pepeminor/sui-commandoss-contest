@@ -44,11 +44,7 @@ export function Navbar() {
       <nav className="navbar">
         <Link href="/" className="navbar__logo">
           <div className="navbar__logo-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" fill="white" />
-              <path d="M2 17l10 5 10-5" stroke="white" strokeWidth="2" fill="none" />
-              <path d="M2 12l10 5 10-5" stroke="white" strokeWidth="2" fill="none" />
-            </svg>
+            <i className="ri-stack-fill" style={{ fontSize: 14, color: 'white' }} />
           </div>
           <span className="navbar__logo-name">Verse</span>
         </Link>
@@ -72,9 +68,7 @@ export function Navbar() {
               href="/create"
               className={`navbar__publish${pathname === '/create' ? ' navbar__publish--active' : ''}`}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="navbar__publish-icon">
-                <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-              </svg>
+              <i className="ri-add-line navbar__publish-icon" style={{ fontSize: 14 }} />
               {t('nav.publish')}
             </Link>
           )}
@@ -94,13 +88,7 @@ export function Navbar() {
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Menu"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            {menuOpen ? (
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            ) : (
-              <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            )}
-          </svg>
+          <i className={menuOpen ? 'ri-close-line' : 'ri-menu-line'} style={{ fontSize: 20 }} />
         </button>
       </nav>
 
@@ -117,9 +105,7 @@ export function Navbar() {
                   title={address}
                 >
                   {shortenAddress(address)}
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ marginLeft: 'auto', opacity: 0.5 }}>
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
+                  <i className="ri-arrow-right-s-line" style={{ fontSize: 12, marginLeft: 'auto', opacity: 0.5 }} />
                 </button>
                 <div className="mobile-menu__divider" />
               </>
@@ -132,9 +118,7 @@ export function Navbar() {
                 className={`mobile-menu__publish${pathname === '/create' ? ' mobile-menu__publish--active' : ''}`}
                 onClick={() => setMenuOpen(false)}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                </svg>
+                <i className="ri-add-line" style={{ fontSize: 16 }} />
                 {t('nav.publish')}
               </Link>
             )}

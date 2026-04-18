@@ -64,14 +64,9 @@ export function MusicPlayer() {
               aria-label={isPlaying ? 'Pause' : 'Play'}
             >
               {isPlaying ? (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <rect x="6" y="4" width="4" height="16" rx="1" />
-                  <rect x="14" y="4" width="4" height="16" rx="1" />
-                </svg>
+                <i className="ri-pause-fill" style={{ fontSize: 18 }} />
               ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <polygon points="6,4 20,12 6,20" />
-                </svg>
+                <i className="ri-play-fill" style={{ fontSize: 18 }} />
               )}
             </button>
           )}
@@ -88,9 +83,7 @@ export function MusicPlayer() {
 
         {/* Close */}
         <button className="music-player__close" onClick={stop} aria-label="Close">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <path d="M18 6L6 18M6 6l12 12" />
-          </svg>
+          <i className="ri-close-line" style={{ fontSize: 14 }} />
         </button>
       </div>
 

@@ -43,9 +43,7 @@ export function Modal({ open, onClose, title, children, actions }: ModalProps) {
           <div className="modal__header">
             <h3 className="modal__title">{title}</h3>
             <button className="modal__close" onClick={onClose} aria-label="Close">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
+              <i className="ri-close-line" style={{ fontSize: 16 }} />
             </button>
           </div>
         )}
