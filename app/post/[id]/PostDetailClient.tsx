@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { usePost } from '@/hooks/usePost';
 import { useHasAccess, useNFTForPost, useNFTsForPost } from '@/hooks/useMyNFTs';
 import { MintButton } from '@/components/MintButton';
@@ -31,63 +31,50 @@ export function PostDetailClient({ postId }: Props) {
   const { address, getSigner } = useAuth();
   const player = useMusicPlayer();
 
-  const isCurrentTrack = player.track?.postId === postId;
   const isAudioPost = post?.mediaType === 1 && post.mediaBlobId;
 
-  const handlePlay = useCallback(async () => {
+  // Decrypt + download + play handler for the bottom bar
+  const handleDecryptAndPlay = useCallback(async () => {
     if (!post || !nft || !address || !isAudioPost) return;
 
-    // If already loaded and just paused, resume
-    if (isCurrentTrack && !player.isPlaying && !player.isLoading) {
-      player.resume();
-      return;
-    }
-
-    // If already playing this track, pause
-    if (isCurrentTrack && player.isPlaying) {
-      player.pause();
-      return;
-    }
-
-    // Start loading
     const track = {
-      postId,
-      title: post.title,
-      author: post.author,
-      nftObjectId: nft.objectId,
-      encryptionKey: post.encryptionKey,
-      mediaBlobId: post.mediaBlobId,
+      postId, title: post.title, author: post.author,
+      nftObjectId: nft.objectId, encryptionKey: post.encryptionKey, mediaBlobId: post.mediaBlobId,
     };
 
     player.setLoadingTrack(track);
 
     try {
       const signer = await getSigner();
-
-      // 1. Seal-decrypt the AES key
       const aesKeyBytes = await decryptRaw({
         encryptedData: new Uint8Array(post.encryptionKey),
-        nftObjectId: nft.objectId,
-        postObjectId: postId,
-        userAddress: address,
-        signer,
+        nftObjectId: nft.objectId, postObjectId: postId,
+        userAddress: address, signer,
       });
-
-      // 2. Download encrypted audio from Walrus
       const encryptedAudio = await downloadFromWalrus(post.mediaBlobId);
-
-      // 3. AES-decrypt the audio
       const aesKey = await importKey(aesKeyBytes);
       const audioBuffer = await decryptMedia(encryptedAudio, aesKey);
-
-      // 4. Play
       const blob = new Blob([audioBuffer], { type: 'audio/mpeg' });
       player.playTrack(track, blob);
     } catch (err) {
       console.error('Audio playback failed:', err);
-      player.setError(t('player.error'));
+      player.setError('Playback failed');
     }
-  }, [post, nft, address, isAudioPost, isCurrentTrack, player, postId, getSigner, t]);
+  }, [post, nft, address, isAudioPost, postId, player, getSigner]);
+
+  // Auto-show bottom bar with track info when user owns an audio post
+  useEffect(() => {
+    if (!post || !nft || !address || !isAudioPost || !hasAccess) return;
+    if (player.isPlaying || player.isLoading) return;
+
+    player.setReadyTrack({
+      postId, title: post.title, author: post.author,
+      nftObjectId: nft.objectId, encryptionKey: post.encryptionKey, mediaBlobId: post.mediaBlobId,
+    });
+    player.setOnRequestPlay(handleDecryptAndPlay);
+
+    return () => { player.setOnRequestPlay(null); };
+  }, [post, nft, address, isAudioPost, hasAccess, postId, player, handleDecryptAndPlay]);
 
   if (isLoading) {
     return (
@@ -180,37 +167,6 @@ export function PostDetailClient({ postId }: Props) {
 
       {hasAccess && nft ? (
         <>
-          {/* Audio play button */}
-          {isAudioPost && (
-            <div className="audio-play-section">
-              <button
-                className={`audio-play-btn${isCurrentTrack && player.isPlaying ? ' audio-play-btn--playing' : ''}`}
-                onClick={handlePlay}
-                disabled={isCurrentTrack && player.isLoading}
-              >
-                {isCurrentTrack && player.isLoading ? (
-                  <div className="music-player__spinner" />
-                ) : isCurrentTrack && player.isPlaying ? (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <rect x="6" y="4" width="4" height="16" rx="1" />
-                    <rect x="14" y="4" width="4" height="16" rx="1" />
-                  </svg>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <polygon points="6,4 20,12 6,20" />
-                  </svg>
-                )}
-                <span>
-                  {isCurrentTrack && player.isLoading
-                    ? t('player.loading')
-                    : isCurrentTrack && player.isPlaying
-                      ? t('player.playing')
-                      : t('player.play')}
-                </span>
-              </button>
-            </div>
-          )}
-
           <ContentViewer encryptedContent={post.encryptedContent} nftObjectId={nft.objectId} postObjectId={postId} />
           <TransferNFTModal open={!!transferNft} onClose={() => setTransferNft(null)} nft={transferNft} />
         </>

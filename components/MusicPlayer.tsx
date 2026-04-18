@@ -12,13 +12,31 @@ function formatTime(seconds: number): string {
 
 export function MusicPlayer() {
   const {
-    track, isPlaying, isLoading, progress, duration, currentTime, error,
-    pause, resume, seek, stop,
+    track, isPlaying, isLoading, isReady, progress, duration, currentTime, error,
+    pause, resume, seek, stop, onRequestPlay,
   } = useMusicPlayer();
 
   if (!track) return null;
 
+  const handlePlayPause = () => {
+    if (isLoading) return;
+
+    // Track is ready but audio not yet loaded — trigger decrypt+download
+    if (isReady && !isPlaying && onRequestPlay) {
+      onRequestPlay();
+      return;
+    }
+
+    // Normal play/pause toggle
+    if (isPlaying) {
+      pause();
+    } else {
+      resume();
+    }
+  };
+
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isReady) return; // can't seek before audio is loaded
     const rect = e.currentTarget.getBoundingClientRect();
     const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     seek(ratio * duration);
@@ -42,7 +60,7 @@ export function MusicPlayer() {
           ) : (
             <button
               className="music-player__play"
-              onClick={isPlaying ? pause : resume}
+              onClick={handlePlayPause}
               aria-label={isPlaying ? 'Pause' : 'Play'}
             >
               {isPlaying ? (
@@ -61,11 +79,11 @@ export function MusicPlayer() {
 
         {/* Progress bar */}
         <div className="music-player__progress-wrap">
-          <span className="music-player__time">{formatTime(currentTime)}</span>
+          <span className="music-player__time">{isReady ? '—' : formatTime(currentTime)}</span>
           <div className="music-player__bar" onClick={handleSeek}>
             <div className="music-player__bar-fill" style={{ width: `${progress * 100}%` }} />
           </div>
-          <span className="music-player__time">{formatTime(duration)}</span>
+          <span className="music-player__time">{isReady ? '—' : formatTime(duration)}</span>
         </div>
 
         {/* Close */}

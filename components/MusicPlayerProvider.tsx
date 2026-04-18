@@ -15,21 +15,25 @@ interface MusicPlayerState {
   track: Track | null;
   isPlaying: boolean;
   isLoading: boolean;
-  progress: number;      // 0-1
-  duration: number;       // seconds
-  currentTime: number;    // seconds
+  isReady: boolean;       // track set but not yet loaded/played
+  progress: number;
+  duration: number;
+  currentTime: number;
   error: string | null;
 }
 
 interface MusicPlayerActions {
-  playTrack: (track: Track, audioBlob: Blob) => void;
-  loadAndPlay: (track: Track) => void;
+  setReadyTrack: (track: Track) => void;
   setLoadingTrack: (track: Track) => void;
+  playTrack: (track: Track, audioBlob: Blob) => void;
   pause: () => void;
   resume: () => void;
   seek: (time: number) => void;
   stop: () => void;
   setError: (err: string | null) => void;
+  /** Called by MusicPlayer when user presses play on a ready (not yet loaded) track */
+  onRequestPlay: (() => Promise<void>) | null;
+  setOnRequestPlay: (fn: (() => Promise<void>) | null) => void;
 }
 
 type MusicPlayerContextType = MusicPlayerState & MusicPlayerActions;
@@ -47,6 +51,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     track: null,
     isPlaying: false,
     isLoading: false,
+    isReady: false,
     progress: 0,
     duration: 0,
     currentTime: 0,
@@ -55,8 +60,8 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const blobUrlRef = useRef<string | null>(null);
+  const onRequestPlayRef = useRef<(() => Promise<void>) | null>(null);
 
-  // Cleanup blob URL on unmount or track change
   const cleanupBlobUrl = useCallback(() => {
     if (blobUrlRef.current) {
       URL.revokeObjectURL(blobUrlRef.current);
@@ -71,11 +76,23 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       audioRef.current = null;
     }
     cleanupBlobUrl();
-    setState({ track: null, isPlaying: false, isLoading: false, progress: 0, duration: 0, currentTime: 0, error: null });
+    onRequestPlayRef.current = null;
+    setState({ track: null, isPlaying: false, isLoading: false, isReady: false, progress: 0, duration: 0, currentTime: 0, error: null });
   }, [cleanupBlobUrl]);
 
+  /** Show bottom bar with track info, but don't load audio yet */
+  const setReadyTrack = useCallback((track: Track) => {
+    setState((s) => {
+      // Don't overwrite if already playing/loading this or another track
+      if (s.isPlaying || s.isLoading) return s;
+      // Don't re-set if already ready with same track
+      if (s.track?.postId === track.postId && s.isReady) return s;
+      return { ...s, track, isReady: true, isPlaying: false, isLoading: false, error: null, progress: 0, duration: 0, currentTime: 0 };
+    });
+  }, []);
+
   const setLoadingTrack = useCallback((track: Track) => {
-    setState((s) => ({ ...s, track, isLoading: true, isPlaying: false, error: null }));
+    setState((s) => ({ ...s, track, isLoading: true, isReady: false, isPlaying: false, error: null }));
   }, []);
 
   const setError = useCallback((err: string | null) => {
@@ -83,7 +100,6 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const playTrack = useCallback((track: Track, audioBlob: Blob) => {
-    // Stop previous
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.src = '';
@@ -115,13 +131,8 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     });
 
     audio.play();
-    setState((s) => ({ ...s, track, isPlaying: true, isLoading: false, error: null }));
+    setState((s) => ({ ...s, track, isPlaying: true, isLoading: false, isReady: false, error: null }));
   }, [cleanupBlobUrl]);
-
-  const loadAndPlay = useCallback((_track: Track) => {
-    // This is a placeholder — actual decrypt + download is triggered from PostDetail
-    // The component calling this should use setLoadingTrack + playTrack after decrypt
-  }, []);
 
   const pause = useCallback(() => {
     audioRef.current?.pause();
@@ -139,6 +150,10 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const setOnRequestPlay = useCallback((fn: (() => Promise<void>) | null) => {
+    onRequestPlayRef.current = fn;
+  }, []);
+
   useEffect(() => {
     return () => {
       cleanupBlobUrl();
@@ -150,7 +165,13 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }, [cleanupBlobUrl]);
 
   return (
-    <MusicPlayerContext.Provider value={{ ...state, playTrack, loadAndPlay, setLoadingTrack, pause, resume, seek, stop, setError }}>
+    <MusicPlayerContext.Provider value={{
+      ...state,
+      setReadyTrack, setLoadingTrack, playTrack,
+      pause, resume, seek, stop, setError,
+      onRequestPlay: onRequestPlayRef.current,
+      setOnRequestPlay,
+    }}>
       {children}
     </MusicPlayerContext.Provider>
   );
