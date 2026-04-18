@@ -9,7 +9,6 @@ import { useToast } from './Toast';
 import { useI18n } from '@/i18n/I18nProvider';
 import { suiClient } from '@/lib/sui-client';
 import { parseTransactionError } from '@/lib/errors';
-import { SUI_RPC_URL } from '@/config';
 import { type TokenBalance, formatTokenAmount } from '@/hooks/useTokenBalances';
 
 interface SendTokenModalProps {
@@ -45,22 +44,17 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
         const [coin] = tx.splitCoins(tx.gas, [amountMist]);
         tx.transferObjects([coin], recipient);
       } else {
-        const res = await fetch(SUI_RPC_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0', id: 1,
-            method: 'suix_getCoins',
-            params: [address, selected.coinType, null, 50],
-          }),
+        const { objects: coins } = await suiClient.core.listCoins({
+          owner: address,
+          coinType: selected.coinType,
+          limit: 50,
         });
-        const coinsData = (await res.json()).result?.data ?? [];
 
-        if (!coinsData.length) throw new Error('No coins found');
+        if (!coins.length) throw new Error('No coins found');
 
-        const primaryCoin = tx.object(coinsData[0].coinObjectId);
-        if (coinsData.length > 1) {
-          tx.mergeCoins(primaryCoin, coinsData.slice(1).map((c: any) => tx.object(c.coinObjectId)));
+        const primaryCoin = tx.object(coins[0].objectId);
+        if (coins.length > 1) {
+          tx.mergeCoins(primaryCoin, coins.slice(1).map((c) => tx.object(c.objectId)));
         }
         const [splitCoin] = tx.splitCoins(primaryCoin, [amountMist]);
         tx.transferObjects([splitCoin], recipient);

@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/auth/useAuth';
-import { SUI_RPC_URL } from '@/config';
+import { suiClient } from '@/lib/sui-client';
 
 export interface TokenBalance {
   coinType: string;
@@ -29,29 +29,19 @@ export function useTokenBalances() {
   return useQuery({
     queryKey: ['tokenBalances', address],
     queryFn: async (): Promise<TokenBalance[]> => {
-      const res = await fetch(SUI_RPC_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'suix_getAllBalances',
-          params: [address],
-        }),
-      });
-      const data = await res.json();
-      const balances: TokenBalance[] = (data.result ?? []).map((b: any) => {
+      const { balances } = await suiClient.core.listBalances({ owner: address! });
+      const result: TokenBalance[] = balances.map((b) => {
         const symbol = extractSymbol(b.coinType);
         return {
           coinType: b.coinType,
           symbol,
-          totalBalance: BigInt(b.totalBalance),
+          totalBalance: BigInt(b.coinBalance || b.balance || '0'),
           decimals: getDecimals(symbol),
         };
       });
 
       // Sort: SUI first, then WAL, then rest alphabetically
-      return balances.sort((a, b) => {
+      return result.sort((a, b) => {
         if (a.symbol === 'SUI') return -1;
         if (b.symbol === 'SUI') return 1;
         if (a.symbol === 'WAL') return -1;

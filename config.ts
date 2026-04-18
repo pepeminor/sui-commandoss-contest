@@ -11,9 +11,7 @@ export function sanitizeNetwork(value: unknown): SuiNetwork {
 }
 
 export const NETWORK = sanitizeNetwork(process.env.NEXT_PUBLIC_SUI_NETWORK);
-// gRPC endpoint — same fullnode URL used for JSON-RPC (port 443)
-export const SUI_RPC_URL = process.env.NEXT_PUBLIC_SUI_RPC_URL?.trim() || 'https://fullnode.testnet.sui.io:443';
-export const SUI_GRPC_URL = process.env.NEXT_PUBLIC_SUI_GRPC_URL?.trim() || SUI_RPC_URL;
+export const SUI_GRPC_URL = process.env.NEXT_PUBLIC_SUI_GRPC_URL?.trim() || 'https://fullnode.testnet.sui.io:443';
 export const SUI_GRAPHQL_URL = process.env.NEXT_PUBLIC_SUI_GRAPHQL_URL?.trim() || 'https://graphql.testnet.sui.io/graphql';
 export const PACKAGE_ID = process.env.NEXT_PUBLIC_PACKAGE_ID?.trim() || '';
 export const SEAL_PACKAGE_ID = process.env.NEXT_PUBLIC_SEAL_PACKAGE_ID?.trim() || '';

@@ -10,7 +10,7 @@ import { isSuiGraphQLClient } from '@mysten/sui/graphql';
 
 // Mock env so config doesn't throw
 vi.stubEnv('NEXT_PUBLIC_SUI_NETWORK', 'testnet');
-vi.stubEnv('NEXT_PUBLIC_SUI_RPC_URL', 'https://fullnode.testnet.sui.io:443');
+vi.stubEnv('NEXT_PUBLIC_SUI_GRPC_URL', 'https://fullnode.testnet.sui.io:443');
 vi.stubEnv('NEXT_PUBLIC_SUI_GRAPHQL_URL', 'https://sui-testnet.mystenlabs.com/graphql');
 
 describe('sui-client exports', () => {
