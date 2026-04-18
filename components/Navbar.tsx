@@ -121,6 +121,22 @@ export function Navbar() {
               </>
             )}
 
+            {/* Publish CTA in mobile menu */}
+            {showPublish && (
+              <Link
+                href="/create"
+                className={`mobile-menu__publish${pathname === '/create' ? ' mobile-menu__publish--active' : ''}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+                {t('nav.publish')}
+              </Link>
+            )}
+
+            <div className="mobile-menu__divider" />
+
             {/* Nav links */}
             <div className="mobile-menu__links">
               {links.map(({ href, label }) => (
@@ -192,14 +208,6 @@ export function Navbar() {
         </p>
       </Modal>
 
-      {/* Mobile FAB — Publish */}
-      {showPublish && pathname !== '/create' && (
-        <Link href="/create" className="fab-publish" aria-label={t('nav.publish')}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-          </svg>
-        </Link>
-      )}
     </>
   );
 }
