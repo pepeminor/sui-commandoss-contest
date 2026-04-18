@@ -6,6 +6,7 @@ import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
 import { ENOKI_API_KEY, NETWORK } from '@/config';
 import { I18nProvider } from '@/i18n/I18nProvider';
 import { ToastProvider } from '@/components/Toast';
+import { WalletModalProvider } from '@/components/WalletModalProvider';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,7 +28,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <WalletProvider>
             <I18nProvider>
               <ToastProvider>
-                {children}
+                <WalletModalProvider>
+                  {children}
+                </WalletModalProvider>
               </ToastProvider>
             </I18nProvider>
           </WalletProvider>

@@ -10,7 +10,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { shortenAddress } from '@/lib/utils';
 import { useIsClient } from '@/hooks/useIsClient';
 import { useToast } from './Toast';
-import { WalletModal } from './WalletModal';
+import { useWalletModal } from './WalletModalProvider';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -20,7 +20,7 @@ export function Navbar() {
   const isClient = useIsClient();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [walletOpen, setWalletOpen] = useState(false);
+  const { openWallet } = useWalletModal();
   useEffect(() => setMenuOpen(false), [pathname]);
 
   const links = [
@@ -111,7 +111,7 @@ export function Navbar() {
               <>
                 <button
                   className="mobile-menu__address"
-                  onClick={() => { setMenuOpen(false); setWalletOpen(true); }}
+                  onClick={() => { setMenuOpen(false); openWallet(); }}
                   title={address}
                 >
                   {shortenAddress(address)}
@@ -210,8 +210,6 @@ export function Navbar() {
         </p>
       </Modal>
 
-      {/* Wallet Modal */}
-      <WalletModal open={walletOpen} onClose={() => setWalletOpen(false)} />
     </>
   );
 }

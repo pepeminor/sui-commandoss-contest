@@ -1,17 +1,16 @@
 'use client';
 
-import { useState } from 'react';
 import { useAuth } from '@/auth/useAuth';
 import { shortenAddress } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useIsClient } from '@/hooks/useIsClient';
-import { WalletModal } from './WalletModal';
+import { useWalletModal } from './WalletModalProvider';
 
 export function LoginButton() {
   const { address, isLoggedIn, login, logout } = useAuth();
   const { t } = useI18n();
   const isClient = useIsClient();
-  const [walletOpen, setWalletOpen] = useState(false);
+  const { openWallet } = useWalletModal();
 
   if (!isClient) {
     return (
@@ -25,21 +24,18 @@ export function LoginButton() {
 
   if (isLoggedIn && address) {
     return (
-      <>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <button
-            className="navbar__address"
-            onClick={() => setWalletOpen(true)}
-            title={address}
-          >
-            {shortenAddress(address)}
-          </button>
-          <button className="btn btn--ghost btn--sm" onClick={logout}>
-            {t('nav.logout')}
-          </button>
-        </div>
-        <WalletModal open={walletOpen} onClose={() => setWalletOpen(false)} />
-      </>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <button
+          className="navbar__address"
+          onClick={openWallet}
+          title={address}
+        >
+          {shortenAddress(address)}
+        </button>
+        <button className="btn btn--ghost btn--sm" onClick={logout}>
+          {t('nav.logout')}
+        </button>
+      </div>
     );
   }
 
