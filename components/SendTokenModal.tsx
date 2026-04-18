@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Transaction } from '@mysten/sui/transactions';
+import { coinWithBalance, Transaction } from '@mysten/sui/transactions';
 import { Modal } from './Modal';
 import { useAuth } from '@/auth/useAuth';
 import { useToast } from './Toast';
@@ -40,42 +40,14 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
       const tx = new Transaction();
       tx.setSender(address);
 
-      if (selected.coinType === '0x2::sui::SUI') {
-        // Fetch all SUI coins and provide them as gas payment so the SDK
-        // merges fragmented coins into a single gas coin. Without this,
-        // the SDK picks one coin which may not cover amount + gas.
-        const { objects: suiCoins } = await suiClient.core.listCoins({
-          owner: address,
-          coinType: '0x2::sui::SUI',
-          limit: 50,
-        });
-
-        if (suiCoins.length) {
-          tx.setGasPayment(suiCoins.map((c) => ({
-            objectId: c.objectId,
-            version: c.version,
-            digest: c.digest,
-          })));
-        }
-
-        const [coin] = tx.splitCoins(tx.gas, [amountMist]);
-        tx.transferObjects([coin], recipient);
-      } else {
-        const { objects: coins } = await suiClient.core.listCoins({
-          owner: address,
-          coinType: selected.coinType,
-          limit: 50,
-        });
-
-        if (!coins.length) throw new Error('No coins found');
-
-        const primaryCoin = tx.object(coins[0].objectId);
-        if (coins.length > 1) {
-          tx.mergeCoins(primaryCoin, coins.slice(1).map((c) => tx.object(c.objectId)));
-        }
-        const [splitCoin] = tx.splitCoins(primaryCoin, [amountMist]);
-        tx.transferObjects([splitCoin], recipient);
-      }
+      // coinWithBalance auto-resolves coin lookup, merging, and splitting.
+      // For SUI it uses the gas coin; for other types it finds owned coins.
+      const isSui = selected.coinType === '0x2::sui::SUI';
+      const coin = coinWithBalance({
+        balance: amountMist,
+        ...(isSui ? {} : { type: selected.coinType }),
+      });
+      tx.transferObjects([coin], recipient);
 
       let result;
       try {
