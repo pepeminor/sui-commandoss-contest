@@ -164,9 +164,14 @@
 
   &__header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
     margin-bottom: 20px;
+  }
+
+  &__header-info {
+    flex: 1;
+    min-width: 0;
   }
 
   &__title {
@@ -225,8 +230,9 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-bottom: 16px;
+    flex-shrink: 0;
     font-size: 12px;
+    white-space: nowrap;
   }
 
   &__blur-preview {

@@ -46,7 +46,7 @@ export function PostDetailClient({ postId }: Props) {
     <div className="container post-detail">
       <div className="post-detail__header">
         <AddressAvatar address={post.author} size={44} />
-        <div>
+        <div className="post-detail__header-info">
           <h1 className="post-detail__title">{post.title}</h1>
           <div className="post-detail__meta">
             <span>{shortenAddress(post.author)}</span>
@@ -68,6 +68,14 @@ export function PostDetailClient({ postId }: Props) {
             </a>
           </div>
         </div>
+        {hasAccess && nft && (
+          <button className="btn btn--ghost btn--sm post-detail__transfer-btn" onClick={() => setTransferOpen(true)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+            {t('wallet.transferTitle')}
+          </button>
+        )}
       </div>
 
       <div className="post-detail__stats">
@@ -93,12 +101,6 @@ export function PostDetailClient({ postId }: Props) {
 
       {hasAccess && nft ? (
         <>
-          <button className="btn btn--ghost btn--sm post-detail__transfer-btn" onClick={() => setTransferOpen(true)}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M12 19V5M5 12l7-7 7 7" />
-            </svg>
-            {t('wallet.transferTitle')}
-          </button>
           <ContentViewer encryptedContent={post.encryptedContent} nftObjectId={nft.objectId} postObjectId={postId} />
           <TransferNFTModal open={transferOpen} onClose={() => setTransferOpen(false)} nft={nft} />
         </>
