@@ -106,7 +106,14 @@ export function PostDetailClient({ postId }: Props) {
 
   return (
     <>
-    <div className="container post-detail">
+    <div className={`container post-detail${soldOut ? ' post-detail--soldout' : ''}`}>
+      {soldOut && (
+        <div className="post-detail__soldout-banner">
+          <i className="ri-fire-fill" style={{ fontSize: 16 }} />
+          <span>SOLD OUT</span>
+          <span className="post-detail__soldout-sub">{post.minted}/{post.maxSupply} editions collected</span>
+        </div>
+      )}
       <div className="post-detail__header">
         <AddressAvatar address={post.author} size={44} />
         <div className="post-detail__header-info">
@@ -163,7 +170,7 @@ export function PostDetailClient({ postId }: Props) {
         <div className="post-detail__stat-divider" />
         <div className="post-detail__stat">
           <div className="post-detail__stat-label">{t('post.sold')}</div>
-          <div className="post-detail__stat-value text-primary">{post.minted}/{post.maxSupply}</div>
+          <div className={`post-detail__stat-value ${soldOut ? 'text-accent' : 'text-primary'}`}>{post.minted}/{post.maxSupply}</div>
         </div>
         {ownedNfts.length > 0 && (
           <>
