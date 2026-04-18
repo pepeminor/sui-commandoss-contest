@@ -10,10 +10,13 @@ import { SkeletonList } from '@/components/Skeleton';
 import { PACKAGE_ID } from '@/config';
 import { useI18n } from '@/i18n/I18nProvider';
 
+type SortTab = 'newest' | 'top';
+
 export function FeedClient() {
   const { data: posts, isLoading, isError, hasNextPage, isFetchingNextPage, fetchNextPage } = useFeed();
   const { t } = useI18n();
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
+  const [sortTab, setSortTab] = useState<SortTab>('newest');
 
   // Extract real artists from feed + merge with fake showcase artists
   const artists = useMemo(() => {
@@ -33,9 +36,13 @@ export function FeedClient() {
     return [...real, ...fakes];
   }, [posts]);
 
-  const filteredPosts = selectedArtist
-    ? posts.filter((p) => p.author === selectedArtist)
-    : posts;
+  const filteredPosts = useMemo(() => {
+    const base = selectedArtist ? posts.filter((p) => p.author === selectedArtist) : posts;
+    if (sortTab === 'top') {
+      return [...base].sort((a, b) => Number(b.price) - Number(a.price) || b.maxSupply - a.maxSupply);
+    }
+    return base;
+  }, [posts, selectedArtist, sortTab]);
 
   if (!PACKAGE_ID) {
     return (
@@ -50,6 +57,21 @@ export function FeedClient() {
       <div className="page-header">
         <h1 className="page-header__title">{t('feed.title')}</h1>
         <p className="page-header__sub">{t('feed.subtitle')}</p>
+      </div>
+
+      <div className="feed-tabs">
+        <button
+          className={`feed-tabs__item${sortTab === 'newest' ? ' feed-tabs__item--active' : ''}`}
+          onClick={() => setSortTab('newest')}
+        >
+          Newest
+        </button>
+        <button
+          className={`feed-tabs__item${sortTab === 'top' ? ' feed-tabs__item--active' : ''}`}
+          onClick={() => setSortTab('top')}
+        >
+          Top Hits
+        </button>
       </div>
 
       {isLoading && <SkeletonList count={3} height={120} />}
