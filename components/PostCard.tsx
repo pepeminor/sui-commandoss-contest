@@ -6,6 +6,7 @@ import { useHasAccess } from '@/hooks/useMyNFTs';
 import { formatSUI, shortenAddress, timeAgo, explorerObjectUrl } from '@/lib/utils';
 import { NETWORK } from '@/config';
 import { AddressAvatar } from './AddressAvatar';
+import { SuiIcon } from './SuiIcon';
 import { useI18n } from '@/i18n/I18nProvider';
 
 interface PostCardProps {
@@ -52,7 +53,7 @@ export function PostCard({ post }: PostCardProps) {
 
           <div className="post-card__footer">
             <div className="post-card__price">
-              <i className="ri-coin-line" style={{ fontSize: 12 }} />
+              <SuiIcon size={12} />
               {formatSUI(post.price)} SUI
             </div>
 

@@ -13,6 +13,7 @@ import { SendTokenModal } from './SendTokenModal';
 import { TransferNFTModal } from './TransferNFTModal';
 import { type NFTData } from '@/hooks/useMyNFTs';
 import { useRouter } from 'next/navigation';
+import { SuiIcon } from './SuiIcon';
 
 interface WalletModalProps {
   open: boolean;
@@ -59,7 +60,7 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
   if (!address) return null;
 
   const tokenIcon = (symbol: string) => {
-    if (symbol === 'SUI') return '💧';
+    if (symbol === 'SUI') return <SuiIcon size={32} />;
     if (symbol === 'WAL') return '🦭';
     return '🪙';
   };
