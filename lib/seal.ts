@@ -10,9 +10,9 @@ import { PACKAGE_ID } from '@/config';
 // Official Seal example uses this config: https://seal-docs.wal.app/Pricing
 const TESTNET_SERVER_CONFIGS = [
   {
-    objectId: '0xb012378c9f3799fb5b1a7083da74a4069e3c3f1c93de0b27212a5799ce1e1e98',
+    objectId: '0x9c949e53c36ab7a9c484ed9e8b43267a77d4b8d70e79aa6b39042e3d4c434105',
     weight: 1,
-    aggregatorUrl: 'https://seal-aggregator-testnet.mystenlabs.com',
+    aggregatorUrl: 'https://seal-testnet-open.overclock.run',
   },
 ];
 
