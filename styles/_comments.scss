@@ -3,7 +3,12 @@
 // ─── Toggle button (mobile only) ─────────────────────────────────────────────
 
 .comments-toggle {
-  display: none; // hidden on desktop
+  display: none;
+
+  &--desktop,
+  &--mobile {
+    display: none;
+  }
 }
 
 // ─── Backdrop (mobile only) ─────────────────────────────────────────────────
@@ -57,7 +62,7 @@
     cursor: pointer;
     padding: 4px;
     border-radius: 6px;
-    display: none; // hidden on desktop
+    display: none;
     align-items: center;
     justify-content: center;
     transition: color $duration-fast ease, background $duration-fast ease;
@@ -204,12 +209,59 @@
 @media (min-width: 769px) {
   .comments-panel--desktop {
     position: fixed;
-    right: 0;
+    right: -340px;
     top: 56px;
     width: 320px;
     height: calc(100vh - 56px);
     z-index: 50;
     border-left: 0.5px solid $border;
+    transition: right $duration-normal $ease-out-expo;
+
+    &.comments-panel--open {
+      right: 0;
+    }
+
+    .comments-panel__close--desktop {
+      display: flex;
+    }
+
+    .comments-panel__close--mobile {
+      display: none;
+    }
+  }
+
+  .comments-toggle--desktop {
+    display: flex;
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 90;
+    align-items: center;
+    gap: 6px;
+    background: $bg-menu;
+    border: 0.5px solid $border;
+    border-radius: 24px;
+    padding: 10px 14px;
+    color: $text-muted;
+    cursor: pointer;
+    transition: background $duration-fast ease, border-color $duration-fast ease, color $duration-fast ease;
+
+    &:hover {
+      background: $bg-surface;
+      border-color: $border-hover;
+      color: $text-primary;
+    }
+
+    .comments-toggle__count {
+      font-size: 12px;
+      font-weight: 700;
+      font-family: $font-base;
+    }
+  }
+
+  .comments-toggle--mobile {
+    display: none;
   }
 
   .comments-panel--mobile {
@@ -267,15 +319,15 @@
     right: 0;
     left: 0;
     top: auto;
-    bottom: 0;
+    bottom: 72px; // above music player bar
     width: 100%;
-    height: 75vh;
-    max-height: 75vh;
+    height: 65vh;
+    max-height: 65vh;
     z-index: 100;
     border-left: none;
     border-top-left-radius: $radius-lg;
     border-top-right-radius: $radius-lg;
-    transform: translateY(100%);
+    transform: translateY(calc(100% + 72px));
     transition: transform $duration-normal $ease-out-expo;
 
     &.comments-panel--open {
@@ -292,8 +344,12 @@
       flex-shrink: 0;
     }
 
-    .comments-panel__close {
+    .comments-panel__close--mobile {
       display: flex;
+    }
+
+    .comments-panel__close--desktop {
+      display: none;
     }
 
     .comments-panel__header {
@@ -310,7 +366,7 @@
 
     .comments-panel__form {
       padding: 10px 16px;
-      padding-bottom: max(10px, env(safe-area-inset-bottom));
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
     }
 
     .comments-panel__input {

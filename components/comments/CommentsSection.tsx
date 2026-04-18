@@ -17,6 +17,7 @@ export function CommentsSection({ postId }: Props) {
   const [userComments, setUserComments] = useState<MockComment[]>([]);
   const [input, setInput] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [desktopOpen, setDesktopOpen] = useState(true);
 
   const seededComments = getSeededComments(postId);
   const allComments = [...userComments, ...seededComments];
@@ -53,7 +54,13 @@ export function CommentsSection({ postId }: Props) {
         </svg>
         <h3 className="comments-panel__title">{t('comments.title')}</h3>
         <span className="comments-panel__count">{allComments.length}</span>
-        <button className="comments-panel__close" onClick={() => setMobileOpen(false)} aria-label="Close">
+        <button className="comments-panel__close comments-panel__close--mobile" onClick={() => setMobileOpen(false)} aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <button className="comments-panel__close comments-panel__close--desktop" onClick={() => setDesktopOpen(false)} aria-label="Close">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
@@ -103,14 +110,27 @@ export function CommentsSection({ postId }: Props) {
 
   return (
     <>
-      {/* Desktop: always visible panel */}
-      <div className="comments-panel comments-panel--desktop">
+      {/* Desktop: panel with toggle */}
+      <div className={`comments-panel comments-panel--desktop${desktopOpen ? ' comments-panel--open' : ''}`}>
         {panelContent}
       </div>
 
+      {!desktopOpen && (
+        <button
+          className="comments-toggle comments-toggle--desktop"
+          onClick={() => setDesktopOpen(true)}
+          aria-label={t('comments.title')}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          <span className="comments-toggle__count">{allComments.length}</span>
+        </button>
+      )}
+
       {/* Mobile: toggle button + bottom sheet */}
       <button
-        className="comments-toggle"
+        className="comments-toggle comments-toggle--mobile"
         onClick={() => setMobileOpen(true)}
         aria-label={t('comments.title')}
       >
