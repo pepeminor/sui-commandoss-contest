@@ -131,7 +131,11 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
               <div className="info-divider" />
               <div className="info-row">
                 <span className="info-row__label">{t('wallet.to')}</span>
-                <span className="wallet__token-type" style={{ fontSize: 11 }}>{recipient}</span>
+                <span className="info-row__value info-row__value--mono">{shortenAddress(recipient)}</span>
+              </div>
+              <div className="info-row">
+                <span className="info-row__label">{t('mint.gasFee')}</span>
+                <span className="info-row__value">~0.002 SUI</span>
               </div>
             </div>
 
