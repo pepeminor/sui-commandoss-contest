@@ -200,6 +200,11 @@
     background: $accent-soft;
     color: $accent;
     flex-shrink: 0;
+
+    &[title="Text"] {
+      background: $bg-surface;
+      color: $text-secondary;
+    }
   }
 
   &__meta {

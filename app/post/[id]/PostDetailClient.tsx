@@ -109,13 +109,21 @@ export function PostDetailClient({ postId }: Props) {
         <AddressAvatar address={post.author} size={44} />
         <div className="post-detail__header-info">
           <h1 className="post-detail__title">
-            {isAudioPost && (
-              <span className="post-detail__media-badge" title="Audio">
+            <span className="post-detail__media-badge" title={isAudioPost ? 'Audio' : 'Text'}>
+              {isAudioPost ? (
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M9 18V5l12-2v13M6 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
                 </svg>
-              </span>
-            )}
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <polyline points="10 9 9 9 8 9" />
+                </svg>
+              )}
+            </span>
             {post.title}
           </h1>
           <div className="post-detail__meta">
