@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { Providers } from './providers';
 import { MusicPlayer } from '@/components/MusicPlayer';
+import 'remixicon/fonts/remixicon.css';
 import '@/styles/global.scss';
 
 const font = Plus_Jakarta_Sans({
