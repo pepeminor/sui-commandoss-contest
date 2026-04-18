@@ -166,19 +166,25 @@
   &__lang {
     background: $bg-surface;
     border: 0.5px solid $border;
-    border-radius: $radius-sm;
-    color: $text-muted;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 6px 10px;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    font-family: $font-base;
-    transition: color $duration-fast, border-color $duration-fast;
+    padding: 0;
+    transition: border-color $duration-fast, transform $duration-fast;
 
     &:hover {
-      color: $text-primary;
       border-color: $border-hover;
+      transform: scale(1.08);
     }
+  }
+
+  &__lang-flag {
+    font-size: 18px;
+    line-height: 1;
   }
 
   &__address {

@@ -81,8 +81,9 @@ export function Navbar() {
           <button
             className="navbar__lang"
             onClick={() => setLocale(locale === 'en' ? 'vi' : 'en')}
+            title={locale === 'en' ? 'Tiếng Việt' : 'English'}
           >
-            {locale === 'en' ? 'VI' : 'EN'}
+            <span className="navbar__lang-flag">{locale === 'en' ? '🇻🇳' : '🇬🇧'}</span>
           </button>
           <LoginButton />
         </div>
