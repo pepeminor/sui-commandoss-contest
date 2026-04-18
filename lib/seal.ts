@@ -6,15 +6,13 @@ import { suiClient, graphqlClient } from './sui-client';
 import { buildSealApproveTx } from './transactions';
 import { PACKAGE_ID } from '@/config';
 
-// Testnet Seal key servers (from official docs: https://seal-docs.wal.app)
+// Decentralized testnet key server (3-of-5 committee with aggregator)
+// Official Seal example uses this config: https://seal-docs.wal.app/Pricing
 const TESTNET_SERVER_CONFIGS = [
   {
-    objectId: '0x73d05d62c18d9374e3ea529e8e0ed6161da1a141a94d3f76ae3fe4e99356db75',
+    objectId: '0xb012378c9f3799fb5b1a7083da74a4069e3c3f1c93de0b27212a5799ce1e1e98',
     weight: 1,
-  },
-  {
-    objectId: '0xf5d14a81a982144ae441cd7d64b09027f116a468bd36e7eca494f750591623c8',
-    weight: 1,
+    aggregatorUrl: 'https://seal-aggregator-testnet.mystenlabs.com',
   },
 ];
 
@@ -77,7 +75,7 @@ export async function encryptContent(content: string, packageId = PACKAGE_ID): P
   const id = crypto.getRandomValues(new Uint8Array(32));
 
   const result = await sealClient.encrypt({
-    threshold: 2,
+    threshold: 1,
     packageId,
     id: Array.from(id).map((b) => b.toString(16).padStart(2, '0')).join(''),
     data,
