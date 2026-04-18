@@ -44,15 +44,6 @@ export function FeedClient() {
         <p className="page-header__sub">{t('feed.subtitle')}</p>
       </div>
 
-      {/* Artist carousel */}
-      {!isLoading && artists.length > 0 && (
-        <ArtistCarousel
-          artists={artists}
-          selected={selectedArtist}
-          onSelect={setSelectedArtist}
-        />
-      )}
-
       {isLoading && <SkeletonList count={3} height={120} />}
 
       {isError && <EmptyState title={t('feed.error')} desc={t('feed.errorDesc')} />}
@@ -76,6 +67,15 @@ export function FeedClient() {
       )}
 
       {isFetchingNextPage && <SkeletonList count={2} height={120} />}
+
+      {/* Artist carousel — bottom */}
+      {!isLoading && artists.length > 0 && (
+        <ArtistCarousel
+          artists={artists}
+          selected={selectedArtist}
+          onSelect={setSelectedArtist}
+        />
+      )}
     </div>
   );
 }
