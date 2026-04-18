@@ -37,7 +37,14 @@ export function PostCard({ post }: PostCardProps) {
             </span>
           </div>
 
-          <div className="post-card__title">{post.title}</div>
+          <div className="post-card__title">
+            {post.mediaType === 1 && (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-accent" style={{ flexShrink: 0, marginRight: 4, verticalAlign: 'middle', display: 'inline' }}>
+                <path d="M9 18V5l12-2v13M6 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+              </svg>
+            )}
+            {post.title}
+          </div>
 
           <div className={`post-card__preview${hasAccess ? '' : ' post-card__preview--locked'}`}>
             {t('post.preview')}

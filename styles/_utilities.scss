@@ -185,6 +185,21 @@
     font-weight: 800;
     letter-spacing: -0.4px;
     margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__media-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: $accent-soft;
+    color: $accent;
+    flex-shrink: 0;
   }
 
   &__meta {

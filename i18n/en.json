@@ -139,5 +139,25 @@
   "dashboard.sold": "sold",
   "dashboard.revenue": "revenue",
   "dashboard.loadMore": "Load more",
-  "dashboard.loading": "Loading..."
+  "dashboard.loading": "Loading...",
+
+  "create.audioLabel": "Audio File (optional)",
+  "create.audioUploadHint": "Click to upload audio file",
+  "create.audioMaxSize": "Max 100MB — MP3, WAV, FLAC, AAC",
+  "create.audioTooLarge": "File is too large. Maximum 100MB.",
+  "create.audioInvalidType": "Please select an audio file.",
+  "create.lyricsPlaceholder": "Enter lyrics or description for this track...",
+  "create.walrusUpload": "Walrus storage",
+  "create.stage.encrypt": "Encrypting audio...",
+  "create.stage.upload": "Uploading to Walrus...",
+  "create.stage.seal": "Sealing encryption key...",
+  "create.stage.chain": "Publishing to chain...",
+  "create.stage.done": "Done!",
+
+  "player.play": "Play",
+  "player.playing": "Playing",
+  "player.loading": "Loading...",
+  "player.error": "Playback failed. Try again.",
+
+  "post.blurPreviewAudio": "This is an exclusive audio track for NFT holders only. Buy NFT to listen and read the full lyrics. Content is encrypted on-chain — only your wallet can decrypt after purchase."
 }

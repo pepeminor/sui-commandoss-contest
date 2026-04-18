@@ -76,6 +76,60 @@ export async function encryptContent(content: string, packageId = PACKAGE_ID): P
   return result.encryptedObject;
 }
 
+/** Encrypt raw bytes (e.g. AES key) — returns sealed bytes */
+export async function encryptRaw(data: Uint8Array, packageId = PACKAGE_ID): Promise<Uint8Array> {
+  const sealClient = getSealClient();
+  const id = crypto.getRandomValues(new Uint8Array(32));
+
+  const result = await sealClient.encrypt({
+    threshold: 1,
+    packageId,
+    id: Array.from(id).map((b) => b.toString(16).padStart(2, '0')).join(''),
+    data,
+  });
+
+  return result.encryptedObject;
+}
+
+/** Decrypt raw bytes (returns Uint8Array instead of string) */
+export async function decryptRaw({
+  encryptedData,
+  nftObjectId,
+  postObjectId,
+  userAddress,
+  signer,
+}: {
+  encryptedData: Uint8Array;
+  nftObjectId: string;
+  postObjectId: string;
+  userAddress: string;
+  signer: Signer;
+}): Promise<Uint8Array> {
+  const sealClient = getSealClient();
+
+  const innerId = EncryptedObject.parse(encryptedData).id;
+
+  const attemptDecrypt = async (sessionKey: SessionKey) => {
+    const tx = buildSealApproveTx(innerId, nftObjectId, postObjectId);
+    tx.setSender(userAddress);
+    const txBytes = await tx.build({ client: suiClient, onlyTransactionKind: true });
+    return sealClient.decrypt({ data: encryptedData, sessionKey, txBytes });
+  };
+
+  let sessionKey = await getOrCreateSessionKey(userAddress, signer);
+  try {
+    return await attemptDecrypt(sessionKey);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg.includes('InvalidSignature') || msg.includes('InvalidCertificate') || msg.includes('Invalid user signature')) {
+      clearSessionKey(userAddress);
+      sessionKey = await getOrCreateSessionKey(userAddress, signer);
+      return await attemptDecrypt(sessionKey);
+    }
+    throw err;
+  }
+}
+
 // ─── Decrypt ─────────────────────────────────────────────────────────────────
 
 export async function decryptContent({

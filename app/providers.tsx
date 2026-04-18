@@ -7,6 +7,7 @@ import { ENOKI_API_KEY, NETWORK } from '@/config';
 import { I18nProvider } from '@/i18n/I18nProvider';
 import { ToastProvider } from '@/components/Toast';
 import { WalletModalProvider } from '@/components/WalletModalProvider';
+import { MusicPlayerProvider } from '@/components/MusicPlayerProvider';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,7 +30,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <I18nProvider>
               <ToastProvider>
                 <WalletModalProvider>
-                  {children}
+                  <MusicPlayerProvider>
+                    {children}
+                  </MusicPlayerProvider>
                 </WalletModalProvider>
               </ToastProvider>
             </I18nProvider>

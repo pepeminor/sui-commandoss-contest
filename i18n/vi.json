@@ -139,5 +139,25 @@
   "dashboard.sold": "đã bán",
   "dashboard.revenue": "doanh thu",
   "dashboard.loadMore": "Xem thêm",
-  "dashboard.loading": "Đang tải..."
+  "dashboard.loading": "Đang tải...",
+
+  "create.audioLabel": "File nhạc (tùy chọn)",
+  "create.audioUploadHint": "Nhấn để tải file nhạc lên",
+  "create.audioMaxSize": "Tối đa 100MB — MP3, WAV, FLAC, AAC",
+  "create.audioTooLarge": "File quá lớn. Tối đa 100MB.",
+  "create.audioInvalidType": "Vui lòng chọn file nhạc.",
+  "create.lyricsPlaceholder": "Nhập lyrics hoặc mô tả cho bài hát...",
+  "create.walrusUpload": "Lưu trữ Walrus",
+  "create.stage.encrypt": "Đang mã hóa nhạc...",
+  "create.stage.upload": "Đang tải lên Walrus...",
+  "create.stage.seal": "Đang seal encryption key...",
+  "create.stage.chain": "Đang publish lên chain...",
+  "create.stage.done": "Xong!",
+
+  "player.play": "Phát",
+  "player.playing": "Đang phát",
+  "player.loading": "Đang tải...",
+  "player.error": "Không thể phát. Thử lại.",
+
+  "post.blurPreviewAudio": "Đây là bài nhạc exclusive chỉ dành cho người có NFT. Mua NFT để nghe và đọc toàn bộ lyrics. Nội dung được bảo vệ bằng Seal encryption on-chain — chỉ ví của bạn mới có thể giải mã sau khi mua."
 }

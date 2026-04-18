@@ -8,6 +8,9 @@ export interface PostData {
   author: string;
   title: string;
   encryptedContent: number[];
+  mediaType: number;            // 0=text, 1=audio, 2=video, 3=image
+  mediaBlobId: string;          // Walrus blob ID
+  encryptionKey: number[];      // Seal-encrypted AES key
   price: bigint;
   maxSupply: number;
   minted: number;
@@ -39,11 +42,24 @@ export function usePost(postId: string | undefined) {
         encryptedContent = Array.from((raw as number[]) ?? []);
       }
 
+      // Parse encryption_key same way as encrypted_content
+      const rawKey = fields.encryption_key;
+      let encryptionKey: number[];
+      if (typeof rawKey === 'string' && rawKey.length > 0) {
+        const binary = atob(rawKey);
+        encryptionKey = Array.from(binary, (c) => c.charCodeAt(0));
+      } else {
+        encryptionKey = Array.from((rawKey as number[]) ?? []);
+      }
+
       return {
         objectId: postId,
         author:           String(fields.author ?? ''),
         title:            String(fields.title ?? ''),
         encryptedContent,
+        mediaType:        Number(fields.media_type ?? 0),
+        mediaBlobId:      String(fields.media_blob_id ?? ''),
+        encryptionKey,
         price:            BigInt(String(fields.price ?? 0)),
         maxSupply:        Number(fields.max_supply ?? 0),
         minted:           Number(fields.minted ?? 0),

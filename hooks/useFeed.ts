@@ -10,6 +10,7 @@ export interface FeedPost {
   title: string;
   price: bigint;
   maxSupply: number;
+  mediaType: number;   // 0=text, 1=audio, 2=video, 3=image
   createdAt: string;
 }
 
@@ -63,6 +64,7 @@ export function useFeed() {
             title:     String(json.title ?? ''),
             price:     BigInt(json.price ?? 0),
             maxSupply: Number(json.max_supply ?? 0),
+            mediaType: Number(json.media_type ?? 0),
             createdAt: String(json.created_at ?? node.timestamp ?? Date.now()),
           } satisfies FeedPost;
         })
