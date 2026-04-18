@@ -7,7 +7,7 @@ interface AddressAvatarProps {
 }
 
 const PALETTE = [
-  '#7B6EE8', '#5DCAA5', '#F0997B', '#ED93B1',
+  '#E8623A', '#5DCAA5', '#F0997B', '#ED93B1',
   '#6FBCF0', '#B3ACF0', '#E8C56E', '#6EE8B7',
   '#E86E8A', '#6EB4E8', '#C56EE8', '#E8A86E',
 ] as const;
@@ -48,7 +48,6 @@ export function AddressAvatar({ address, size = 38, className }: AddressAvatarPr
   const bg = PALETTE[(hash * 7 + 3) % PALETTE.length];
   const grid = generateGrid(address);
   const cellSize = size / 5;
-  const clipId = `avatar-clip-${hash}`;
 
   return (
     <svg
@@ -58,32 +57,25 @@ export function AddressAvatar({ address, size = 38, className }: AddressAvatarPr
       className={className}
       role="img"
       aria-label={`Avatar for ${address.slice(0, 10)}`}
-      style={{ flexShrink: 0 }}
+      style={{ flexShrink: 0, borderRadius: '50%', overflow: 'hidden' }}
     >
-      <defs>
-        <clipPath id={clipId}>
-          <circle cx={size / 2} cy={size / 2} r={size / 2} />
-        </clipPath>
-      </defs>
-      <g clipPath={`url(#${clipId})`}>
-        <rect width={size} height={size} fill={bg} opacity={0.2} />
-        {grid.map((filled, i) => {
-          if (!filled) return null;
-          const row = Math.floor(i / 5);
-          const col = i % 5;
-          return (
-            <rect
-              key={i}
-              x={col * cellSize}
-              y={row * cellSize}
-              width={cellSize}
-              height={cellSize}
-              fill={fg}
-              opacity={0.8}
-            />
-          );
-        })}
-      </g>
+      <rect width={size} height={size} fill={bg} opacity={0.2} />
+      {grid.map((filled, i) => {
+        if (!filled) return null;
+        const row = Math.floor(i / 5);
+        const col = i % 5;
+        return (
+          <rect
+            key={i}
+            x={col * cellSize}
+            y={row * cellSize}
+            width={cellSize}
+            height={cellSize}
+            fill={fg}
+            opacity={0.8}
+          />
+        );
+      })}
       <circle
         cx={size / 2}
         cy={size / 2}
