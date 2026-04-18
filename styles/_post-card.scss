@@ -32,6 +32,26 @@
     }
   }
 
+  // Sold out — accent border glow
+  &--soldout {
+    border-color: $accent-border;
+    background: rgba(232, 98, 58, 0.03);
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: $radius-lg;
+      pointer-events: none;
+      box-shadow: inset 0 0 0 1px $accent-border, 0 0 12px rgba(232, 98, 58, 0.08);
+    }
+
+    &:hover {
+      border-color: $accent;
+      background: rgba(232, 98, 58, 0.06);
+    }
+  }
+
   &__inner {
     padding: 14px 16px;
     display: flex;
@@ -158,5 +178,11 @@
     background: $bg-surface-2;
     color: $text-hint;
     border: 0.5px solid $border;
+  }
+
+  &--soldout {
+    background: $accent-soft;
+    color: $accent;
+    border: 0.5px solid $accent-border;
   }
 }

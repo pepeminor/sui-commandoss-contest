@@ -16,11 +16,12 @@ interface PostCardProps {
 export function PostCard({ post }: PostCardProps) {
   const hasAccess = useHasAccess(post.postId);
   const { t } = useI18n();
+  const soldOut = post.maxSupply > 0 && post.minted >= post.maxSupply;
 
   return (
     <Link
       href={`/post/${post.postId}`}
-      className={`post-card${hasAccess ? ' post-card--owned' : ''}`}
+      className={`post-card${hasAccess ? ' post-card--owned' : ''}${soldOut ? ' post-card--soldout' : ''}`}
     >
       <div className="post-card__inner">
         <AddressAvatar address={post.author} size={38} />
@@ -33,9 +34,15 @@ export function PostCard({ post }: PostCardProps) {
               <span>{timeAgo(post.createdAt)}</span>
             </div>
 
-            <span className={`badge badge--${hasAccess ? 'owned' : 'locked'}`}>
-              {hasAccess ? `✓ ${t('post.owned')}` : `🔒 ${t('post.locked')}`}
-            </span>
+            {soldOut ? (
+              <span className="badge badge--soldout">
+                <i className="ri-fire-fill" style={{ fontSize: 10 }} /> SOLD OUT
+              </span>
+            ) : (
+              <span className={`badge badge--${hasAccess ? 'owned' : 'locked'}`}>
+                {hasAccess ? `✓ ${t('post.owned')}` : `🔒 ${t('post.locked')}`}
+              </span>
+            )}
           </div>
 
           <div className="post-card__title">
@@ -69,7 +76,7 @@ export function PostCard({ post }: PostCardProps) {
                 <i className="ri-external-link-line" style={{ fontSize: 12 }} />
               </a>
               <span className="post-card__supply">
-                {post.maxSupply > 0 ? `${post.maxSupply} max` : '∞'}
+                {post.minted}/{post.maxSupply > 0 ? post.maxSupply : '∞'} {t('post.sold')}
               </span>
             </div>
           </div>

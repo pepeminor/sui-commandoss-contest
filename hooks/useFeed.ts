@@ -1,7 +1,7 @@
 'use client';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { graphqlClient } from '@/lib/sui-client';
+import { graphqlClient, suiClient } from '@/lib/sui-client';
 import { PACKAGE_ID } from '@/config';
 
 export interface FeedPost {
@@ -10,6 +10,7 @@ export interface FeedPost {
   title: string;
   price: bigint;
   maxSupply: number;
+  minted: number;
   mediaType: number;   // 0=text, 1=audio, 2=video, 3=image
   createdAt: string;
 }
@@ -64,12 +65,32 @@ export function useFeed() {
             title:     String(json.title ?? ''),
             price:     BigInt(json.price ?? 0),
             maxSupply: Number(json.max_supply ?? 0),
+            minted:    0,
             mediaType: Number(json.media_type ?? 0),
             createdAt: String(json.created_at ?? node.timestamp ?? Date.now()),
           } satisfies FeedPost;
         })
         .filter((p: FeedPost) => p.postId)
         .reverse();
+
+      // Batch fetch minted counts from on-chain objects
+      if (posts.length > 0) {
+        try {
+          const results = await Promise.all(
+            posts.map((p) =>
+              suiClient.core.getObject({ objectId: p.postId, include: { json: true } })
+            ),
+          );
+          for (let i = 0; i < posts.length; i++) {
+            const fields = results[i]?.object?.json as Record<string, unknown> | null;
+            if (fields) {
+              posts[i].minted = Number(fields.minted ?? 0);
+            }
+          }
+        } catch {
+          // Silently fallback — minted stays 0
+        }
+      }
 
       return {
         posts,

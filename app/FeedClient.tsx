@@ -39,7 +39,7 @@ export function FeedClient() {
   const filteredPosts = useMemo(() => {
     const base = selectedArtist ? posts.filter((p) => p.author === selectedArtist) : posts;
     if (sortTab === 'top') {
-      return [...base].sort((a, b) => Number(b.price) - Number(a.price) || b.maxSupply - a.maxSupply);
+      return [...base].sort((a, b) => b.minted - a.minted || Number(b.price) - Number(a.price));
     }
     return base;
   }, [posts, selectedArtist, sortTab]);
