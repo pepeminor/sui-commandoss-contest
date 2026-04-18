@@ -158,6 +158,12 @@ function CreateContent() {
             <input className="form-input" placeholder={t('create.titlePlaceholder')} value={title} onChange={(e) => setTitle(e.target.value)} required />
           </div>
 
+          <div className="form-group">
+            <label className="form-label">{t('create.contentLabel')}</label>
+            <textarea className="form-textarea" placeholder={audioFile ? t('create.lyricsPlaceholder') : t('create.contentPlaceholder')} value={content} onChange={(e) => setContent(e.target.value)} rows={audioFile ? 6 : 10} required />
+            <span className="form-hint">{t('create.contentHint')}</span>
+          </div>
+
           {/* Audio upload */}
           <div className="form-group">
             <label className="form-label">{t('create.audioLabel')}</label>
@@ -198,12 +204,6 @@ function CreateContent() {
                 <span className="text-hint" style={{ fontSize: 11 }}>{t('create.audioMaxSize')}</span>
               </label>
             )}
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">{t('create.contentLabel')}</label>
-            <textarea className="form-textarea" placeholder={audioFile ? t('create.lyricsPlaceholder') : t('create.contentPlaceholder')} value={content} onChange={(e) => setContent(e.target.value)} rows={audioFile ? 6 : 10} required />
-            <span className="form-hint">{t('create.contentHint')}</span>
           </div>
           <div className="form-row">
             <div className="form-group">
