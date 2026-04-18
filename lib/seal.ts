@@ -2,7 +2,7 @@
 
 import { SealClient, SessionKey, EncryptedObject } from '@mysten/seal';
 import type { Signer } from '@mysten/sui/cryptography';
-import { suiClient } from './sui-client';
+import { suiClient, graphqlClient } from './sui-client';
 import { buildSealApproveTx } from './transactions';
 import { PACKAGE_ID } from '@/config';
 
@@ -46,16 +46,23 @@ async function getOrCreateSessionKey(address: string, signer: Signer): Promise<S
   const cached = sessionKeyCache.get(address);
   if (cached && !cached.isExpired()) return cached;
 
-  // Pass signer directly so SessionKey lazily signs via getCertificate().
-  // This avoids the local verifyPersonalMessageSignature call which can fail
-  // for zkLogin (Enoki) signers — the Seal key servers verify instead.
+  // Official Seal example pattern: create WITHOUT signer, then manually sign
+  // and call setPersonalMessageSignature(). This ensures local verification
+  // of the zkLogin signature before sending to key servers.
   const sessionKey = await SessionKey.create({
     address,
     packageId: PACKAGE_ID,
     ttlMin: 10,
-    signer,
-    suiClient,
+    suiClient: graphqlClient,
   });
+
+  // Sign the personal message with the Enoki keypair (zkLogin signer)
+  const personalMessage = sessionKey.getPersonalMessage();
+  const { signature } = await signer.signPersonalMessage(personalMessage);
+
+  // setPersonalMessageSignature verifies the signature locally first
+  // (uses graphqlClient for zkLogin proof verification on-chain)
+  await sessionKey.setPersonalMessageSignature(signature);
 
   sessionKeyCache.set(address, sessionKey);
   setTimeout(() => sessionKeyCache.delete(address), 10 * 60 * 1000);
@@ -95,7 +102,6 @@ export async function decryptContent({
   signer: Signer;
 }): Promise<string> {
   const sealClient = getSealClient();
-  const sessionKey = await getOrCreateSessionKey(userAddress, signer);
 
   const bytes =
     encryptedContent instanceof Uint8Array ? encryptedContent : new Uint8Array(encryptedContent);
@@ -103,10 +109,27 @@ export async function decryptContent({
   // Extract the inner ID baked into the encrypted blob during encrypt
   const innerId = EncryptedObject.parse(bytes).id;
 
-  const tx = buildSealApproveTx(innerId, nftObjectId, postObjectId);
-  tx.setSender(userAddress);
-  const txBytes = await tx.build({ client: suiClient, onlyTransactionKind: true });
+  const attemptDecrypt = async (sessionKey: SessionKey) => {
+    const tx = buildSealApproveTx(innerId, nftObjectId, postObjectId);
+    tx.setSender(userAddress);
+    const txBytes = await tx.build({ client: suiClient, onlyTransactionKind: true });
+    return sealClient.decrypt({ data: bytes, sessionKey, txBytes });
+  };
 
-  const decryptedBytes = await sealClient.decrypt({ data: bytes, sessionKey, txBytes });
-  return new TextDecoder().decode(decryptedBytes);
+  // First attempt with (possibly cached) session key
+  let sessionKey = await getOrCreateSessionKey(userAddress, signer);
+  try {
+    const decryptedBytes = await attemptDecrypt(sessionKey);
+    return new TextDecoder().decode(decryptedBytes);
+  } catch (err) {
+    // On signature/session errors, clear cache and retry with a fresh session key
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg.includes('InvalidSignature') || msg.includes('InvalidCertificate') || msg.includes('Invalid user signature')) {
+      clearSessionKey(userAddress);
+      sessionKey = await getOrCreateSessionKey(userAddress, signer);
+      const decryptedBytes = await attemptDecrypt(sessionKey);
+      return new TextDecoder().decode(decryptedBytes);
+    }
+    throw err;
+  }
 }
