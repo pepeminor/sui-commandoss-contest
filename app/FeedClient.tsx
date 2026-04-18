@@ -5,7 +5,7 @@ import { useFeed } from '@/hooks/useFeed';
 import { PostCard } from '@/components/PostCard';
 import { ArtistCarousel, type Artist } from '@/components/ArtistCarousel';
 import { EmptyState } from '@/components/EmptyState';
-import { SkeletonList } from '@/components/Skeleton';
+import { SkeletonList, SkeletonGrid } from '@/components/Skeleton';
 import { PACKAGE_ID } from '@/config';
 import { useI18n } from '@/i18n/I18nProvider';
 
@@ -67,7 +67,7 @@ export function FeedClient() {
         <p className="page-header__sub">{t('feed.subtitle')}</p>
       </div>
 
-      {isLoading && <SkeletonList count={3} height={120} />}
+      {isLoading && <SkeletonGrid count={6} />}
 
       {isError && <EmptyState title={t('feed.error')} desc={t('feed.errorDesc')} />}
 
@@ -75,7 +75,11 @@ export function FeedClient() {
         <EmptyState icon="✍️" title={t('feed.empty')} desc={t('feed.emptyDesc')} />
       )}
 
-      {!isLoading && filteredPosts.map((post) => <PostCard key={post.postId} post={post} />)}
+      {!isLoading && filteredPosts.length > 0 && (
+        <div className="feed-grid">
+          {filteredPosts.map((post) => <PostCard key={post.postId} post={post} />)}
+        </div>
+      )}
 
       {hasNextPage && !selectedArtist && (
         <div className="load-more">
@@ -89,7 +93,7 @@ export function FeedClient() {
         </div>
       )}
 
-      {isFetchingNextPage && <SkeletonList count={2} height={120} />}
+      {isFetchingNextPage && <SkeletonGrid count={3} />}
 
       {/* Artist carousel — bottom */}
       {!isLoading && artists.length > 0 && (

@@ -81,6 +81,12 @@ body {
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
   border-radius: $radius-md;
+
+  &.skeleton-card-art {
+    aspect-ratio: 1;
+    width: 100%;
+    height: auto;
+  }
 }
 
 @keyframes shimmer {
