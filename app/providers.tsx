@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
 import { ENOKI_API_KEY, NETWORK } from '@/config';
 import { I18nProvider } from '@/i18n/I18nProvider';
+import { ToastProvider } from '@/components/Toast';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,7 +26,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
           <WalletProvider>
             <I18nProvider>
-              {children}
+              <ToastProvider>
+                {children}
+              </ToastProvider>
             </I18nProvider>
           </WalletProvider>
         </SuiClientProvider>

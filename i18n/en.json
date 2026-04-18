@@ -79,5 +79,24 @@
 
   "post.viewOnChain": "On-chain",
 
-  "common.cancel": "Cancel"
+  "common.cancel": "Cancel",
+
+  "wallet.title": "Wallet",
+  "wallet.copied": "Address copied!",
+  "wallet.send": "Send",
+  "wallet.receive": "Receive",
+  "wallet.tokens": "Tokens",
+  "wallet.nfts": "NFTs",
+  "wallet.noTokens": "No tokens yet",
+  "wallet.noNfts": "No NFTs yet",
+  "wallet.sendTitle": "Send Token",
+  "wallet.token": "Token",
+  "wallet.recipient": "Recipient address",
+  "wallet.amount": "Amount",
+  "wallet.available": "Available",
+  "wallet.to": "To",
+  "wallet.reviewSend": "Review Send",
+  "wallet.confirmSend": "Confirm & Send",
+  "wallet.sending": "Sending...",
+  "wallet.sendSuccess": "Token sent successfully!"
 }

@@ -79,5 +79,24 @@
 
   "post.viewOnChain": "On-chain",
 
-  "common.cancel": "Hủy"
+  "common.cancel": "Hủy",
+
+  "wallet.title": "Ví",
+  "wallet.copied": "Đã copy địa chỉ!",
+  "wallet.send": "Gửi",
+  "wallet.receive": "Nhận",
+  "wallet.tokens": "Token",
+  "wallet.nfts": "NFTs",
+  "wallet.noTokens": "Chưa có token nào",
+  "wallet.noNfts": "Chưa có NFT nào",
+  "wallet.sendTitle": "Gửi Token",
+  "wallet.token": "Token",
+  "wallet.recipient": "Địa chỉ người nhận",
+  "wallet.amount": "Số lượng",
+  "wallet.available": "Khả dụng",
+  "wallet.to": "Đến",
+  "wallet.reviewSend": "Xem lại",
+  "wallet.confirmSend": "Xác nhận & Gửi",
+  "wallet.sending": "Đang gửi...",
+  "wallet.sendSuccess": "Gửi token thành công!"
 }

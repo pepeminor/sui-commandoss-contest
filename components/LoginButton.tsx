@@ -5,20 +5,13 @@ import { useAuth } from '@/auth/useAuth';
 import { shortenAddress } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useIsClient } from '@/hooks/useIsClient';
+import { WalletModal } from './WalletModal';
 
 export function LoginButton() {
   const { address, isLoggedIn, login, logout } = useAuth();
   const { t } = useI18n();
-  const [copied, setCopied] = useState(false);
   const isClient = useIsClient();
-
-  const handleCopy = () => {
-    if (!address) return;
-    navigator.clipboard.writeText(address).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
+  const [walletOpen, setWalletOpen] = useState(false);
 
   if (!isClient) {
     return (
@@ -32,18 +25,21 @@ export function LoginButton() {
 
   if (isLoggedIn && address) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <button
-          className="navbar__address"
-          onClick={handleCopy}
-          title={address}
-        >
-          {copied ? `✓ ${t('nav.copied')}` : shortenAddress(address)}
-        </button>
-        <button className="btn btn--ghost btn--sm" onClick={logout}>
-          {t('nav.logout')}
-        </button>
-      </div>
+      <>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button
+            className="navbar__address"
+            onClick={() => setWalletOpen(true)}
+            title={address}
+          >
+            {shortenAddress(address)}
+          </button>
+          <button className="btn btn--ghost btn--sm" onClick={logout}>
+            {t('nav.logout')}
+          </button>
+        </div>
+        <WalletModal open={walletOpen} onClose={() => setWalletOpen(false)} />
+      </>
     );
   }
 

@@ -242,7 +242,8 @@
   animation: slide-in-right $duration-normal $ease-out-expo;
 
   &__address {
-    display: block;
+    display: flex;
+    align-items: center;
     width: 100%;
     padding: 10px 12px;
     font-size: 12px;

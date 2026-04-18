@@ -6,6 +6,8 @@
 @use 'post-card';
 @use 'forms';
 @use 'modal';
+@use 'toast';
+@use 'wallet';
 @use 'utilities';
 
 *, *::before, *::after {

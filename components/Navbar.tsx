@@ -9,15 +9,18 @@ import { useAuth } from '@/auth/useAuth';
 import { useI18n } from '@/i18n/I18nProvider';
 import { shortenAddress } from '@/lib/utils';
 import { useIsClient } from '@/hooks/useIsClient';
+import { useToast } from './Toast';
+import { WalletModal } from './WalletModal';
 
 export function Navbar() {
   const pathname = usePathname();
   const { isLoggedIn, address, logout } = useAuth();
   const { t, locale, setLocale } = useI18n();
+  const { toast } = useToast();
   const isClient = useIsClient();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [walletOpen, setWalletOpen] = useState(false);
   useEffect(() => setMenuOpen(false), [pathname]);
 
   const links = [
@@ -28,14 +31,6 @@ export function Navbar() {
   ];
 
   const showPublish = isClient && isLoggedIn;
-
-  const handleCopy = () => {
-    if (!address) return;
-    navigator.clipboard.writeText(address).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
 
   const handleLogout = () => {
     setShowLogoutConfirm(false);
@@ -114,8 +109,15 @@ export function Navbar() {
             {/* Address at top */}
             {isClient && isLoggedIn && address && (
               <>
-                <button className="mobile-menu__address" onClick={handleCopy} title={address}>
-                  {copied ? `✓ ${t('nav.copied')}` : shortenAddress(address)}
+                <button
+                  className="mobile-menu__address"
+                  onClick={() => { setMenuOpen(false); setWalletOpen(true); }}
+                  title={address}
+                >
+                  {shortenAddress(address)}
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ marginLeft: 'auto', opacity: 0.5 }}>
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
                 </button>
                 <div className="mobile-menu__divider" />
               </>
@@ -208,6 +210,8 @@ export function Navbar() {
         </p>
       </Modal>
 
+      {/* Wallet Modal */}
+      <WalletModal open={walletOpen} onClose={() => setWalletOpen(false)} />
     </>
   );
 }
