@@ -7,6 +7,7 @@ import { buildCreatePostTx, buildCreatePostWithMediaTx } from '@/lib/transaction
 import { encryptContent, encryptRaw } from '@/lib/seal';
 import { generateAESKey, exportKey, encryptMedia } from '@/lib/media-crypto';
 import { uploadToWalrus } from '@/lib/walrus';
+import { transcodeAudio } from '@/lib/audio-transcode';
 
 export interface CreatePostInput {
   title: string;
@@ -30,19 +31,24 @@ export function useCreatePost() {
 
       let tx;
       if (audioFile) {
-        onUploadProgress?.('encrypt', 0);
+        onUploadProgress?.('transcode', 0);
+        const compressed = await transcodeAudio(audioFile, (p) => {
+          onUploadProgress?.('transcode', p * 0.3); // 0 → 30%
+        });
+
+        onUploadProgress?.('encrypt', 0.3);
         const aesKey = await generateAESKey();
-        const audioBuffer = await audioFile.arrayBuffer();
+        const audioBuffer = await compressed.arrayBuffer();
         const encryptedAudio = await encryptMedia(audioBuffer, aesKey);
 
-        onUploadProgress?.('upload', 0.2);
+        onUploadProgress?.('upload', 0.4);
         const { blobId } = await uploadToWalrus(encryptedAudio);
 
-        onUploadProgress?.('seal', 0.6);
+        onUploadProgress?.('seal', 0.7);
         const rawKey = await exportKey(aesKey);
         const sealedKey = await encryptRaw(rawKey);
 
-        onUploadProgress?.('chain', 0.8);
+        onUploadProgress?.('chain', 0.85);
         tx = buildCreatePostWithMediaTx({
           title, encryptedContent,
           mediaType: 1, mediaBlobId: blobId, encryptionKey: sealedKey,

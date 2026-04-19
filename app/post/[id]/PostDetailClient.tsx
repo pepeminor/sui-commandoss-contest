@@ -56,12 +56,17 @@ export function PostDetailClient({ postId }: Props) {
       ]);
 
       const signer = await getSigner();
-      const aesKeyBytes = await decryptRaw({
-        encryptedData: new Uint8Array(post.encryptionKey),
-        nftObjectId: nft.objectId, postObjectId: postId,
-        userAddress: address, signer,
-      });
-      const encryptedAudio = await downloadFromWalrus(post.mediaBlobId);
+
+      // Run Seal decrypt + Walrus download in parallel
+      const [aesKeyBytes, encryptedAudio] = await Promise.all([
+        decryptRaw({
+          encryptedData: new Uint8Array(post.encryptionKey),
+          nftObjectId: nft.objectId, postObjectId: postId,
+          userAddress: address, signer,
+        }),
+        downloadFromWalrus(post.mediaBlobId),
+      ]);
+
       const aesKey = await importKey(aesKeyBytes);
       const audioBuffer = await decryptMedia(encryptedAudio, aesKey);
       const blob = new Blob([audioBuffer], { type: 'audio/mpeg' });
