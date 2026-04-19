@@ -85,7 +85,7 @@ function CreateContent() {
             <div className="text-secondary" style={{ fontSize: 14, marginBottom: 20 }}>&ldquo;{successTitle}&rdquo;</div>
             {successDigest && (
               <div className="info-panel" style={{ marginBottom: 24, textAlign: 'left' }}>
-                <div className="post-detail__stat-label" style={{ marginBottom: 4 }}>Tx Digest</div>
+                <div className="post-detail__stat-label" style={{ marginBottom: 4 }}>{t('create.txDigest')}</div>
                 <div className="text-sui" style={{ fontSize: 11, fontFamily: 'monospace', wordBreak: 'break-all' }}>{successDigest}</div>
               </div>
             )}
@@ -173,7 +173,7 @@ function CreateContent() {
                   <div className="audio-file-preview__name">{audioFile.name}</div>
                   <div className="audio-file-preview__size">{(audioFile.size / (1024 * 1024)).toFixed(1)} MB</div>
                 </div>
-                <button type="button" className="audio-file-preview__remove" onClick={removeAudio} aria-label="Remove">
+                <button type="button" className="audio-file-preview__remove" onClick={removeAudio} aria-label={t('create.removeAudio')}>
                   <i className="ri-close-line" style={{ fontSize: 14 }} />
                 </button>
               </div>
@@ -249,7 +249,7 @@ function CreateContent() {
             <div className="text-primary" style={{ fontSize: 14, fontWeight: 700 }}>{title}</div>
             <div className="text-muted" style={{ fontSize: 12, marginTop: 4 }}>
               {contentSize.toLocaleString()} bytes &middot; {maxSupply} NFT &middot; {formatSUI(priceMist)} SUI/NFT
-              {audioFile && <> &middot; {(audioFile.size / (1024 * 1024)).toFixed(1)} MB audio</>}
+              {audioFile && <> &middot; {t('create.audioSize', { size: (audioFile.size / (1024 * 1024)).toFixed(1) })}</>}
             </div>
           </div>
           <div className="info-panel">

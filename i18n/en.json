@@ -10,6 +10,8 @@
 
   "feed.title": "Feed",
   "feed.subtitle": "Exclusive content from creators — buy NFT to unlock",
+  "feed.tabNewReleases": "New Releases",
+  "feed.tabTopHits": "Top Hits",
   "feed.empty": "No posts yet",
   "feed.emptyDesc": "Be the first to publish on-chain!",
   "feed.error": "Failed to load feed",
@@ -170,5 +172,19 @@
   "comments.loginToComment": "Login to comment",
   "comments.send": "Send",
   "comments.justNow": "just now",
-  "comments.empty": "No comments yet. Be the first!"
+  "comments.empty": "No comments yet. Be the first!",
+
+  "auth.authenticating": "Authenticating...",
+  "create.txDigest": "Tx Digest",
+  "create.audioSize": "{size} MB audio",
+  "create.removeAudio": "Remove",
+  "post.soldOutBanner": "SOLD OUT",
+  "post.editionsCollected": "{minted}/{maxSupply} editions collected",
+  "post.mediaAudio": "Audio",
+  "post.mediaText": "Text",
+  "player.pause": "Pause",
+  "common.close": "Close",
+  "wallet.qrAlt": "QR Code",
+  "wallet.sendFailed": "Send failed",
+  "wallet.transferFailed": "Transfer failed"
 }

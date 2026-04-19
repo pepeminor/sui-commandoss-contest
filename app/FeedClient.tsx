@@ -11,14 +11,14 @@ import { SkeletonList } from '@/components/Skeleton';
 import { PACKAGE_ID } from '@/config';
 import { useI18n } from '@/i18n/I18nProvider';
 
-type SortTab = 'newest' | 'top';
+type SortTab = 'new-releases' | 'top';
 
 export function FeedClient() {
   const { data: posts, isLoading, isError, hasNextPage, isFetchingNextPage, fetchNextPage } = useFeed();
   const ownedPostIds = useOwnedPostIds();
   const { t } = useI18n();
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
-  const [sortTab, setSortTab] = useState<SortTab>('newest');
+  const [sortTab, setSortTab] = useState<SortTab>('new-releases');
 
   // Extract real artists from feed + merge with fake showcase artists
   const artists = useMemo(() => {
@@ -63,16 +63,16 @@ export function FeedClient() {
 
       <div className="feed-tabs">
         <button
-          className={`feed-tabs__item${sortTab === 'newest' ? ' feed-tabs__item--active' : ''}`}
-          onClick={() => setSortTab('newest')}
+          className={`feed-tabs__item${sortTab === 'new-releases' ? ' feed-tabs__item--active' : ''}`}
+          onClick={() => setSortTab('new-releases')}
         >
-          Newest
+          {t('feed.tabNewReleases')}
         </button>
         <button
           className={`feed-tabs__item${sortTab === 'top' ? ' feed-tabs__item--active' : ''}`}
           onClick={() => setSortTab('top')}
         >
-          Top Hits
+          {t('feed.tabTopHits')}
         </button>
       </div>
 
@@ -85,7 +85,9 @@ export function FeedClient() {
       )}
 
       {!isLoading && filteredPosts.map((post) => <PostCard key={post.postId} post={post} hasAccess={ownedPostIds.has(post.postId)} />)}
-
+      
+      {isFetchingNextPage && <SkeletonList count={2} height={120} />}
+      
       {hasNextPage && !selectedArtist && (
         <div className="load-more">
           <button
@@ -98,7 +100,6 @@ export function FeedClient() {
         </div>
       )}
 
-      {isFetchingNextPage && <SkeletonList count={2} height={120} />}
 
       {/* Artist carousel — bottom */}
       {!isLoading && artists.length > 0 && (

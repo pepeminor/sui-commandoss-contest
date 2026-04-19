@@ -44,7 +44,7 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
       handleClose();
     },
     onError: (err) => {
-      toast(err instanceof Error ? err.message : 'Transfer failed', 'error');
+      toast(err instanceof Error ? err.message : t('wallet.transferFailed'), 'error');
     },
   });
 

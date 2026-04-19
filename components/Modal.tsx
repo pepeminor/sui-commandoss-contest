@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useCallback, type ReactNode } from 'react';
+import { useI18n } from '@/i18n/I18nProvider';
 
 interface ModalProps {
   open: boolean;
@@ -11,6 +12,7 @@ interface ModalProps {
 }
 
 export function Modal({ open, onClose, title, children, actions }: ModalProps) {
+  const { t } = useI18n();
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -42,7 +44,7 @@ export function Modal({ open, onClose, title, children, actions }: ModalProps) {
         {title && (
           <div className="modal__header">
             <h3 className="modal__title">{title}</h3>
-            <button className="modal__close" onClick={onClose} aria-label="Close">
+            <button className="modal__close" onClick={onClose} aria-label={t('common.close')}>
               <i className="ri-close-line" style={{ fontSize: 16 }} />
             </button>
           </div>

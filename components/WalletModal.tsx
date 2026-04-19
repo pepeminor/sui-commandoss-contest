@@ -74,7 +74,7 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
           <div className="wallet__qr-section">
             {qrDataUrl && (
               <div className="wallet__qr-wrapper">
-                <img src={qrDataUrl} alt="QR Code" className="wallet__qr" width={140} height={140} />
+                <img src={qrDataUrl} alt={t('wallet.qrAlt')} className="wallet__qr" width={140} height={140} />
               </div>
             )}
             <button className="wallet__address-btn" onClick={handleCopy} title={address}>

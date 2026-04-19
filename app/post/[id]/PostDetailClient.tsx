@@ -164,7 +164,7 @@ export function PostDetailClient({ postId }: Props) {
       }
     } catch (err) {
       console.error('Audio playback failed:', err);
-      player.setError('Playback failed');
+      player.setError(t('player.error'));
     }
   }, [player]);
 
@@ -206,15 +206,15 @@ export function PostDetailClient({ postId }: Props) {
       {soldOut && (
         <div className="post-detail__soldout-banner">
           <i className="ri-fire-fill" style={{ fontSize: 16 }} />
-          <span>SOLD OUT</span>
-          <span className="post-detail__soldout-sub">{post.minted}/{post.maxSupply} editions collected</span>
+          <span>{t('post.soldOutBanner')}</span>
+          <span className="post-detail__soldout-sub">{t('post.editionsCollected', { minted: post.minted, maxSupply: post.maxSupply })}</span>
         </div>
       )}
       <div className="post-detail__header">
         <AddressAvatar address={post.author} size={44} />
         <div className="post-detail__header-info">
           <h1 className="post-detail__title">
-            <span className="post-detail__media-badge" title={isAudioPost ? 'Audio' : 'Text'}>
+            <span className="post-detail__media-badge" title={isAudioPost ? t('post.mediaAudio') : t('post.mediaText')}>
               {isAudioPost ? (
                 <i className="ri-music-2-fill" style={{ fontSize: 14 }} />
               ) : (
@@ -245,7 +245,7 @@ export function PostDetailClient({ postId }: Props) {
               }
             }}
             disabled={player.isLoading && isCurrentTrack}
-            aria-label={isCurrentTrack && player.isPlaying ? 'Pause' : 'Play'}
+            aria-label={isCurrentTrack && player.isPlaying ? t('player.pause') : t('player.play')}
           >
             {player.isLoading && isCurrentTrack ? (
               <div className="post-detail__play-spinner" />

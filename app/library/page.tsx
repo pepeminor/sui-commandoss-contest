@@ -58,6 +58,8 @@ function LibraryContent() {
             </Link>
           ))}
 
+        {isFetchingNextPage && <SkeletonList count={2} height={80} />}
+
         {hasNextPage && (
           <div className="load-more">
             <button
@@ -69,8 +71,6 @@ function LibraryContent() {
             </button>
           </div>
         )}
-
-        {isFetchingNextPage && <SkeletonList count={2} height={80} />}
       </div>
     </div>
   );

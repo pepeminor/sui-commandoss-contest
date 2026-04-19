@@ -55,7 +55,7 @@ export function SendTokenModal({ open, onClose, balances }: SendTokenModalProps)
       handleClose();
     },
     onError: (err) => {
-      toast(err instanceof Error ? err.message : 'Send failed', 'error');
+      toast(err instanceof Error ? err.message : t('wallet.sendFailed'), 'error');
     },
   });
 

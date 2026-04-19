@@ -10,6 +10,8 @@
 
   "feed.title": "Feed",
   "feed.subtitle": "Nội dung exclusive từ các artist — mua NFT để đọc toàn bộ",
+  "feed.tabNewReleases": "Mới phát hành",
+  "feed.tabTopHits": "Nổi bật",
   "feed.empty": "Chưa có bài nào",
   "feed.emptyDesc": "Hãy là người đầu tiên publish bài lên chain!",
   "feed.error": "Không thể tải feed",
@@ -170,5 +172,19 @@
   "comments.loginToComment": "Đăng nhập để bình luận",
   "comments.send": "Gửi",
   "comments.justNow": "vừa xong",
-  "comments.empty": "Chưa có bình luận. Hãy là người đầu tiên!"
+  "comments.empty": "Chưa có bình luận. Hãy là người đầu tiên!",
+
+  "auth.authenticating": "Đang xác thực...",
+  "create.txDigest": "Tx Digest",
+  "create.audioSize": "{size} MB audio",
+  "create.removeAudio": "Xóa",
+  "post.soldOutBanner": "SOLD OUT",
+  "post.editionsCollected": "{minted}/{maxSupply} editions đã sưu tầm",
+  "post.mediaAudio": "Audio",
+  "post.mediaText": "Text",
+  "player.pause": "Tạm dừng",
+  "common.close": "Đóng",
+  "wallet.qrAlt": "Mã QR",
+  "wallet.sendFailed": "Gửi thất bại",
+  "wallet.transferFailed": "Chuyển thất bại"
 }

@@ -2,6 +2,7 @@
 
 import { useMusicPlayer } from './MusicPlayerProvider';
 import { shortenAddress } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nProvider';
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds < 0) return '0:00';
@@ -15,6 +16,7 @@ export function MusicPlayer() {
     track, isPlaying, isLoading, isReady, progress, duration, currentTime, error,
     pause, resume, seek, stop, onRequestPlay,
   } = useMusicPlayer();
+  const { t } = useI18n();
 
   if (!track) return null;
 
@@ -61,7 +63,7 @@ export function MusicPlayer() {
             <button
               className="music-player__play"
               onClick={handlePlayPause}
-              aria-label={isPlaying ? 'Pause' : 'Play'}
+              aria-label={isPlaying ? t('player.pause') : t('player.play')}
             >
               {isPlaying ? (
                 <i className="ri-pause-fill" style={{ fontSize: 18 }} />
@@ -82,7 +84,7 @@ export function MusicPlayer() {
         </div>
 
         {/* Close */}
-        <button className="music-player__close" onClick={stop} aria-label="Close">
+        <button className="music-player__close" onClick={stop} aria-label={t('common.close')}>
           <i className="ri-close-line" style={{ fontSize: 14 }} />
         </button>
       </div>
