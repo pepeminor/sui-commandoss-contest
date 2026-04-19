@@ -125,11 +125,17 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       if (isActive()) setState((s) => ({ ...s, isPlaying: false, progress: 1 }));
     });
     audio.addEventListener('error', () => {
-      if (isActive()) setState((s) => ({ ...s, isPlaying: false, error: 'Playback error' }));
+      if (isActive()) setState((s) => ({ ...s, isPlaying: false, isLoading: false, error: 'Playback error' }));
     });
 
-    audio.play();
-    setState((s) => ({ ...s, track, isPlaying: true, isLoading: false, isReady: false, error: null }));
+    setState((s) => ({ ...s, track, isPlaying: false, isLoading: true, isReady: false, error: null }));
+    void audio.play()
+      .then(() => {
+        if (isActive()) setState((s) => ({ ...s, isPlaying: true, isLoading: false, error: null }));
+      })
+      .catch(() => {
+        if (isActive()) setState((s) => ({ ...s, isPlaying: false, isLoading: false, error: 'Playback error' }));
+      });
   }, [cleanupBlobUrl]);
 
   /** Swap audio source while preserving playback position (for streaming upgrade). */
@@ -149,7 +155,11 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
       // Update duration to full track length
       setState((s) => ({ ...s, duration: audio.duration }));
       audio.currentTime = savedTime;
-      if (wasPlaying) audio.play();
+      if (wasPlaying) {
+        void audio.play().catch(() => {
+          setState((s) => ({ ...s, isPlaying: false, error: 'Playback error' }));
+        });
+      }
     }, { once: true });
   }, [cleanupBlobUrl]);
 
@@ -159,8 +169,16 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const resume = useCallback(() => {
-    audioRef.current?.play();
-    setState((s) => ({ ...s, isPlaying: true }));
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    void audio.play()
+      .then(() => {
+        if (audioRef.current === audio) setState((s) => ({ ...s, isPlaying: true, error: null }));
+      })
+      .catch(() => {
+        if (audioRef.current === audio) setState((s) => ({ ...s, isPlaying: false, error: 'Playback error' }));
+      });
   }, []);
 
   const seek = useCallback((time: number) => {

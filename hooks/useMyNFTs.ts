@@ -22,9 +22,14 @@ interface NFTPage {
   nextCursor: string | null;
 }
 
-function parseNFTs(objects: any[]): NFTData[] {
+interface OwnedNFTObject {
+  objectId: string;
+  json?: Record<string, unknown> | null;
+}
+
+function parseNFTs(objects: OwnedNFTObject[]): NFTData[] {
   return objects.flatMap((obj) => {
-    const fields = obj.json as Record<string, unknown> | null;
+    const fields = obj.json ?? null;
     if (!fields) return [];
     return [{
       objectId:  obj.objectId,
@@ -75,6 +80,7 @@ export function useMyNFTs() {
   return {
     data: allNFTs,
     isLoading: query.isLoading,
+    isSuccess: query.isSuccess,
     hasNextPage: query.hasNextPage,
     isFetchingNextPage: query.isFetchingNextPage,
     fetchNextPage: query.fetchNextPage,
