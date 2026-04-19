@@ -1,35 +1,46 @@
 'use client';
 
 import { useCallback } from 'react';
-import { useEnokiFlow, useZkLogin } from '@mysten/enoki/react';
+import {
+  useCurrentAccount,
+  useWalletConnection,
+  useWallets,
+  useDAppKit,
+} from '@mysten/dapp-kit-react';
+import { CurrentAccountSigner } from '@mysten/dapp-kit-core';
+import { isGoogleWallet } from '@mysten/enoki';
 import type { Signer } from '@mysten/sui/cryptography';
-import { APP_URL, GOOGLE_CLIENT_ID, NETWORK, sanitizeNetwork } from '@/config';
 
 export function useAuth() {
-  const enokiFlow = useEnokiFlow();
-  const { address } = useZkLogin();
+  const dAppKit = useDAppKit();
+  const account = useCurrentAccount();
+  const { wallet } = useWalletConnection();
+  const wallets = useWallets();
+  const address = account?.address ?? null;
 
   const login = useCallback(async () => {
-    const network = sanitizeNetwork(NETWORK);
-    const url = await enokiFlow.createAuthorizationURL({
-      provider: 'google',
-      clientId: GOOGLE_CLIENT_ID,
-      redirectUrl: `${APP_URL}/auth/callback`,
-      network,
-    });
-    window.location.href = url;
-  }, [enokiFlow]);
+    const enokiGoogle = wallets.find((w) => isGoogleWallet(w));
+    if (!enokiGoogle) {
+      console.error('Enoki Google wallet not registered');
+      return;
+    }
+    await dAppKit.connectWallet({ wallet: enokiGoogle });
+  }, [wallets, dAppKit]);
 
-  const logout = useCallback(() => enokiFlow.logout(), [enokiFlow]);
+  const logout = useCallback(async () => {
+    if (!wallet) return;
+    await dAppKit.disconnectWallet();
+  }, [wallet, dAppKit]);
 
-  /** Get signer (EnokiKeypair extends Signer) — only callable when user is logged in */
+  /** Get signer — wraps the current connected wallet as a Signer */
   const getSigner = useCallback(
-    (): Promise<Signer> => enokiFlow.getKeypair({ network: sanitizeNetwork(NETWORK) }),
-    [enokiFlow],
+    (): Promise<Signer> =>
+      Promise.resolve(new CurrentAccountSigner(dAppKit as any)),
+    [dAppKit],
   );
 
   return {
-    address: address ?? null,
+    address,
     isLoggedIn: !!address,
     login,
     logout,
