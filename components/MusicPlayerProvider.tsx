@@ -26,6 +26,7 @@ interface MusicPlayerActions {
   setReadyTrack: (track: Track) => void;
   setLoadingTrack: (track: Track) => void;
   playTrack: (track: Track, audioBlob: Blob) => void;
+  replaceAudioBlob: (newBlob: Blob) => void;
   pause: () => void;
   resume: () => void;
   seek: (time: number) => void;
@@ -131,6 +132,25 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     setState((s) => ({ ...s, track, isPlaying: true, isLoading: false, isReady: false, error: null }));
   }, [cleanupBlobUrl]);
 
+  /** Swap audio source while preserving playback position (for streaming upgrade). */
+  const replaceAudioBlob = useCallback((newBlob: Blob) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const savedTime = audio.currentTime;
+    const wasPlaying = !audio.paused;
+
+    cleanupBlobUrl();
+    const url = URL.createObjectURL(newBlob);
+    blobUrlRef.current = url;
+
+    audio.src = url;
+    audio.addEventListener('canplay', () => {
+      audio.currentTime = savedTime;
+      if (wasPlaying) audio.play();
+    }, { once: true });
+  }, [cleanupBlobUrl]);
+
   const pause = useCallback(() => {
     audioRef.current?.pause();
     setState((s) => ({ ...s, isPlaying: false }));
@@ -163,7 +183,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   return (
     <MusicPlayerContext.Provider value={{
       ...state,
-      setReadyTrack, setLoadingTrack, playTrack,
+      setReadyTrack, setLoadingTrack, playTrack, replaceAudioBlob,
       pause, resume, seek, stop, setError,
       onRequestPlay, setOnRequestPlay,
     }}>

@@ -152,7 +152,6 @@
   "create.audioInvalidType": "Please select an audio file.",
   "create.lyricsPlaceholder": "Enter lyrics or description for this track...",
   "create.walrusUpload": "Walrus storage",
-  "create.stage.transcode": "Compressing audio...",
   "create.stage.encrypt": "Encrypting audio...",
   "create.stage.upload": "Uploading to Walrus...",
   "create.stage.seal": "Sealing encryption key...",

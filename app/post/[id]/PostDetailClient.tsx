@@ -14,6 +14,7 @@ import { useMusicPlayer } from '@/components/MusicPlayerProvider';
 import { useAuth } from '@/auth/useAuth';
 import { type NFTData } from '@/hooks/useMyNFTs';
 import { CommentsSection } from '@/components/comments/CommentsSection';
+import type { WavHeader } from '@/lib/wav-utils';
 
 interface Props {
   postId: string;
@@ -48,29 +49,118 @@ export function PostDetailClient({ postId }: Props) {
     player.setLoadingTrack(track);
 
     try {
-      // Lazy imports to reduce initial bundle
-      const [{ decryptRaw }, { importKey, decryptMedia }, { downloadFromWalrus }] = await Promise.all([
+      const [{ decryptRaw }, { importKey, decryptMedia }, walrusModule, chunkedCrypto, wavUtils] = await Promise.all([
         import('@/lib/seal'),
         import('@/lib/media-crypto'),
         import('@/lib/walrus'),
+        import('@/lib/chunked-crypto'),
+        import('@/lib/wav-utils'),
       ]);
 
       const signer = await getSigner();
 
-      // Run Seal decrypt + Walrus download in parallel
-      const [aesKeyBytes, encryptedAudio] = await Promise.all([
+      // Seal decrypt + Walrus streaming fetch in parallel
+      const [aesKeyBytes, walrusResponse] = await Promise.all([
         decryptRaw({
           encryptedData: new Uint8Array(post.encryptionKey),
           nftObjectId: nft.objectId, postObjectId: postId,
           userAddress: address, signer,
         }),
-        downloadFromWalrus(post.mediaBlobId),
+        walrusModule.fetchWalrusStream(post.mediaBlobId),
       ]);
 
       const aesKey = await importKey(aesKeyBytes);
-      const audioBuffer = await decryptMedia(encryptedAudio, aesKey);
-      const blob = new Blob([audioBuffer], { type: 'audio/mpeg' });
-      player.playTrack(track, blob);
+      const reader = walrusResponse.body?.getReader();
+
+      if (reader) {
+        // Read first bytes to detect format
+        const first = await reader.read();
+        if (first.done || !first.value) throw new Error('Empty audio data');
+
+        if (chunkedCrypto.isChunkedFormat(first.value)) {
+          // ─── STREAMING PLAYBACK (chunked format) ────────────────────────
+          // Re-wrap reader so decryptChunkedStream sees the bytes we already consumed
+          let sentFirst = false;
+          const prependedReader: ReadableStreamDefaultReader<Uint8Array> = {
+            read: async () => {
+              if (!sentFirst) { sentFirst = true; return { done: false, value: first.value! }; }
+              return reader.read();
+            },
+            releaseLock: () => reader.releaseLock(),
+            cancel: (r?: any) => reader.cancel(r),
+            closed: reader.closed,
+          } as ReadableStreamDefaultReader<Uint8Array>;
+
+          const contentLength = parseInt(walrusResponse.headers.get('content-length') || '0', 10);
+          const state = { started: false, header: null as WavHeader | null };
+
+          const fullData = await chunkedCrypto.decryptChunkedStream(
+            prependedReader,
+            contentLength,
+            aesKey,
+            (output, decrypted) => {
+              // Start playing after first ~512KB of audio is ready
+              if (!state.started && decrypted >= 512 * 1024) {
+                if (!state.header) state.header = wavUtils.parseWavHeader(output);
+                if (state.header) {
+                  const pcm = output.subarray(state.header.dataOffset, decrypted);
+                  const aligned = pcm.length - (pcm.length % state.header.blockAlign);
+                  if (aligned > 0) {
+                    const partialBlob = wavUtils.buildWavBlob(state.header, pcm.subarray(0, aligned));
+                    player.playTrack(track, partialBlob);
+                    state.started = true;
+                  }
+                }
+              }
+            },
+          );
+
+          // Download complete → swap to full audio (preserves currentTime)
+          const hdr = state.header ?? wavUtils.parseWavHeader(fullData);
+          if (hdr) {
+            const pcm = fullData.subarray(hdr.dataOffset);
+            const finalBlob = wavUtils.buildWavBlob(hdr, pcm);
+            if (state.started) {
+              player.replaceAudioBlob(finalBlob);
+            } else {
+              player.playTrack(track, finalBlob);
+            }
+          } else {
+            const blob = new Blob([fullData.slice().buffer as ArrayBuffer], { type: 'audio/wav' });
+            if (!state.started) player.playTrack(track, blob);
+          }
+
+        } else {
+          // ─── LEGACY PLAYBACK (single-block AES-GCM) ─────────────────────
+          const chunks: Uint8Array[] = [first.value];
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            if (value) chunks.push(value);
+          }
+          const total = chunks.reduce((s, c) => s + c.length, 0);
+          const encryptedAudio = new Uint8Array(total);
+          let off = 0;
+          for (const c of chunks) { encryptedAudio.set(c, off); off += c.length; }
+
+          const audioBuffer = await decryptMedia(encryptedAudio, aesKey);
+          const blob = new Blob([audioBuffer], { type: 'audio/mpeg' });
+          player.playTrack(track, blob);
+        }
+      } else {
+        // No streaming support — full download fallback
+        const encryptedAudio = await walrusModule.downloadFromWalrus(post.mediaBlobId);
+
+        if (chunkedCrypto.isChunkedFormat(encryptedAudio)) {
+          const decrypted = await chunkedCrypto.decryptChunkedFull(encryptedAudio, aesKey);
+          const blob = new Blob([decrypted.slice().buffer as ArrayBuffer], { type: 'audio/wav' });
+          player.playTrack(track, blob);
+        } else {
+          const audioBuffer = await decryptMedia(encryptedAudio, aesKey);
+          const blob = new Blob([audioBuffer], { type: 'audio/mpeg' });
+          player.playTrack(track, blob);
+        }
+      }
     } catch (err) {
       console.error('Audio playback failed:', err);
       player.setError('Playback failed');

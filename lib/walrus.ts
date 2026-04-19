@@ -60,3 +60,16 @@ export async function downloadFromWalrus(blobId: string): Promise<Uint8Array> {
   const buffer = await response.arrayBuffer();
   return new Uint8Array(buffer);
 }
+
+/**
+ * Streaming download from Walrus.
+ * Returns the raw Response so the caller can read body as a stream.
+ */
+export async function fetchWalrusStream(blobId: string): Promise<Response> {
+  const url = `${WALRUS_AGGREGATOR}/v1/blobs/${blobId}`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Walrus download failed (${response.status})`);
+  }
+  return response;
+}

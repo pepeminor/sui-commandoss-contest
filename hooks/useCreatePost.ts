@@ -5,9 +5,9 @@ import { useAuth } from '@/auth/useAuth';
 import { signAndExecute } from '@/lib/sui-client';
 import { buildCreatePostTx, buildCreatePostWithMediaTx } from '@/lib/transactions';
 import { encryptContent, encryptRaw } from '@/lib/seal';
-import { generateAESKey, exportKey, encryptMedia } from '@/lib/media-crypto';
+import { generateAESKey, exportKey } from '@/lib/media-crypto';
+import { encryptChunked } from '@/lib/chunked-crypto';
 import { uploadToWalrus } from '@/lib/walrus';
-import { transcodeAudio } from '@/lib/audio-transcode';
 
 export interface CreatePostInput {
   title: string;
@@ -31,24 +31,19 @@ export function useCreatePost() {
 
       let tx;
       if (audioFile) {
-        onUploadProgress?.('transcode', 0);
-        const compressed = await transcodeAudio(audioFile, (p) => {
-          onUploadProgress?.('transcode', p * 0.3); // 0 → 30%
-        });
-
-        onUploadProgress?.('encrypt', 0.3);
+        onUploadProgress?.('encrypt', 0);
         const aesKey = await generateAESKey();
-        const audioBuffer = await compressed.arrayBuffer();
-        const encryptedAudio = await encryptMedia(audioBuffer, aesKey);
+        const audioBuffer = await audioFile.arrayBuffer();
+        const encryptedAudio = await encryptChunked(audioBuffer, aesKey);
 
-        onUploadProgress?.('upload', 0.4);
+        onUploadProgress?.('upload', 0.2);
         const { blobId } = await uploadToWalrus(encryptedAudio);
 
-        onUploadProgress?.('seal', 0.7);
+        onUploadProgress?.('seal', 0.6);
         const rawKey = await exportKey(aesKey);
         const sealedKey = await encryptRaw(rawKey);
 
-        onUploadProgress?.('chain', 0.85);
+        onUploadProgress?.('chain', 0.8);
         tx = buildCreatePostWithMediaTx({
           title, encryptedContent,
           mediaType: 1, mediaBlobId: blobId, encryptionKey: sealedKey,

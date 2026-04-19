@@ -152,7 +152,6 @@
   "create.audioInvalidType": "Vui lòng chọn file nhạc.",
   "create.lyricsPlaceholder": "Nhập lyrics hoặc mô tả cho bài hát...",
   "create.walrusUpload": "Lưu trữ Walrus",
-  "create.stage.transcode": "Đang nén nhạc...",
   "create.stage.encrypt": "Đang mã hóa nhạc...",
   "create.stage.upload": "Đang tải lên Walrus...",
   "create.stage.seal": "Đang seal encryption key...",
