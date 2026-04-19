@@ -1,64 +1,65 @@
 // ─── Color tokens ─────────────────────────────────────────────────────────────
 
-// Backgrounds
-$bg-base:         #0a0a0f;
-$bg-card:         rgba(255, 255, 255, 0.025);
-$bg-card-hover:   rgba(232, 98, 58, 0.04);
-$bg-surface:      rgba(255, 255, 255, 0.05);
-$bg-surface-2:    rgba(255, 255, 255, 0.03);
+// Backgrounds — richer, warmer dark
+$bg-base:         #08080b;
+$bg-card:         rgba(255, 255, 255, 0.018);
+$bg-card-hover:   rgba(255, 255, 255, 0.032);
+$bg-surface:      rgba(255, 255, 255, 0.04);
+$bg-surface-2:    rgba(255, 255, 255, 0.022);
 
-// Accent — orange-red
+// Accent — warm terracotta
 $accent:          #E8623A;
 $accent-hover:    #EF7A55;
-$accent-soft:     rgba(232, 98, 58, 0.15);
-$accent-border:   rgba(232, 98, 58, 0.25);
+$accent-soft:     rgba(232, 98, 58, 0.1);
+$accent-border:   rgba(232, 98, 58, 0.18);
 
-// Text
-$text-primary:    #f0ebe4;
-$text-secondary:  rgba(240, 235, 228, 0.7);
-$text-muted:      rgba(240, 235, 228, 0.5);
-$text-hint:       rgba(240, 235, 228, 0.38);
+// Text — warmer cream palette
+$text-primary:    #ede8e0;
+$text-secondary:  rgba(237, 232, 224, 0.62);
+$text-muted:      rgba(237, 232, 224, 0.4);
+$text-hint:       rgba(237, 232, 224, 0.25);
 
-// Borders
-$border:          rgba(255, 255, 255, 0.06);
-$border-hover:    rgba(255, 255, 255, 0.1);
-$border-accent:   rgba(232, 98, 58, 0.3);
+// Borders — ultra-subtle
+$border:          rgba(255, 255, 255, 0.05);
+$border-hover:    rgba(255, 255, 255, 0.09);
+$border-accent:   rgba(232, 98, 58, 0.22);
 
 // Semantic
 $color-owned:       #5DCAA5;
 $color-owned-soft:  rgba(93, 202, 165, 0.06);
-$color-owned-border: rgba(93, 202, 165, 0.3);
-$color-locked:      rgba(240, 235, 228, 0.3);
+$color-owned-border: rgba(93, 202, 165, 0.2);
+$color-locked:      rgba(237, 232, 224, 0.22);
 $color-sui:         #6FBCF0;
-$color-error:       #ff7070;
-$color-error-soft:  rgba(255, 70, 70, 0.08);
-$color-error-border: rgba(255, 70, 70, 0.2);
+$color-error:       #ee6b6b;
+$color-error-soft:  rgba(238, 107, 107, 0.07);
+$color-error-border: rgba(238, 107, 107, 0.16);
 
 // Surfaces
-$bg-menu:           #111118;
+$bg-menu:           #0d0d12;
 
 // ─── Spacing & Shape ──────────────────────────────────────────────────────────
 
-$radius-sm:  7px;
+$radius-sm:  6px;
 $radius-md:  10px;
 $radius-lg:  14px;
 $radius-xl:  20px;
 
 // ─── Typography ───────────────────────────────────────────────────────────────
 
-$font-base: 'Plus Jakarta Sans', system-ui, sans-serif;
+$font-base:    'Plus Jakarta Sans', system-ui, sans-serif;
+$font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
 
-// ─── Motion ───────────────────────────────────────────────────────────────────
+// ─── Motion — restrained, smooth ────────────────────────────────────────────
 
-$duration-fast:   150ms;
-$duration-normal: 300ms;
+$duration-fast:   120ms;
+$duration-normal: 280ms;
 $ease-out-expo:   cubic-bezier(0.16, 1, 0.3, 1);
 
 // ─── Avatar palette ──────────────────────────────────────────────────────────
 
 $avatar-colors: (
-  ember:  (bg: rgba(232, 98, 58, 0.2),   text: #F0997B),
-  teal:   (bg: rgba(29, 158, 117, 0.2),  text: #5DCAA5),
-  coral:  (bg: rgba(216, 90, 48, 0.2),   text: #F0997B),
-  amber:  (bg: rgba(212, 160, 50, 0.2),  text: #E8C56E),
+  ember:  (bg: rgba(232, 98, 58, 0.15),  text: #F0997B),
+  teal:   (bg: rgba(29, 158, 117, 0.15), text: #5DCAA5),
+  coral:  (bg: rgba(216, 90, 48, 0.15),  text: #F0997B),
+  amber:  (bg: rgba(212, 160, 50, 0.15), text: #E8C56E),
 );

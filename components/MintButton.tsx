@@ -24,11 +24,7 @@ export function MintButton({ postId, price, soldOut }: MintButtonProps) {
   const isClient = useIsClient();
 
   if (soldOut) {
-    return (
-      <button className="btn btn--ghost" disabled>
-        {t('mint.soldOut')}
-      </button>
-    );
+    return null;
   }
 
   if (!isClient) {
@@ -41,7 +37,7 @@ export function MintButton({ postId, price, soldOut }: MintButtonProps) {
 
   if (!isLoggedIn) {
     return (
-      <button className="btn btn--primary" onClick={login}>
+      <button className="btn btn--primary btn--full" onClick={login}>
         {t('mint.loginToBuy')} — {formatSUI(price)} SUI
       </button>
     );

@@ -18,7 +18,7 @@
 .sidebar {
   width: 200px;
   flex-shrink: 0;
-  padding: 20px 16px;
+  padding: 24px 16px;
   border-right: 0.5px solid $border;
 
   &--right {
@@ -29,21 +29,21 @@
 
 .feed-container {
   flex: 1;
-  padding: 20px 24px;
+  padding: 24px 28px;
   min-width: 0;
 }
 
 .section-label {
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: $text-hint;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .divider {
   height: 0.5px;
   background: $border;
-  margin: 16px 0;
+  margin: 20px 0;
 }

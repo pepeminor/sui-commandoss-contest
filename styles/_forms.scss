@@ -4,15 +4,15 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .form-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  color: $text-secondary;
+  color: $text-muted;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
 .form-input,
@@ -30,21 +30,19 @@
   &::placeholder { color: $text-hint; }
 
   &:focus {
-    border-color: $border-accent;
-    background: rgba(232, 98, 58, 0.04);
+    border-color: $accent-border;
   }
 }
 
 .form-input {
   height: 42px;
   padding: 0 14px;
-
 }
 
 select.form-input {
   padding-right: 36px;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23f0ebe4' stroke-opacity='0.45' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23ede8e0' stroke-opacity='0.3' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
 }
@@ -53,7 +51,7 @@ select.form-input {
   padding: 12px 14px;
   resize: vertical;
   min-height: 120px;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .form-hint {
@@ -63,7 +61,7 @@ select.form-input {
 
 .form-error {
   font-size: 12px;
-  color: #ff7070;
+  color: $color-error;
 }
 
 .form-row {
@@ -83,15 +81,14 @@ select.form-input {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  padding: 28px 16px;
-  border: 1.5px dashed $border-hover;
+  padding: 32px 16px;
+  border: 1px dashed $border-hover;
   border-radius: $radius-lg;
   cursor: pointer;
-  transition: border-color $duration-fast, background $duration-fast;
+  transition: border-color $duration-fast;
 
   &:hover {
     border-color: $accent-border;
-    background: rgba(232, 98, 58, 0.03);
   }
 }
 
@@ -140,6 +137,7 @@ select.form-input {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: color $duration-fast, border-color $duration-fast;
 
     &:hover {
       border-color: $color-error-border;
@@ -165,27 +163,26 @@ select.form-input {
   border-radius: 99px;
   font-family: $font-base;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  transition: all $duration-fast;
+  transition: opacity $duration-fast;
 
   &:hover:not(:disabled) {
-    background: $accent-hover;
-    transform: translateY(-1px);
+    opacity: 0.88;
   }
 
   &:disabled {
-    opacity: 0.7;
+    opacity: 0.6;
     cursor: wait;
   }
 
   &--playing {
-    background: rgba(232, 98, 58, 0.12);
+    background: $accent-soft;
     color: $accent;
     border: 0.5px solid $accent-border;
 
     &:hover:not(:disabled) {
-      background: rgba(232, 98, 58, 0.18);
+      opacity: 0.85;
     }
   }
 }

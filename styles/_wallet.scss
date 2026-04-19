@@ -14,7 +14,7 @@
   }
 
   &__qr-wrapper {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.03);
     border: 0.5px solid $border;
     border-radius: $radius-lg;
     padding: 12px;
@@ -30,18 +30,18 @@
     align-items: center;
     gap: 6px;
     padding: 6px 14px;
-    font-size: 12px;
-    font-weight: 600;
-    font-family: monospace;
-    color: $text-secondary;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: $text-muted;
     background: $bg-surface;
     border: 0.5px solid $border;
     border-radius: 99px;
     cursor: pointer;
-    transition: all $duration-fast;
+    transition: color $duration-fast, border-color $duration-fast;
 
     &:hover {
-      color: $text-primary;
+      color: $text-secondary;
       border-color: $border-hover;
     }
   }
@@ -62,21 +62,22 @@
     border: none;
     cursor: pointer;
     font-family: $font-base;
-    color: $text-secondary;
-    font-size: 12px;
+    color: $text-muted;
+    font-size: 11px;
     font-weight: 600;
     transition: color $duration-fast;
+    letter-spacing: 0.02em;
 
     &:hover {
-      color: $text-primary;
+      color: $text-secondary;
 
       .wallet__action-icon { border-color: $accent-border; }
     }
   }
 
   &__action-icon {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     background: $bg-surface;
     border: 0.5px solid $border;
@@ -97,14 +98,14 @@
     flex: 1;
     padding: 10px 0;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     font-family: $font-base;
     color: $text-muted;
     background: none;
     border: none;
-    border-bottom: 2px solid transparent;
+    border-bottom: 1.5px solid transparent;
     cursor: pointer;
-    transition: all $duration-fast;
+    transition: color $duration-fast;
     text-align: center;
 
     &:hover { color: $text-secondary; }
@@ -120,7 +121,7 @@
   &__nft-list {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
     max-height: 240px;
     overflow-y: auto;
   }
@@ -146,10 +147,10 @@
   }
 
   &__token-icon {
-    font-size: 22px;
+    font-size: 20px;
     flex-shrink: 0;
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -158,10 +159,10 @@
   }
 
   &__nft-icon {
-    font-size: 18px;
+    font-size: 16px;
     flex-shrink: 0;
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -187,9 +188,9 @@
   }
 
   &__token-type {
-    font-size: 11px;
-    color: $text-muted;
-    font-family: monospace;
+    font-size: 10px;
+    color: $text-hint;
+    font-family: 'SF Mono', 'Fira Code', monospace;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -197,7 +198,7 @@
 
   &__token-amount {
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 600;
     color: $text-primary;
     flex-shrink: 0;
     font-family: $font-base;
@@ -206,8 +207,8 @@
   &__nft-transfer {
     display: none;
     flex-shrink: 0;
-    padding: 4px 10px;
-    font-size: 11px;
+    padding: 3px 10px;
+    font-size: 10px;
     font-weight: 600;
     font-family: $font-base;
     color: $accent;
@@ -215,10 +216,10 @@
     border: 0.5px solid $accent-border;
     border-radius: 99px;
     cursor: pointer;
-    transition: all $duration-fast;
+    transition: opacity $duration-fast;
 
     &:hover {
-      background: rgba(232, 98, 58, 0.25);
+      opacity: 0.85;
     }
   }
 
@@ -231,12 +232,12 @@
   }
 
   &__nft-arrow {
-    color: $text-muted;
+    color: $text-hint;
     flex-shrink: 0;
   }
 
   &__empty {
-    padding: 24px;
+    padding: 28px;
     text-align: center;
     font-size: 13px;
     color: $text-muted;
@@ -259,13 +260,13 @@
     border-radius: $radius-sm;
     color: $color-error;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     font-family: $font-base;
     cursor: pointer;
-    transition: background $duration-fast ease;
+    transition: opacity $duration-fast;
 
     &:hover {
-      background: $color-error-soft;
+      opacity: 0.85;
     }
   }
 }
@@ -277,7 +278,7 @@
   align-items: flex-start;
   gap: 8px;
   padding: 10px 12px;
-  background: rgba(232, 98, 58, 0.08);
+  background: $accent-soft;
   border: 0.5px solid $accent-border;
   border-radius: $radius-sm;
   font-size: 12px;

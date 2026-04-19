@@ -8,15 +8,15 @@
   border: none;
   cursor: pointer;
   font-family: $font-base;
-  font-weight: 700;
+  font-weight: 600;
   border-radius: $radius-sm;
-  transition: all $duration-fast ease;
+  transition: opacity $duration-fast ease;
   text-decoration: none;
+  letter-spacing: 0.01em;
 
   &:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
-    transform: none !important;
   }
 
   &--full {
@@ -26,7 +26,7 @@
   }
 
   &--sm {
-    padding: 6px 10px;
+    padding: 5px 10px;
     font-size: 12px;
   }
 
@@ -37,10 +37,9 @@
     font-size: 13px;
 
     &:hover:not(:disabled) {
-      background: $accent-hover;
-      transform: translateY(-1px);
+      opacity: 0.88;
     }
-    &:active:not(:disabled) { transform: scale(0.98); }
+    &:active:not(:disabled) { opacity: 0.75; }
   }
 
   &--mint {
@@ -48,19 +47,18 @@
     background: $accent;
     color: #fff;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
 
     &:hover:not(:disabled) {
-      background: $accent-hover;
-      transform: translateY(-1px);
+      opacity: 0.88;
     }
-    &:active:not(:disabled) { transform: scale(0.98); }
+    &:active:not(:disabled) { opacity: 0.75; }
   }
 
   &--owned {
     padding: 6px 12px;
-    background: rgba(29, 158, 117, 0.1);
-    border: 0.5px solid rgba(29, 158, 117, 0.25);
+    background: rgba(93, 202, 165, 0.08);
+    border: 0.5px solid rgba(93, 202, 165, 0.18);
     color: $color-owned;
     font-size: 12px;
     cursor: default;
@@ -69,20 +67,20 @@
   &--ghost {
     padding: 7px 14px;
     background: $bg-surface;
-    border: 0.5px solid $border-hover;
-    color: $text-primary;
+    border: 0.5px solid $border;
+    color: $text-secondary;
     font-size: 13px;
 
-    &:hover:not(:disabled) { background: rgba(255, 255, 255, 0.08); }
+    &:hover:not(:disabled) { background: rgba(255, 255, 255, 0.06); color: $text-primary; }
   }
 
   &--danger {
     padding: 7px 16px;
-    background: rgba(255, 70, 70, 0.12);
+    background: $color-error-soft;
     border: 0.5px solid $color-error-border;
     color: $color-error;
     font-size: 13px;
 
-    &:hover:not(:disabled) { background: rgba(255, 70, 70, 0.18); }
+    &:hover:not(:disabled) { opacity: 0.85; }
   }
 }

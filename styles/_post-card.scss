@@ -4,38 +4,37 @@
   background: $bg-card;
   border: 0.5px solid $border;
   border-radius: $radius-lg;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   overflow: hidden;
   cursor: pointer;
-  transition: border-color $duration-fast, background $duration-fast, transform $duration-fast;
+  transition: border-color $duration-fast, background $duration-fast;
   position: relative;
   text-decoration: none;
   display: block;
 
   &:hover {
-    border-color: $border-accent;
+    border-color: $border-hover;
     background: $bg-card-hover;
-    transform: translateY(-1px);
   }
 
-  // Owned — teal stripe on left
+  // Owned — thin teal line on left
   &--owned {
     &::before {
       content: '';
       position: absolute;
       left: 0;
       top: 0;
-      width: 3px;
+      width: 2px;
       height: 100%;
       background: $color-owned;
       border-radius: $radius-lg 0 0 $radius-lg;
+      opacity: 0.7;
     }
   }
 
-  // Sold out — bright accent border + glow
+  // Sold out — subtle accent border
   &--soldout {
-    border-color: rgba(232, 98, 58, 0.5);
-    background: rgba(232, 98, 58, 0.04);
+    border-color: rgba(232, 98, 58, 0.3);
 
     &::after {
       content: '';
@@ -43,23 +42,18 @@
       inset: 0;
       border-radius: $radius-lg;
       pointer-events: none;
-      box-shadow: inset 0 0 0 1px rgba(232, 98, 58, 0.4), 0 0 20px rgba(232, 98, 58, 0.12), 0 0 40px rgba(232, 98, 58, 0.05);
+      box-shadow: inset 0 0 0 0.5px rgba(232, 98, 58, 0.25);
     }
 
     &:hover {
-      border-color: $accent;
-      background: rgba(232, 98, 58, 0.07);
-
-      &::after {
-        box-shadow: inset 0 0 0 1px rgba(232, 98, 58, 0.6), 0 0 24px rgba(232, 98, 58, 0.18), 0 0 48px rgba(232, 98, 58, 0.08);
-      }
+      border-color: rgba(232, 98, 58, 0.45);
     }
   }
 
   &__inner {
-    padding: 14px 16px;
+    padding: 16px 18px;
     display: flex;
-    gap: 12px;
+    gap: 14px;
     align-items: flex-start;
   }
 
@@ -69,39 +63,40 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   &__meta {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 12px;
-    color: $text-muted;
+    font-size: 11px;
+    color: $text-hint;
     font-weight: 500;
+    letter-spacing: 0.01em;
   }
 
   &__dot {
-    width: 3px;
-    height: 3px;
+    width: 2px;
+    height: 2px;
     border-radius: 50%;
     background: $text-hint;
   }
 
   &__title {
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 600;
     color: $text-primary;
     letter-spacing: -0.2px;
-    margin-bottom: 5px;
-    line-height: 1.3;
+    margin-bottom: 6px;
+    line-height: 1.35;
   }
 
   &__preview {
     font-size: 13px;
     line-height: 1.65;
     color: $text-muted;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -111,7 +106,7 @@
       filter: blur(3px);
       user-select: none;
       pointer-events: none;
-      color: rgba(236, 233, 248, 0.3);
+      color: rgba(237, 232, 224, 0.2);
       transition: filter $duration-fast;
     }
   }
@@ -131,7 +126,7 @@
     align-items: center;
     gap: 5px;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     color: $color-sui;
   }
 
@@ -165,21 +160,21 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 8px;
-  border-radius: 5px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 
   &--owned {
-    background: rgba(29, 158, 117, 0.12);
+    background: rgba(93, 202, 165, 0.08);
     color: $color-owned;
-    border: 0.5px solid rgba(29, 158, 117, 0.2);
+    border: 0.5px solid rgba(93, 202, 165, 0.15);
   }
 
   &--locked {
-    background: $bg-surface-2;
+    background: transparent;
     color: $text-hint;
     border: 0.5px solid $border;
   }
@@ -187,7 +182,6 @@
   &--soldout {
     background: $accent-soft;
     color: $accent;
-    border: 0.5px solid rgba(232, 98, 58, 0.5);
-    transform: rotate(6deg);
+    border: 0.5px solid $accent-border;
   }
 }
