@@ -92,12 +92,13 @@ export function usePostAudioPlayback({ postId, post, nft, hasAccess }: UsePostAu
     playerRef.current.setLoadingTrack(track);
 
     try {
-      const [{ decryptRaw }, { importKey, decryptMedia }, walrus, chunkedCrypto, wavUtils] = await Promise.all([
+      const [{ decryptRaw }, { importKey, decryptMedia }, walrus, chunkedCrypto, wavUtils, audioUtils] = await Promise.all([
         import('@/lib/seal'),
         import('@/lib/media-crypto'),
         import('@/lib/walrus'),
         import('@/lib/chunked-crypto'),
         import('@/lib/wav-utils'),
+        import('@/lib/audio-utils'),
       ]);
 
       const signer: Signer = await getSigner();
@@ -124,13 +125,13 @@ export function usePostAudioPlayback({ postId, post, nft, hasAccess }: UsePostAu
           const hdr = wavUtils.parseWavHeader(decrypted);
           const blob = hdr
             ? wavUtils.buildWavBlob(hdr, decrypted.subarray(hdr.dataOffset))
-            : new Blob([decrypted.slice().buffer as ArrayBuffer], { type: 'audio/mpeg' });
+            : audioUtils.createAudioBlob(decrypted);
           playerRef.current.playTrack(track, blob);
           return;
         }
 
         const audioBuffer = await decryptMedia(encryptedAudio, aesKey);
-        playerRef.current.playTrack(track, new Blob([audioBuffer], { type: 'audio/mpeg' }));
+        playerRef.current.playTrack(track, audioUtils.createAudioBlob(new Uint8Array(audioBuffer)));
         return;
       }
 
@@ -154,7 +155,7 @@ export function usePostAudioPlayback({ postId, post, nft, hasAccess }: UsePostAu
 
         const audioBuffer = await decryptMedia(encryptedAudio, aesKey);
         if (!isActiveRequest()) return;
-        playerRef.current.playTrack(track, new Blob([audioBuffer], { type: 'audio/mpeg' }));
+        playerRef.current.playTrack(track, audioUtils.createAudioBlob(new Uint8Array(audioBuffer)));
         return;
       }
 
@@ -200,7 +201,7 @@ export function usePostAudioPlayback({ postId, post, nft, hasAccess }: UsePostAu
       const hdr = state.header ?? wavUtils.parseWavHeader(fullData);
       if (!hdr) {
         if (!state.started) {
-          playerRef.current.playTrack(track, new Blob([fullData.slice().buffer as ArrayBuffer], { type: 'audio/mpeg' }));
+          playerRef.current.playTrack(track, audioUtils.createAudioBlob(fullData));
         }
         return;
       }

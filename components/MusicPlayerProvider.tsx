@@ -63,6 +63,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const blobUrlRef = useRef<string | null>(null);
+  const playbackRequestRef = useRef(0);
 
   const cleanupBlobUrl = useCallback(() => {
     if (blobUrlRef.current) {
@@ -72,6 +73,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const stop = useCallback(() => {
+    playbackRequestRef.current += 1;
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.src = '';
@@ -91,14 +93,23 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setLoadingTrack = useCallback((track: Track) => {
+    playbackRequestRef.current += 1;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = '';
+      audioRef.current = null;
+    }
+    cleanupBlobUrl();
     setState((s) => ({ ...s, track, isLoading: true, isReady: false, isPlaying: false, error: null }));
-  }, []);
+  }, [cleanupBlobUrl]);
 
   const setError = useCallback((err: string | null) => {
     setState((s) => ({ ...s, isLoading: false, error: err }));
   }, []);
 
   const playTrack = useCallback((track: Track, audioBlob: Blob) => {
+    const requestId = ++playbackRequestRef.current;
+
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.src = '';
@@ -111,30 +122,31 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     const audio = new Audio(url);
     audioRef.current = audio;
 
-    const isActive = () => audioRef.current === audio;
+    const isActiveAudio = () => audioRef.current === audio;
+    const isCurrentPlaybackRequest = () => isActiveAudio() && playbackRequestRef.current === requestId;
     audio.addEventListener('loadedmetadata', () => {
-      if (isActive()) setState((s) => ({ ...s, duration: audio.duration }));
+      if (isActiveAudio()) setState((s) => ({ ...s, duration: audio.duration, isReady: false }));
     });
     audio.addEventListener('timeupdate', () => {
-      if (!isActive()) return;
+      if (!isActiveAudio()) return;
       const ct = audio.currentTime;
       const dur = audio.duration || 1;
       setState((s) => ({ ...s, currentTime: ct, progress: ct / dur }));
     });
     audio.addEventListener('ended', () => {
-      if (isActive()) setState((s) => ({ ...s, isPlaying: false, progress: 1 }));
+      if (isActiveAudio()) setState((s) => ({ ...s, isPlaying: false, isLoading: false, progress: 1 }));
     });
     audio.addEventListener('error', () => {
-      if (isActive()) setState((s) => ({ ...s, isPlaying: false, isLoading: false, error: 'Playback error' }));
+      if (isActiveAudio()) setState((s) => ({ ...s, isPlaying: false, isLoading: false, error: 'Playback error' }));
     });
 
     setState((s) => ({ ...s, track, isPlaying: false, isLoading: true, isReady: false, error: null }));
     void audio.play()
       .then(() => {
-        if (isActive()) setState((s) => ({ ...s, isPlaying: true, isLoading: false, error: null }));
+        if (isCurrentPlaybackRequest()) setState((s) => ({ ...s, isPlaying: true, isLoading: false, isReady: false, error: null }));
       })
       .catch(() => {
-        if (isActive()) setState((s) => ({ ...s, isPlaying: false, isLoading: false, error: 'Playback error' }));
+        if (isCurrentPlaybackRequest()) setState((s) => ({ ...s, isPlaying: false, isLoading: false, error: 'Playback error' }));
       });
   }, [cleanupBlobUrl]);
 
@@ -143,6 +155,7 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     const audio = audioRef.current;
     if (!audio) return;
 
+    const requestId = ++playbackRequestRef.current;
     const savedTime = audio.currentTime;
     const wasPlaying = !audio.paused;
 
@@ -151,14 +164,27 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     blobUrlRef.current = url;
 
     audio.src = url;
+    setState((s) => ({ ...s, isLoading: wasPlaying, isReady: false, error: null }));
     audio.addEventListener('loadedmetadata', () => {
+      if (audioRef.current !== audio || playbackRequestRef.current !== requestId) return;
+
       // Update duration to full track length
       setState((s) => ({ ...s, duration: audio.duration }));
       audio.currentTime = savedTime;
       if (wasPlaying) {
-        void audio.play().catch(() => {
-          setState((s) => ({ ...s, isPlaying: false, error: 'Playback error' }));
-        });
+        void audio.play()
+          .then(() => {
+            if (audioRef.current === audio && playbackRequestRef.current === requestId) {
+              setState((s) => ({ ...s, isPlaying: true, isLoading: false, isReady: false, error: null }));
+            }
+          })
+          .catch(() => {
+            if (audioRef.current === audio && playbackRequestRef.current === requestId) {
+              setState((s) => ({ ...s, isPlaying: false, isLoading: false, error: 'Playback error' }));
+            }
+          });
+      } else {
+        setState((s) => ({ ...s, isPlaying: false, isLoading: false, isReady: false }));
       }
     }, { once: true });
   }, [cleanupBlobUrl]);
