@@ -221,7 +221,15 @@ function CreateContent() {
             </div>
           )}
 
-          {isError && <p className="form-error" style={{ marginBottom: 12 }}>{error && 'i18n' in error ? t((error as any).i18n.key, (error as any).i18n.params) : error instanceof Error ? error.message : t('create.publishFailed')}</p>}
+          {isError && (
+            <p className="form-error" style={{ marginBottom: 12 }}>
+              {error && 'i18n' in error
+                ? t((error as any).i18n.key, (error as any).i18n.params)
+                : error instanceof Error
+                  ? error.message
+                  : t('create.publishFailed')}
+            </p>
+          )}
 
           <button type="submit" className="btn btn--primary btn--full" disabled={isPending || !title.trim() || !content.trim()}>
             {isPending ? (audioFile ? stageLabel || t('create.publishing') : t('create.publishing')) : t('create.publish')}

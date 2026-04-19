@@ -1,5 +1,3 @@
-'use client';
-
 import { SealClient, SessionKey, EncryptedObject } from '@mysten/seal';
 import type { Signer } from '@mysten/sui/cryptography';
 import { suiClient } from './sui-client';

@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { graphqlClient, suiClient } from '@/lib/sui-client';
 import { PACKAGE_ID } from '@/config';
@@ -73,18 +74,19 @@ export function useFeed() {
         .filter((p: FeedPost) => p.postId)
         .reverse();
 
-      // Batch fetch minted counts from on-chain objects
+      // Batch fetch minted counts (1 RPC call instead of N)
       if (posts.length > 0) {
         try {
-          const results = await Promise.all(
-            posts.map((p) =>
-              suiClient.core.getObject({ objectId: p.postId, include: { json: true } })
-            ),
-          );
-          for (let i = 0; i < posts.length; i++) {
-            const fields = results[i]?.object?.json as Record<string, unknown> | null;
-            if (fields) {
-              posts[i].minted = Number(fields.minted ?? 0);
+          const { objects } = await suiClient.core.getObjects({
+            objectIds: posts.map((p) => p.postId),
+            include: { json: true },
+          });
+          for (const obj of objects) {
+            if (obj instanceof Error || !('json' in obj)) continue;
+            const fields = obj.json as Record<string, unknown> | null;
+            if (fields && obj.objectId) {
+              const match = posts.find((p) => p.postId === obj.objectId);
+              if (match) match.minted = Number(fields.minted ?? 0);
             }
           }
         } catch {
@@ -103,7 +105,10 @@ export function useFeed() {
     enabled: !!PACKAGE_ID,
   });
 
-  const allPosts = query.data?.pages.flatMap((p) => p.posts) ?? [];
+  const allPosts = useMemo(
+    () => query.data?.pages.flatMap((p) => p.posts) ?? [],
+    [query.data?.pages],
+  );
 
   return {
     data: allPosts,

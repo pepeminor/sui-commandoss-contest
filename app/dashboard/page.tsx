@@ -39,8 +39,8 @@ function DashboardContent() {
     }
   }, [posts, sort]);
 
-  const totalSold = posts.reduce((sum, p) => sum + p.minted, 0);
-  const totalRevenue = posts.reduce((sum, p) => sum + BigInt(p.minted) * p.price, 0n);
+  const totalSold = useMemo(() => posts.reduce((sum, p) => sum + p.minted, 0), [posts]);
+  const totalRevenue = useMemo(() => posts.reduce((sum, p) => sum + BigInt(p.minted) * p.price, 0n), [posts]);
 
   return (
     <div className="page">

@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { suiClient } from '@/lib/sui-client';
 import { PACKAGE_ID } from '@/config';
@@ -65,8 +66,11 @@ export function useMyNFTs() {
     staleTime: 15_000,
   });
 
-  const allNFTs = (query.data?.pages.flatMap((p) => p.nfts) ?? [])
-    .sort((a, b) => b.mintedAt - a.mintedAt);
+  const allNFTs = useMemo(
+    () => (query.data?.pages.flatMap((p) => p.nfts) ?? [])
+      .sort((a, b) => b.mintedAt - a.mintedAt),
+    [query.data?.pages],
+  );
 
   return {
     data: allNFTs,
@@ -97,6 +101,12 @@ function useAllMyNFTs() {
     enabled: !!address && !!PACKAGE_ID,
     staleTime: 15_000,
   });
+}
+
+/** Pre-indexed set of owned post IDs — single hook for the whole feed */
+export function useOwnedPostIds(): Set<string> {
+  const { data } = useAllMyNFTs();
+  return useMemo(() => new Set((data ?? []).map((nft) => nft.postId)), [data]);
 }
 
 export function useHasAccess(postId: string | undefined): boolean {

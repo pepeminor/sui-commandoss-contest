@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useFeed } from '@/hooks/useFeed';
 import { PostCard } from '@/components/PostCard';
+import { useOwnedPostIds } from '@/hooks/useMyNFTs';
 import { ArtistCarousel, type Artist } from '@/components/ArtistCarousel';
 import { FAKE_ARTISTS } from '@/lib/fake-artists';
 import { EmptyState } from '@/components/EmptyState';
@@ -14,6 +15,7 @@ type SortTab = 'newest' | 'top';
 
 export function FeedClient() {
   const { data: posts, isLoading, isError, hasNextPage, isFetchingNextPage, fetchNextPage } = useFeed();
+  const ownedPostIds = useOwnedPostIds();
   const { t } = useI18n();
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
   const [sortTab, setSortTab] = useState<SortTab>('newest');
@@ -82,7 +84,7 @@ export function FeedClient() {
         <EmptyState icon="✍️" title={t('feed.empty')} desc={t('feed.emptyDesc')} />
       )}
 
-      {!isLoading && filteredPosts.map((post) => <PostCard key={post.postId} post={post} />)}
+      {!isLoading && filteredPosts.map((post) => <PostCard key={post.postId} post={post} hasAccess={ownedPostIds.has(post.postId)} />)}
 
       {hasNextPage && !selectedArtist && (
         <div className="load-more">

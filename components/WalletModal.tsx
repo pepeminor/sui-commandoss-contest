@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import QRCode from 'qrcode';
 import { Modal } from './Modal';
 import { useAuth } from '@/auth/useAuth';
 import { useTokenBalances, formatTokenAmount } from '@/hooks/useTokenBalances';
@@ -43,11 +42,13 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
 
   useEffect(() => {
     if (!address || !open) return;
-    QRCode.toDataURL(address, {
-      width: 180,
-      margin: 2,
-      color: { dark: '#f0ebe4', light: '#00000000' },
-    }).then(setQrDataUrl);
+    import('qrcode').then((QRCode) =>
+      QRCode.toDataURL(address, {
+        width: 180,
+        margin: 2,
+        color: { dark: '#f0ebe4', light: '#00000000' },
+      }).then(setQrDataUrl)
+    );
   }, [address, open]);
 
   const handleCopy = () => {

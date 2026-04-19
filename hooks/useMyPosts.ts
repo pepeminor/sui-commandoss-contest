@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { graphqlClient, suiClient } from '@/lib/sui-client';
 import { PACKAGE_ID } from '@/config';
@@ -114,7 +115,10 @@ export function useMyPosts() {
     enabled: !!address && !!PACKAGE_ID,
   });
 
-  const allPosts = query.data?.pages.flatMap((p) => p.posts) ?? [];
+  const allPosts = useMemo(
+    () => query.data?.pages.flatMap((p) => p.posts) ?? [],
+    [query.data?.pages],
+  );
 
   return {
     data: allPosts,

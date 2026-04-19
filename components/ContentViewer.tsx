@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { decryptContent } from '@/lib/seal';
 import { useAuth } from '@/auth/useAuth';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -19,6 +19,15 @@ export function ContentViewer({ encryptedContent, nftObjectId, postObjectId }: C
   const [error, setError] = useState<string | null>(null);
   const decryptRequestIdRef = useRef(0);
 
+  // Stable fingerprint so we don't re-decrypt when the array reference changes but content is the same
+  const contentFingerprint = useMemo(
+    () => encryptedContent.length > 0 ? `${encryptedContent.length}:${encryptedContent[0]}:${encryptedContent[encryptedContent.length - 1]}` : '',
+    [encryptedContent],
+  );
+  // Keep a stable ref to the latest encryptedContent for use inside the callback
+  const encryptedContentRef = useRef(encryptedContent);
+  encryptedContentRef.current = encryptedContent;
+
   const attemptDecrypt = useCallback(async () => {
     const requestId = decryptRequestIdRef.current + 1;
     decryptRequestIdRef.current = requestId;
@@ -36,7 +45,7 @@ export function ContentViewer({ encryptedContent, nftObjectId, postObjectId }: C
     try {
       const signer = await getSigner();
       const result = await decryptContent({
-        encryptedContent, nftObjectId, postObjectId, userAddress: address, signer,
+        encryptedContent: encryptedContentRef.current, nftObjectId, postObjectId, userAddress: address, signer,
       });
       if (isLatestRequest()) setContent(result);
     } catch (err) {
@@ -45,7 +54,7 @@ export function ContentViewer({ encryptedContent, nftObjectId, postObjectId }: C
     } finally {
       if (isLatestRequest()) setIsLoading(false);
     }
-  }, [address, nftObjectId, postObjectId, encryptedContent, getSigner, t]);
+  }, [address, nftObjectId, postObjectId, contentFingerprint, getSigner, t]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     attemptDecrypt();

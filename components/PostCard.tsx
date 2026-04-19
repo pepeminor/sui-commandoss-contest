@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
+import { memo, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import type { FeedPost } from '@/hooks/useFeed';
-import { useHasAccess } from '@/hooks/useMyNFTs';
 import { formatSUI, shortenAddress, timeAgo, explorerObjectUrl } from '@/lib/utils';
 import { NETWORK } from '@/config';
 import { AddressAvatar } from './AddressAvatar';
@@ -11,16 +11,24 @@ import { useI18n } from '@/i18n/I18nProvider';
 
 interface PostCardProps {
   post: FeedPost;
+  hasAccess: boolean;
 }
 
-export function PostCard({ post }: PostCardProps) {
-  const hasAccess = useHasAccess(post.postId);
+export const PostCard = memo(function PostCard({ post, hasAccess }: PostCardProps) {
   const { t } = useI18n();
+  const router = useRouter();
   const soldOut = post.maxSupply > 0 && post.minted >= post.maxSupply;
 
+  const handleCardClick = useCallback(() => {
+    router.push(`/post/${post.postId}`);
+  }, [router, post.postId]);
+
   return (
-    <Link
-      href={`/post/${post.postId}`}
+    <div
+      role="link"
+      tabIndex={0}
+      onClick={handleCardClick}
+      onKeyDown={(e) => { if (e.key === 'Enter') handleCardClick(); }}
       className={`post-card${hasAccess ? ' post-card--owned' : ''}${soldOut ? ' post-card--soldout' : ''}`}
     >
       <div className="post-card__inner">
@@ -82,6 +90,6 @@ export function PostCard({ post }: PostCardProps) {
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
-}
+});
