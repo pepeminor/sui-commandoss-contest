@@ -6,7 +6,7 @@ import { DAppKitProvider } from '@mysten/dapp-kit-react';
 import { SuiGrpcClient } from '@mysten/sui/grpc';
 import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport';
 import { enokiWalletsInitializer } from '@mysten/enoki';
-import { ENOKI_API_KEY, GOOGLE_CLIENT_ID, NETWORK } from '@/config';
+import { ENOKI_API_KEY, GOOGLE_CLIENT_ID, APP_URL, NETWORK } from '@/config';
 import { I18nProvider } from '@/i18n/I18nProvider';
 import { ToastProvider } from '@/components/Toast';
 import { WalletModalProvider } from '@/components/WalletModalProvider';
@@ -40,7 +40,10 @@ const dAppKit = createDAppKit({
     enokiWalletsInitializer({
       apiKey: ENOKI_API_KEY,
       providers: {
-        google: { clientId: GOOGLE_CLIENT_ID },
+        google: {
+          clientId: GOOGLE_CLIENT_ID,
+          redirectUrl: `${APP_URL}/auth/callback`,
+        },
       },
     }),
   ],
