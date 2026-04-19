@@ -145,7 +145,9 @@ export function MusicPlayerProvider({ children }: { children: ReactNode }) {
     blobUrlRef.current = url;
 
     audio.src = url;
-    audio.addEventListener('canplay', () => {
+    audio.addEventListener('loadedmetadata', () => {
+      // Update duration to full track length
+      setState((s) => ({ ...s, duration: audio.duration }));
       audio.currentTime = savedTime;
       if (wasPlaying) audio.play();
     }, { once: true });

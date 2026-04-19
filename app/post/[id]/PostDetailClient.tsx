@@ -93,14 +93,15 @@ export function PostDetailClient({ postId }: Props) {
 
           const contentLength = parseInt(walrusResponse.headers.get('content-length') || '0', 10);
           const state = { started: false, header: null as WavHeader | null };
+          // Buffer ~20 seconds of CD-quality WAV (176KB/s) before starting
+          const PLAY_THRESHOLD = 20 * 176 * 1024; // ~3.5MB
 
           const fullData = await chunkedCrypto.decryptChunkedStream(
             prependedReader,
             contentLength,
             aesKey,
             (output, decrypted) => {
-              // Start playing after first ~512KB of audio is ready
-              if (!state.started && decrypted >= 512 * 1024) {
+              if (!state.started && decrypted >= PLAY_THRESHOLD) {
                 if (!state.header) state.header = wavUtils.parseWavHeader(output);
                 if (state.header) {
                   const pcm = output.subarray(state.header.dataOffset, decrypted);

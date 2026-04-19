@@ -75,5 +75,6 @@ export function buildWavBlob(header: WavHeader, pcmData: Uint8Array): Blob {
   // data sub-chunk size (last 4 bytes of header = the "data" chunk size field)
   hv.setUint32(hdr.length - 4, pcmData.length, true);
 
-  return new Blob([hdr.buffer as ArrayBuffer, pcmData.buffer as ArrayBuffer], { type: 'audio/wav' });
+  // slice() to get clean ArrayBuffers (subarray shares the parent buffer)
+  return new Blob([hdr.slice().buffer as ArrayBuffer, pcmData.slice().buffer as ArrayBuffer], { type: 'audio/wav' });
 }
