@@ -10,6 +10,7 @@ import {
 import { CurrentAccountSigner } from '@mysten/dapp-kit-core';
 import { isGoogleWallet } from '@mysten/enoki';
 import type { Signer } from '@mysten/sui/cryptography';
+import type { DAppKit } from '@mysten/dapp-kit-react';
 
 export function useAuth() {
   const dAppKit = useDAppKit();
@@ -35,7 +36,7 @@ export function useAuth() {
   /** Get signer — wraps the current connected wallet as a Signer */
   const getSigner = useCallback(
     (): Promise<Signer> =>
-      Promise.resolve(new CurrentAccountSigner(dAppKit as any)),
+      Promise.resolve(new CurrentAccountSigner(dAppKit as DAppKit)),
     [dAppKit],
   );
 

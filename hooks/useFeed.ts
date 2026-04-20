@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, type InfiniteData } from '@tanstack/react-query';
 import { graphqlClient, suiClient } from '@/lib/sui-client';
 import { PACKAGE_ID } from '@/config';
 
@@ -38,8 +38,25 @@ interface FeedPage {
   nextCursor: string | null;
 }
 
+interface PostEventNode {
+  contents?: {
+    json?: Record<string, unknown>;
+  };
+  timestamp?: string | number;
+}
+
+interface PostsQueryData {
+  events?: {
+    nodes?: PostEventNode[];
+    pageInfo?: {
+      hasPreviousPage?: boolean;
+      startCursor?: string | null;
+    };
+  };
+}
+
 export function useFeed() {
-  const query = useInfiniteQuery<FeedPage>({
+  const query = useInfiniteQuery<FeedPage, Error, InfiniteData<FeedPage>, readonly unknown[], string | null>({
     queryKey: ['feed', PACKAGE_ID],
     queryFn: async ({ pageParam }) => {
       if (!PACKAGE_ID) return { posts: [], nextCursor: null };
@@ -53,18 +70,18 @@ export function useFeed() {
         },
       });
 
-      const data = result.data as any;
-      const nodes: any[] = data?.events?.nodes ?? [];
+      const data = result.data as PostsQueryData | null | undefined;
+      const nodes = data?.events?.nodes ?? [];
       const pageInfo = data?.events?.pageInfo;
 
       const posts = nodes
-        .map((node: any) => {
+        .map((node) => {
           const json = node.contents?.json ?? {};
           return {
             postId:    String(json.post_id ?? ''),
             author:    String(json.author ?? ''),
             title:     String(json.title ?? ''),
-            price:     BigInt(json.price ?? 0),
+            price:     BigInt(String(json.price ?? 0)),
             maxSupply: Number(json.max_supply ?? 0),
             minted:    0,
             mediaType: Number(json.media_type ?? 0),
@@ -96,7 +113,7 @@ export function useFeed() {
 
       return {
         posts,
-        nextCursor: pageInfo?.hasPreviousPage ? pageInfo.startCursor : null,
+        nextCursor: pageInfo?.hasPreviousPage ? (pageInfo.startCursor ?? null) : null,
       };
     },
     initialPageParam: null as string | null,

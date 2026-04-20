@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, type InfiniteData } from '@tanstack/react-query';
 import { graphqlClient, suiClient } from '@/lib/sui-client';
 import { PACKAGE_ID } from '@/config';
 import { useAuth } from '@/auth/useAuth';
@@ -41,10 +41,27 @@ interface MyPostPage {
   nextCursor: string | null;
 }
 
+interface MyPostEventNode {
+  contents?: {
+    json?: Record<string, unknown>;
+  };
+  timestamp?: string | number;
+}
+
+interface MyPostsQueryData {
+  events?: {
+    nodes?: MyPostEventNode[];
+    pageInfo?: {
+      hasPreviousPage?: boolean;
+      startCursor?: string | null;
+    };
+  };
+}
+
 export function useMyPosts() {
   const { address } = useAuth();
 
-  const query = useInfiniteQuery<MyPostPage>({
+  const query = useInfiniteQuery<MyPostPage, Error, InfiniteData<MyPostPage>, readonly unknown[], string | null>({
     queryKey: ['myPosts', address, PACKAGE_ID],
     queryFn: async ({ pageParam }) => {
       if (!address || !PACKAGE_ID) return { posts: [], nextCursor: null };
@@ -59,17 +76,17 @@ export function useMyPosts() {
         },
       });
 
-      const data = result.data as any;
-      const nodes: any[] = data?.events?.nodes ?? [];
+      const data = result.data as MyPostsQueryData | null | undefined;
+      const nodes = data?.events?.nodes ?? [];
       const pageInfo = data?.events?.pageInfo;
 
       const parsedPosts = nodes
-        .map((node: any) => {
+        .map((node) => {
           const json = node.contents?.json ?? {};
           return {
             postId:    String(json.post_id ?? ''),
             title:     String(json.title ?? ''),
-            price:     BigInt(json.price ?? 0),
+            price:     BigInt(String(json.price ?? 0)),
             maxSupply: Number(json.max_supply ?? 0),
             createdAt: String(json.created_at ?? node.timestamp ?? Date.now()),
           };
@@ -106,7 +123,7 @@ export function useMyPosts() {
 
       return {
         posts,
-        nextCursor: pageInfo?.hasPreviousPage ? pageInfo.startCursor : null,
+        nextCursor: pageInfo?.hasPreviousPage ? (pageInfo.startCursor ?? null) : null,
       };
     },
     initialPageParam: null as string | null,

@@ -9,19 +9,20 @@ import { useAuth } from '@/auth/useAuth';
 import { useI18n } from '@/i18n/I18nProvider';
 import { shortenAddress } from '@/lib/utils';
 import { useIsClient } from '@/hooks/useIsClient';
-import { useToast } from './Toast';
 import { useWalletModal } from './WalletModalProvider';
 
 export function Navbar() {
   const pathname = usePathname();
   const { isLoggedIn, address, logout } = useAuth();
   const { t, locale, setLocale } = useI18n();
-  const { toast } = useToast();
   const isClient = useIsClient();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { openWallet } = useWalletModal();
-  useEffect(() => setMenuOpen(false), [pathname]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMenuOpen(false);
+  }, [pathname]);
 
   const links = [
     { href: '/', label: t('nav.feed') },

@@ -26,6 +26,7 @@ export function ContentViewer({ encryptedContent, nftObjectId, postObjectId }: C
   );
   // Keep a stable ref to the latest encryptedContent for use inside the callback
   const encryptedContentRef = useRef(encryptedContent);
+  // eslint-disable-next-line react-hooks/refs
   encryptedContentRef.current = encryptedContent;
 
   const attemptDecrypt = useCallback(async () => {
@@ -57,6 +58,7 @@ export function ContentViewer({ encryptedContent, nftObjectId, postObjectId }: C
   }, [address, nftObjectId, postObjectId, contentFingerprint, getSigner, t]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     attemptDecrypt();
   }, [attemptDecrypt]);
 

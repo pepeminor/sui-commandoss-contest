@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Modal } from './Modal';
 import { useAuth } from '@/auth/useAuth';
 import { useTokenBalances, formatTokenAmount } from '@/hooks/useTokenBalances';
@@ -74,7 +75,7 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
           <div className="wallet__qr-section">
             {qrDataUrl && (
               <div className="wallet__qr-wrapper">
-                <img src={qrDataUrl} alt={t('wallet.qrAlt')} className="wallet__qr" width={140} height={140} />
+                <Image src={qrDataUrl} alt={t('wallet.qrAlt')} className="wallet__qr" width={140} height={140} unoptimized />
               </div>
             )}
             <button className="wallet__address-btn" onClick={handleCopy} title={address}>

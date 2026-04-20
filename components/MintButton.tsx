@@ -10,6 +10,13 @@ import { useIsClient } from '@/hooks/useIsClient';
 
 const GAS_ESTIMATE_MIST = 5_500_000n; // ~0.0055 SUI
 
+interface I18nError extends Error {
+  i18n?: {
+    key: string;
+    params?: Record<string, string>;
+  };
+}
+
 interface MintButtonProps {
   postId: string;
   price: bigint;
@@ -60,8 +67,8 @@ export function MintButton({ postId, price, soldOut }: MintButtonProps) {
 
       {isError && (
         <p className="error-text">
-          {error && 'i18n' in error
-            ? t((error as any).i18n.key, (error as any).i18n.params)
+          {(error as I18nError | null)?.i18n
+            ? t((error as I18nError).i18n!.key, (error as I18nError).i18n!.params)
             : error instanceof Error ? error.message : t('error.txFailed')}
         </p>
       )}

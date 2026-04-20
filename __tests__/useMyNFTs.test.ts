@@ -105,7 +105,7 @@ describe('useMyNFTs', () => {
     }));
 
     const { useMyNFTs } = await import('@/hooks/useMyNFTs');
-    const { result } = renderHook(() => useMyNFTs(), { wrapper });
+    renderHook(() => useMyNFTs(), { wrapper });
 
     expect(mockListOwnedObjects).not.toHaveBeenCalled();
   });
