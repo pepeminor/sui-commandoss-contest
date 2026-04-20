@@ -57,6 +57,10 @@ select.form-input {
 .form-hint {
   font-size: 11px;
   color: $text-hint;
+
+  &--error {
+    color: $color-error;
+  }
 }
 
 .form-error {
