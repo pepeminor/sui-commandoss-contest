@@ -3,16 +3,38 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
+import { useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Navbar } from '@/components/Navbar';
 import { Modal } from '@/components/Modal';
 import { AuthGuard } from '@/components/AuthGuard';
 import { useCreatePost } from '@/hooks/useCreatePost';
 import { formatSUI } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nProvider';
+import { createPostSchema, parseDecimalToUnits, type CreatePostFormValues } from '@/lib/validation';
 
 const REDIRECT_DELAY = 8;
 const GAS_ESTIMATE_MIST = 2_000_000n;
-const MAX_AUDIO_SIZE = 100 * 1024 * 1024; // 100MB
+
+interface I18nError extends Error {
+  i18n?: {
+    key: string;
+    params?: Record<string, string>;
+  };
+}
+
+function getTransactionDigest(result: unknown): string {
+  if (!result || typeof result !== 'object') return '';
+  const record = result as Record<string, unknown>;
+  if (typeof record.digest === 'string') return record.digest;
+  if (typeof record.Digest === 'string') return record.Digest;
+  const transaction = record.Transaction;
+  if (transaction && typeof transaction === 'object') {
+    const txRecord = transaction as Record<string, unknown>;
+    if (typeof txRecord.digest === 'string') return txRecord.digest;
+  }
+  return '';
+}
 
 function CreateContent() {
   const router = useRouter();
@@ -20,12 +42,7 @@ function CreateContent() {
   const { mutate: createPost, isPending, isError, error } = useCreatePost();
   const { t } = useI18n();
 
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [priceStr, setPriceStr] = useState('0.01');
-  const [supplyStr, setSupplyStr] = useState('100');
   const [showConfirm, setShowConfirm] = useState(false);
-  const [audioFile, setAudioFile] = useState<File | null>(null);
   const [uploadStage, setUploadStage] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -34,6 +51,29 @@ function CreateContent() {
   const [countdown, setCountdown] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    control,
+    formState: { errors, isValid },
+  } = useForm<CreatePostFormValues>({
+    resolver: zodResolver(createPostSchema),
+    mode: 'onChange',
+    defaultValues: {
+      title: '',
+      content: '',
+      priceSui: '0.01',
+      maxSupply: 100,
+      audioFile: undefined,
+    },
+  });
+
+  const title = useWatch({ control, name: 'title' }) ?? '';
+  const content = useWatch({ control, name: 'content' }) ?? '';
+  const priceStr = useWatch({ control, name: 'priceSui' }) ?? '0';
+  const maxSupply = Number(useWatch({ control, name: 'maxSupply' }) || 1);
+  const audioFile = useWatch({ control, name: 'audioFile' }) ?? null;
 
   useEffect(() => {
     if (countdown <= 0) return;
@@ -51,26 +91,25 @@ function CreateContent() {
     return () => clearInterval(timerRef.current!);
   }, [countdown, queryClient, router]);
 
-  const priceMist = BigInt(Math.round(parseFloat(priceStr || '0') * 1e9));
-  const maxSupply = parseInt(supplyStr || '1', 10);
+  const priceMist = createPostSchema.shape.priceSui.safeParse(priceStr).success
+    ? parseDecimalToUnits(priceStr, 9)
+    : 0n;
   const contentSize = new TextEncoder().encode(content).length;
 
   const handleAudioSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > MAX_AUDIO_SIZE) {
-      alert(t('create.audioTooLarge'));
+    const result = createPostSchema.shape.audioFile.safeParse(file);
+    if (!result.success) {
+      alert(t(result.error.issues[0]?.message ?? 'validation.audio.type'));
+      e.target.value = '';
       return;
     }
-    if (!file.type.startsWith('audio/')) {
-      alert(t('create.audioInvalidType'));
-      return;
-    }
-    setAudioFile(file);
+    setValue('audioFile', file, { shouldDirty: true, shouldValidate: true });
   };
 
   const removeAudio = () => {
-    setAudioFile(null);
+    setValue('audioFile', undefined, { shouldDirty: true, shouldValidate: true });
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -103,9 +142,7 @@ function CreateContent() {
     );
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim() || !content.trim()) return;
+  const onSubmit = () => {
     setShowConfirm(true);
   };
 
@@ -126,9 +163,9 @@ function CreateContent() {
         },
       },
       {
-        onSuccess: (result: any) => {
+        onSuccess: (result) => {
           setSuccessTitle(title.trim());
-          setSuccessDigest(result?.digest ?? result?.Digest ?? '');
+          setSuccessDigest(getTransactionDigest(result));
           setCountdown(REDIRECT_DELAY);
           setUploadStage('');
         },
@@ -137,7 +174,7 @@ function CreateContent() {
   };
 
   const stageLabel = uploadStage
-    ? t(`create.stage.${uploadStage}` as any) || uploadStage
+    ? t(`create.stage.${uploadStage}`) || uploadStage
     : '';
 
   return (
@@ -149,16 +186,18 @@ function CreateContent() {
           <p className="page-header__sub">{t('create.subtitle')}</p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="form-group">
             <label className="form-label">{t('create.titleLabel')}</label>
-            <input className="form-input" placeholder={t('create.titlePlaceholder')} value={title} onChange={(e) => setTitle(e.target.value)} required />
+            <input className="form-input" placeholder={t('create.titlePlaceholder')} {...register('title')} />
+            {errors.title && <span className="form-hint form-hint--error">{t(errors.title.message ?? '')}</span>}
           </div>
 
           <div className="form-group">
             <label className="form-label">{t('create.contentLabel')}</label>
-            <textarea className="form-textarea" placeholder={audioFile ? t('create.lyricsPlaceholder') : t('create.contentPlaceholder')} value={content} onChange={(e) => setContent(e.target.value)} rows={audioFile ? 6 : 10} required />
+            <textarea className="form-textarea" placeholder={audioFile ? t('create.lyricsPlaceholder') : t('create.contentPlaceholder')} rows={audioFile ? 6 : 10} {...register('content')} />
             <span className="form-hint">{t('create.contentHint')}</span>
+            {errors.content && <span className="form-hint form-hint--error">{t(errors.content.message ?? '')}</span>}
           </div>
 
           {/* Audio upload */}
@@ -195,11 +234,13 @@ function CreateContent() {
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">{t('create.priceLabel')}</label>
-              <input className="form-input" type="number" step="0.001" min="0" placeholder="0.01" value={priceStr} onChange={(e) => setPriceStr(e.target.value)} />
+              <input className="form-input" inputMode="decimal" placeholder="0.01" {...register('priceSui')} />
+              {errors.priceSui && <span className="form-hint form-hint--error">{t(errors.priceSui.message ?? '')}</span>}
             </div>
             <div className="form-group">
               <label className="form-label">{t('create.supplyLabel')}</label>
-              <input className="form-input" type="number" min="1" placeholder="100" value={supplyStr} onChange={(e) => setSupplyStr(e.target.value)} />
+              <input className="form-input" type="number" min="1" max="100000" step="1" placeholder="100" {...register('maxSupply', { valueAsNumber: true })} />
+              {errors.maxSupply && <span className="form-hint form-hint--error">{t(errors.maxSupply.message ?? '')}</span>}
             </div>
           </div>
 
@@ -223,15 +264,15 @@ function CreateContent() {
 
           {isError && (
             <p className="form-error" style={{ marginBottom: 12 }}>
-              {error && 'i18n' in error
-                ? t((error as any).i18n.key, (error as any).i18n.params)
+              {(error as I18nError | null)?.i18n
+                ? t((error as I18nError).i18n!.key, (error as I18nError).i18n!.params)
                 : error instanceof Error
                   ? error.message
                   : t('create.publishFailed')}
             </p>
           )}
 
-          <button type="submit" className="btn btn--primary btn--full" disabled={isPending || !title.trim() || !content.trim()}>
+          <button type="submit" className="btn btn--primary btn--full" disabled={isPending || !isValid}>
             {isPending ? (audioFile ? stageLabel || t('create.publishing') : t('create.publishing')) : t('create.publish')}
           </button>
         </form>

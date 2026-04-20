@@ -1,11 +1,14 @@
 'use client';
 
-import { useState, useEffect, type FormEvent } from 'react';
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { AddressAvatar } from '@/components/AddressAvatar';
 import { shortenAddress, timeAgo } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useAuth } from '@/auth/useAuth';
 import { useComments, usePostComment } from '@/hooks/useComments';
+import { commentSchema } from '@/lib/validation';
 
 interface Props {
   postId: string;
@@ -14,9 +17,13 @@ interface Props {
 export function CommentsSection({ postId }: Props) {
   const { t } = useI18n();
   const { address } = useAuth();
-  const [input, setInput] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopOpen, setDesktopOpen] = useState(true);
+  const form = useForm<{ content: string }>({
+    resolver: zodResolver(commentSchema.pick({ content: true })),
+    mode: 'onChange',
+    defaultValues: { content: '' },
+  });
 
   const { data: comments = [], isLoading } = useComments(postId);
   const { mutate: submitComment, isPending } = usePostComment(postId);
@@ -30,16 +37,15 @@ export function CommentsSection({ postId }: Props) {
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const text = input.trim();
+  const handleSubmit = form.handleSubmit(({ content }) => {
+    const text = content.trim();
     if (!text || !address || isPending) return;
 
     submitComment(
       { postId, address, content: text },
-      { onSuccess: () => setInput('') },
+      { onSuccess: () => form.reset({ content: '' }) },
     );
-  };
+  });
 
   const commentCount = comments.length;
 
@@ -86,16 +92,15 @@ export function CommentsSection({ postId }: Props) {
         <input
           className="comments-panel__input"
           type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
           placeholder={address ? t('comments.placeholder') : t('comments.loginToComment')}
           disabled={!address || isPending}
           maxLength={500}
+          {...form.register('content')}
         />
         <button
           className="comments-panel__submit"
           type="submit"
-          disabled={!address || !input.trim() || isPending}
+          disabled={!address || !form.formState.isValid || isPending}
         >
           {isPending ? (
             <div className="comments-panel__submit-spinner" />

@@ -1,25 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabase, type CommentRow } from '@/lib/supabase';
+import { commentPostIdSchema, commentSchema } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
 const MAX_CONTENT_LENGTH = 500;
 const MAX_COMMENTS_PER_PAGE = 100;
 const RATE_LIMIT_MS = 10_000;
-const SUI_ADDRESS_REGEX = /^0x[a-fA-F0-9]{64}$/;
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const postId = searchParams.get('postId');
 
-  if (!postId || !SUI_ADDRESS_REGEX.test(postId)) {
+  const query = commentPostIdSchema.safeParse({ postId });
+  if (!query.success) {
     return NextResponse.json({ error: 'Invalid or missing postId' }, { status: 400 });
   }
 
   const { data, error } = await getSupabase()
     .from('comments')
     .select('id, post_id, address, content, created_at')
-    .eq('post_id', postId)
+    .eq('post_id', query.data.postId)
     .order('created_at', { ascending: false })
     .limit(MAX_COMMENTS_PER_PAGE);
 
@@ -32,34 +33,24 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  let body: { postId?: string; address?: string; content?: string };
+  let body: unknown;
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const { postId, address, content } = body;
-
-  if (!postId || !address || !content) {
-    return NextResponse.json({ error: 'postId, address, and content are required' }, { status: 400 });
-  }
-
-  if (!SUI_ADDRESS_REGEX.test(postId)) {
-    return NextResponse.json({ error: 'Invalid postId format' }, { status: 400 });
-  }
-
-  if (!SUI_ADDRESS_REGEX.test(address)) {
-    return NextResponse.json({ error: 'Invalid SUI address' }, { status: 400 });
-  }
-
-  const trimmed = content.trim();
-  if (trimmed.length === 0 || trimmed.length > MAX_CONTENT_LENGTH) {
+  const parsed = commentSchema.safeParse(body);
+  if (!parsed.success) {
     return NextResponse.json({ error: `Content must be 1-${MAX_CONTENT_LENGTH} characters` }, { status: 400 });
   }
+  const { postId, address, content } = parsed.data;
 
   // Strip HTML tags for safety (React auto-escapes on render, this is defense-in-depth)
-  const sanitized = trimmed.replace(/<[^>]*>?/g, '');
+  const sanitized = content.trim().replace(/<[^>]*>?/g, '').trim();
+  if (sanitized.length === 0 || sanitized.length > MAX_CONTENT_LENGTH) {
+    return NextResponse.json({ error: `Content must be 1-${MAX_CONTENT_LENGTH} characters` }, { status: 400 });
+  }
 
   // Rate limit: 1 comment per address per 10 seconds
   const { data: recent } = await getSupabase()

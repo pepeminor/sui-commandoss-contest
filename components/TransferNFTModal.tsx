@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Transaction } from '@mysten/sui/transactions';
 import { Modal } from './Modal';
@@ -11,6 +13,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { signAndExecute } from '@/lib/sui-client';
 import { shortenAddress } from '@/lib/utils';
 import { type NFTData } from '@/hooks/useMyNFTs';
+import { makeTransferNftSchema } from '@/lib/validation';
 
 interface TransferNFTModalProps {
   open: boolean;
@@ -24,8 +27,14 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
   const { t } = useI18n();
   const queryClient = useQueryClient();
 
-  const [recipient, setRecipient] = useState('');
   const [step, setStep] = useState<'form' | 'confirm'>('form');
+  const schema = useMemo(() => makeTransferNftSchema(address ?? undefined), [address]);
+  const form = useForm<{ recipient: string }>({
+    resolver: zodResolver(schema),
+    mode: 'onChange',
+    defaultValues: { recipient: '' },
+  });
+  const recipient = useWatch({ control: form.control, name: 'recipient' }) ?? '';
 
   const transferMutation = useMutation({
     mutationFn: async () => {
@@ -33,7 +42,7 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
 
       const signer = await getSigner();
       const tx = new Transaction();
-      tx.transferObjects([tx.object(nft.objectId)], recipient);
+      tx.transferObjects([tx.object(nft.objectId)], recipient.trim());
 
       return signAndExecute(tx, signer, address);
     },
@@ -50,11 +59,11 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
 
   const handleClose = () => {
     setStep('form');
-    setRecipient('');
+    form.reset({ recipient: '' });
     onClose();
   };
 
-  const isValid = recipient.startsWith('0x') && recipient.length >= 42 && recipient !== address;
+  const handleReview = form.handleSubmit(() => setStep('confirm'));
 
   if (!nft) return null;
 
@@ -79,11 +88,10 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
               <input
                 className="form-input"
                 placeholder="0x..."
-                value={recipient}
-                onChange={(e) => setRecipient(e.target.value.trim())}
+                {...form.register('recipient')}
               />
-              {recipient === address && (
-                <span className="form-hint form-hint--error">{t('wallet.cannotSendSelf')}</span>
+              {form.formState.errors.recipient && (
+                <span className="form-hint form-hint--error">{t(form.formState.errors.recipient.message ?? '')}</span>
               )}
             </div>
 
@@ -91,8 +99,8 @@ export function TransferNFTModal({ open, onClose, nft }: TransferNFTModalProps) 
 
             <button
               className="btn btn--primary btn--full"
-              disabled={!isValid}
-              onClick={() => setStep('confirm')}
+              disabled={!form.formState.isValid}
+              onClick={handleReview}
             >
               {t('wallet.reviewTransfer')}
             </button>
