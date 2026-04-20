@@ -21,11 +21,12 @@ describe('sui-client exports', () => {
 
   it('suiClient.core should exist (gRPC core methods)', async () => {
     const { suiClient } = await import('@/lib/sui-client');
+    const core = suiClient.core as unknown as Record<string, unknown>;
     expect(suiClient).toHaveProperty('core');
-    expect(typeof (suiClient as any).core?.getObject).toBe('function');
-    expect(typeof (suiClient as any).core?.listOwnedObjects).toBe('function');
-    expect(typeof (suiClient as any).core?.signAndExecuteTransaction).toBe('function');
-    expect(typeof (suiClient as any).core?.waitForTransaction).toBe('function');
+    expect(typeof core.getObject).toBe('function');
+    expect(typeof core.listOwnedObjects).toBe('function');
+    expect(typeof core.signAndExecuteTransaction).toBe('function');
+    expect(typeof core.waitForTransaction).toBe('function');
   });
 
   it('graphqlClient should be a SuiGraphQLClient', async () => {

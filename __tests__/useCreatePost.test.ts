@@ -26,6 +26,21 @@ vi.mock('@/lib/sui-client', () => ({
     waitForTransaction: vi.fn(() => { throw new Error('JSON-RPC waitForTransaction called'); }),
   },
   graphqlClient: {},
+  signAndExecute: async (transaction: unknown, signer: unknown) => {
+    let result;
+    try {
+      result = await mockCore.signAndExecuteTransaction({ transaction, signer });
+    } catch (err) {
+      const raw = err instanceof Error ? err.message : String(err);
+      const budget = raw.match(/budget\s+(\d+)/i)?.[1];
+      throw new Error(budget ? `Insufficient SUI for gas. Need at least ${(Number(budget) / 1e9).toFixed(3)} SUI.` : raw);
+    }
+    if (result.$kind === 'FailedTransaction') {
+      throw new Error(result.FailedTransaction?.status?.error || 'Transaction failed');
+    }
+    await mockCore.waitForTransaction({ result });
+    return result;
+  },
 }));
 
 // Valid 32-byte Sui address
@@ -38,6 +53,7 @@ vi.mock('@/auth/useAuth', () => ({
 
 vi.mock('@/lib/seal', () => ({
   encryptContent: vi.fn().mockResolvedValue(new Uint8Array([1, 2, 3])),
+  encryptRaw: vi.fn().mockResolvedValue(new Uint8Array([4, 5, 6])),
 }));
 
 vi.stubEnv('NEXT_PUBLIC_PACKAGE_ID', '0xpkg');

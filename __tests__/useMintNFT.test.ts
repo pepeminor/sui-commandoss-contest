@@ -25,6 +25,14 @@ vi.mock('@/lib/sui-client', () => ({
     waitForTransaction: vi.fn(() => { throw new Error('JSON-RPC waitForTransaction called'); }),
   },
   graphqlClient: {},
+  signAndExecute: async (transaction: unknown, signer: unknown) => {
+    const result = await mockCore.signAndExecuteTransaction({ transaction, signer });
+    if (result.$kind === 'FailedTransaction') {
+      throw new Error(result.FailedTransaction?.status?.error || 'Transaction failed');
+    }
+    await mockCore.waitForTransaction({ result });
+    return result;
+  },
 }));
 
 // Valid 32-byte Sui address

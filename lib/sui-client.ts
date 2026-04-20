@@ -35,15 +35,15 @@ export async function signAndExecute(tx: Transaction, signer: Signer, sender: st
 
   let result;
   try {
-    result = await suiClient.signAndExecuteTransaction({ transaction: tx, signer });
+    result = await suiClient.core.signAndExecuteTransaction({ transaction: tx, signer });
   } catch (e) {
     const parsed = parseTransactionErrorI18n(e);
-    throw Object.assign(new Error(parsed.key), { i18n: parsed });
+    throw Object.assign(new Error(parsed.fallback), { i18n: parsed });
   }
 
   if (result.$kind === 'FailedTransaction') {
     const parsed = parseTransactionErrorI18n(result.FailedTransaction?.status?.error);
-    throw Object.assign(new Error(parsed.key), { i18n: parsed });
+    throw Object.assign(new Error(parsed.fallback), { i18n: parsed });
   }
 
   await suiClient.core.waitForTransaction({ result });
