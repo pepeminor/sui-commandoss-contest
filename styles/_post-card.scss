@@ -12,41 +12,48 @@
   text-decoration: none;
   display: block;
 
+  // Vinyl groove line on left
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom, $accent 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity $duration-fast;
+    border-radius: $radius-lg 0 0 $radius-lg;
+  }
+
   &:hover {
     border-color: $border-hover;
     background: $bg-card-hover;
-  }
 
-  // Owned — thin teal line on left
-  &--owned {
     &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 2px;
-      height: 100%;
-      background: $color-owned;
-      border-radius: $radius-lg 0 0 $radius-lg;
-      opacity: 0.7;
+      opacity: 0.4;
     }
   }
 
-  // Sold out — subtle accent border
-  &--soldout {
-    border-color: rgba(232, 98, 58, 0.3);
+  // Owned — teal groove line
+  &--owned {
+    &::before {
+      background: $color-owned;
+      opacity: 0.6;
+    }
+  }
 
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: $radius-lg;
-      pointer-events: none;
-      box-shadow: inset 0 0 0 0.5px rgba(232, 98, 58, 0.25);
+  // Sold out — hot accent border
+  &--soldout {
+    border-color: rgba(232, 98, 58, 0.25);
+
+    &::before {
+      background: $accent-hot;
+      opacity: 0.5;
     }
 
     &:hover {
-      border-color: rgba(232, 98, 58, 0.45);
+      border-color: rgba(232, 98, 58, 0.4);
     }
   }
 
@@ -70,10 +77,11 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 11px;
+    font-family: $font-mono;
+    font-size: 10px;
     color: $text-hint;
-    font-weight: 500;
-    letter-spacing: 0.01em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
   }
 
   &__dot {
@@ -90,6 +98,8 @@
     letter-spacing: -0.2px;
     margin-bottom: 6px;
     line-height: 1.35;
+    display: flex;
+    align-items: center;
   }
 
   &__preview {
@@ -106,7 +116,7 @@
       filter: blur(3px);
       user-select: none;
       pointer-events: none;
-      color: rgba(237, 232, 224, 0.2);
+      color: rgba(230, 213, 188, 0.15);
       transition: filter $duration-fast;
     }
   }
@@ -125,15 +135,18 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    font-size: 13px;
-    font-weight: 600;
+    font-family: $font-mono;
+    font-size: 12px;
+    font-weight: 700;
     color: $color-sui;
   }
 
   &__supply {
-    font-size: 11px;
+    font-family: $font-mono;
+    font-size: 10px;
     color: $text-hint;
-    font-weight: 500;
+    font-weight: 700;
+    letter-spacing: 0.03em;
   }
 
   &__explorer {
@@ -154,17 +167,18 @@
 }
 
 
-// ─── Badge ────────────────────────────────────────────────────────────────────
+// ─── Badge ──────────────────────────────────────────────────────────────────
 
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  border-radius: 3px;
+  font-family: $font-mono;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 
   &--owned {
@@ -180,8 +194,8 @@
   }
 
   &--soldout {
-    background: $accent-soft;
-    color: $accent;
-    border: 0.5px solid $accent-border;
+    background: $accent-hot-soft;
+    color: $accent-hot;
+    border: 0.5px solid $accent-hot-border;
   }
 }

@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  background: rgba(8, 8, 11, 0.92);
+  background: rgba(5, 5, 8, 0.92);
   border-bottom: 0.5px solid $border;
   position: fixed;
   top: 0;
@@ -30,10 +30,10 @@
   }
 
   &__logo-icon {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     background: $accent;
-    border-radius: 6px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -41,11 +41,12 @@
   }
 
   &__logo-name {
-    font-size: 16px;
-    font-weight: 800;
-    letter-spacing: -0.3px;
-    letter-spacing: 0;
+    font-family: $font-display;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
     color: $text-primary;
+    text-transform: uppercase;
   }
 
   // Desktop links
@@ -60,23 +61,24 @@
 
   &__link {
     padding: 6px 14px;
-    font-size: 13px;
-    font-weight: 500;
+    font-family: $font-mono;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: $text-muted;
     border-radius: $radius-sm;
     cursor: pointer;
     transition: color $duration-fast;
     background: none;
     border: none;
-    font-family: $font-base;
     text-decoration: none;
     white-space: nowrap;
-    letter-spacing: 0.01em;
 
     &:hover { color: $text-secondary; }
 
     &--active {
-      color: $text-primary;
+      color: $accent;
     }
   }
 
@@ -91,7 +93,7 @@
     }
   }
 
-  // ─── Publish CTA (desktop) ────────────────────────────────────────────────
+  // ─── Publish CTA (desktop) ──────────────────────────────────────────────
   &__publish {
     display: inline-flex;
     align-items: center;
@@ -100,7 +102,7 @@
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.02em;
-    color: #fff;
+    color: #0a0a0f;
     background: $accent;
     border: none;
     border-radius: 99px;
@@ -157,20 +159,20 @@
 
   &__address {
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 700;
     color: $text-muted;
     background: transparent;
     border: 0.5px solid $border;
     border-radius: $radius-sm;
     padding: 5px 10px;
-    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-family: $font-mono;
     cursor: pointer;
     transition: color $duration-fast, border-color $duration-fast;
     letter-spacing: 0.02em;
 
     &:hover {
-      color: $text-secondary;
-      border-color: $border-hover;
+      color: $accent;
+      border-color: $accent-border;
     }
   }
 
@@ -191,14 +193,14 @@
   }
 }
 
-// ─── Mobile slide-out menu ───────────────────────────────────────────────────
+// ─── Mobile slide-out menu ────────────────────────────────────────────────────
 
 .mobile-menu-backdrop {
   position: fixed;
   inset: 0;
   top: 56px;
   z-index: 99;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.6);
   animation: modal-fade-in $duration-fast ease;
 }
 
@@ -223,8 +225,8 @@
     width: 100%;
     padding: 10px 12px;
     font-size: 12px;
-    font-weight: 500;
-    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-weight: 700;
+    font-family: $font-mono;
     color: $text-muted;
     background: $bg-surface;
     border: 0.5px solid $border;
@@ -234,8 +236,8 @@
     transition: color $duration-fast, border-color $duration-fast;
 
     &:hover {
-      color: $text-secondary;
-      border-color: $border-hover;
+      color: $accent;
+      border-color: $accent-border;
     }
   }
 
@@ -248,8 +250,11 @@
   &__link {
     display: block;
     padding: 10px 12px;
-    font-size: 13px;
-    font-weight: 500;
+    font-family: $font-mono;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: $text-muted;
     text-decoration: none;
     border-radius: $radius-sm;
@@ -258,7 +263,7 @@
     &:hover { color: $text-primary; }
 
     &--active {
-      color: $text-primary;
+      color: $accent;
     }
   }
 
@@ -307,7 +312,7 @@
     }
 
     &--active {
-      color: #fff;
+      color: #0a0a0f;
       background: $accent;
       border-color: $accent;
     }

@@ -33,6 +33,11 @@ export function Navbar() {
   ];
 
   const showPublish = isClient && isLoggedIn;
+  const nextLocale = locale === 'en' ? 'vi' : 'en';
+  const currentLanguage = locale === 'en'
+    ? { flag: '🇬🇧', label: 'English' }
+    : { flag: '🇻🇳', label: 'Tiếng Việt' };
+  const nextLanguageLabel = nextLocale === 'en' ? 'English' : 'Tiếng Việt';
 
   const handleLogout = () => {
     setShowLogoutConfirm(false);
@@ -45,9 +50,9 @@ export function Navbar() {
       <nav className="navbar">
         <Link href="/" className="navbar__logo">
           <div className="navbar__logo-icon">
-            <i className="ri-stack-fill" style={{ fontSize: 14, color: 'white' }} />
+            <i className="ri-disc-fill" style={{ fontSize: 14, color: '#0a0a0f' }} />
           </div>
-          <span className="navbar__logo-name">Verse</span>
+          <span className="navbar__logo-name">VERSE</span>
         </Link>
 
         {/* Desktop links */}
@@ -75,10 +80,11 @@ export function Navbar() {
           )}
           <button
             className="navbar__lang"
-            onClick={() => setLocale(locale === 'en' ? 'vi' : 'en')}
-            title={locale === 'en' ? 'Tiếng Việt' : 'English'}
+            onClick={() => setLocale(nextLocale)}
+            title={`Switch to ${nextLanguageLabel}`}
+            aria-label={`Switch to ${nextLanguageLabel}`}
           >
-            <span className="navbar__lang-flag">{locale === 'en' ? '🇻🇳' : '🇬🇧'}</span>
+            <span className="navbar__lang-flag">{currentLanguage.flag}</span>
           </button>
           <LoginButton />
         </div>
@@ -145,9 +151,10 @@ export function Navbar() {
             {/* Language toggle */}
             <button
               className="mobile-menu__lang"
-              onClick={() => setLocale(locale === 'en' ? 'vi' : 'en')}
+              onClick={() => setLocale(nextLocale)}
+              aria-label={`Switch to ${nextLanguageLabel}`}
             >
-              {locale === 'en' ? '🇻🇳 Tiếng Việt' : '🇬🇧 English'}
+              {currentLanguage.flag} {currentLanguage.label}
             </button>
 
             {/* Spacer pushes logout to bottom */}

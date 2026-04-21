@@ -32,7 +32,7 @@
 
   &--primary {
     padding: 7px 16px;
-    background: $accent;
+    background: $accent-hot;
     color: #fff;
     font-size: 13px;
 
@@ -44,7 +44,7 @@
 
   &--mint {
     padding: 8px 18px;
-    background: $accent;
+    background: $accent-hot;
     color: #fff;
     font-size: 13px;
     font-weight: 600;
@@ -71,7 +71,7 @@
     color: $text-secondary;
     font-size: 13px;
 
-    &:hover:not(:disabled) { background: rgba(255, 255, 255, 0.06); color: $text-primary; }
+    &:hover:not(:disabled) { background: rgba(255, 255, 255, 0.05); color: $text-primary; }
   }
 
   &--danger {

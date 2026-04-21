@@ -193,6 +193,14 @@
   "comments.justNow": "vừa xong",
   "comments.empty": "Chưa có bình luận. Hãy là người đầu tiên!",
 
+  "hero.poweredBy": "VẬN HÀNH TRÊN SUI NETWORK",
+  "hero.tagline1": "Âm nhạc underground.",
+  "hero.tagline2": "Sở hữu trên blockchain.",
+  "hero.desc": "Nghệ sĩ phát hành bản nhạc độc quyền. Fan mint NFT để truy cập vĩnh viễn. Không trung gian. Không gỡ bỏ. Chỉ có âm nhạc.",
+  "hero.login": "Đăng nhập Google",
+  "hero.dropTrack": "Đăng bài nhạc",
+  "hero.explore": "Khám phá nhạc",
+
   "auth.authenticating": "Đang xác thực...",
   "create.txDigest": "Tx Digest",
   "create.audioSize": "{size} MB audio",

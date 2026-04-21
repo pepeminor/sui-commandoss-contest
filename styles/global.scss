@@ -28,7 +28,444 @@ body {
   padding-bottom: 72px;
 }
 
-// ─── Utilities ────────────────────────────────────────────────────────────────
+// ─── Film grain overlay ─────────────────────────────────────────────────────
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.028;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+// ─── Starry Night Sky (image background + zodiac constellations) ────────────
+
+.starry {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+// Background image — the starry sky photo
+.starry__bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/starry-sky.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+// Bottom fade — transparent gradient for smooth scroll transition
+.starry__fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 35%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(5, 5, 8, 0.4) 30%,
+    rgba(5, 5, 8, 0.8) 60%,
+    $bg-base 100%
+  );
+  z-index: 1;
+}
+
+.starry__zodiac {
+  position: absolute;
+  z-index: 2;
+  opacity: 0;
+  animation: zodiac-appear 1.8s ease-out forwards;
+
+  left: -26px;
+  right: auto;
+  top: min(46vh, 360px);
+  bottom: auto;
+  transform: none;
+  width: 132px;
+
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+.starry__zodiac--desktop {
+  display: none;
+}
+
+.starry__zodiac--mobile {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .starry__zodiac {
+    left: var(--zd-left, 5%);
+    right: auto;
+    top: var(--zd-top, 5%);
+    bottom: auto;
+    transform: none;
+    width: 280px;
+
+  }
+
+  .starry__zodiac--desktop {
+    display: block;
+  }
+
+  .starry__zodiac--mobile {
+    display: none;
+  }
+}
+
+@media (min-width: 1200px) {
+  .starry__zodiac {
+    width: 340px;
+  }
+}
+
+@keyframes zodiac-appear {
+  0%   { opacity: 0; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.starry__zodiac--slot0 { animation-delay: 0.3s; }
+.starry__zodiac--slot1 { animation-delay: 0.9s; }
+.starry__zodiac--slot2 { animation-delay: 1.5s; }
+
+.starry__zodiac-star {
+  animation: zodiac-twinkle 3s ease-in-out infinite;
+}
+
+@keyframes zodiac-twinkle {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
+}
+
+.starry__zodiac-symbol {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 8px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  opacity: 0.58;
+}
+
+.starry__hour-animal {
+  position: absolute;
+  top: 18px;
+  right: 14px;
+  z-index: 3;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: 0.5px solid rgba(212, 168, 75, 0.22);
+  border-radius: 50%;
+  background: rgba(5, 5, 8, 0.48);
+  box-shadow: 0 0 18px rgba(212, 168, 75, 0.1);
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0.88;
+
+  @media (min-width: 768px) {
+    top: 18px;
+    right: 82px;
+    width: 24px;
+    height: 24px;
+    font-size: 13px;
+  }
+}
+
+.starry__drift-a {
+  animation: zodiac-appear 1.8s ease-out forwards, drift-a 30s ease-in-out 2.5s infinite;
+}
+
+.starry__drift-b {
+  animation: zodiac-appear 1.8s ease-out forwards, drift-b 36s ease-in-out 3s infinite;
+}
+
+.starry__drift-c {
+  animation: zodiac-appear 1.8s ease-out forwards, drift-c 28s ease-in-out 3.5s infinite;
+}
+
+@keyframes drift-a {
+  0%, 100% { transform: translate(0, 0); }
+  33%      { transform: translate(8px, -10px); }
+  66%      { transform: translate(-5px, 7px); }
+}
+@keyframes drift-b {
+  0%, 100% { transform: translate(0, 0); }
+  33%      { transform: translate(-9px, 5px); }
+  66%      { transform: translate(6px, -8px); }
+}
+@keyframes drift-c {
+  0%, 100% { transform: translate(0, 0); }
+  25%      { transform: translate(7px, 8px); }
+  50%      { transform: translate(-4px, -9px); }
+  75%      { transform: translate(-7px, 4px); }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  .starry__zodiac-star,
+  .starry__drift-a,
+  .starry__drift-b,
+  .starry__drift-c {
+    animation: zodiac-appear 0.5s ease-out forwards !important;
+  }
+}
+
+// ─── Hero Section ───────────────────────────────────────────────────────────
+
+.hero {
+  position: relative;
+  min-height: calc(100vh - 56px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px 48px;
+  overflow: hidden;
+
+  // Radial glow behind vinyl
+  &::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(77, 162, 255, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  // ─── Vinyl Disc ────────────────────────────────────────────────────────────
+
+  &__vinyl {
+    position: relative;
+    margin-bottom: 36px;
+    z-index: 1;
+  }
+
+  &__disc {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    position: relative;
+    background:
+      // Grooves — fine concentric lines
+      repeating-radial-gradient(
+        circle at center,
+        rgba(255, 255, 255, 0.02) 0px,
+        rgba(255, 255, 255, 0.02) 1px,
+        transparent 1px,
+        transparent 4px
+      ),
+      // Base vinyl
+      radial-gradient(circle, #18181e 0%, #0c0c10 100%);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.04),
+      0 0 0 3px rgba(0, 0, 0, 0.4),
+      0 20px 60px rgba(0, 0, 0, 0.5),
+      inset 0 0 30px rgba(0, 0, 0, 0.3);
+    animation: vinyl-spin 8s linear infinite;
+
+    @media (min-width: 480px) {
+      width: 240px;
+      height: 240px;
+    }
+  }
+
+  &__disc-shine {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(
+      from 30deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.08) 6%,
+      rgba(255, 255, 255, 0.03) 12%,
+      transparent 18%,
+      transparent 45%,
+      rgba(255, 255, 255, 0.06) 50%,
+      rgba(255, 255, 255, 0.02) 56%,
+      transparent 62%
+    );
+    pointer-events: none;
+  }
+
+  &__disc-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #D4A84B 0%, #B8923D 60%, #9A7A30 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    box-shadow:
+      0 0 0 2px rgba(0, 0, 0, 0.3),
+      inset 0 1px 2px rgba(255, 255, 255, 0.2);
+    // Counter-rotate to keep label readable
+    animation: vinyl-counter-spin 8s linear infinite;
+
+    @media (min-width: 480px) {
+      width: 84px;
+      height: 84px;
+    }
+
+  }
+
+  // ─── Content ───────────────────────────────────────────────────────────────
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    max-width: 520px;
+  }
+
+  &__sui-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px 4px 10px;
+    border-radius: 99px;
+    border: 0.5px solid rgba(77, 162, 255, 0.2);
+    background: rgba(77, 162, 255, 0.06);
+    margin-bottom: 20px;
+
+    span {
+      font-family: $font-mono;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: $color-sui;
+    }
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: clamp(64px, 16vw, 120px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 0.9;
+    color: $text-primary;
+    margin-bottom: 16px;
+    text-shadow: 0 2px 40px rgba(212, 168, 75, 0.1);
+  }
+
+  &__tagline {
+    font-family: $font-display;
+    font-size: clamp(18px, 3.5vw, 24px);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+    color: $accent;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  &__desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: $text-primary;
+    max-width: 380px;
+    margin: 0 auto 32px;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    @media (min-width: 480px) {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 220px;
+    height: 48px;
+    padding: 0 24px;
+    font-family: $font-base;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: opacity $duration-fast;
+    text-decoration: none;
+
+    // Default: Google login — hot accent
+    background: $accent-hot;
+    color: #fff;
+
+    &:hover {
+      opacity: 0.88;
+    }
+
+    &:active {
+      opacity: 0.75;
+    }
+
+    i {
+      font-size: 16px;
+    }
+
+    &--create {
+      background: $accent;
+      color: #0a0a0f;
+    }
+
+    &--ghost {
+      background: transparent;
+      border: 0.5px solid $border-hover;
+      color: $text-secondary;
+
+      &:hover {
+        border-color: $accent-border;
+        color: $text-primary;
+      }
+    }
+  }
+
+}
+
+@keyframes vinyl-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes vinyl-counter-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(-360deg); }
+}
+
+// ─── Utilities ──────────────────────────────────────────────────────────────
 
 .stat-card {
   background: $bg-surface-2;
@@ -49,11 +486,12 @@ body {
   }
 
   &__label {
-    font-size: 10px;
-    font-weight: 600;
+    font-family: $font-mono;
+    font-size: 9px;
+    font-weight: 700;
     color: $text-hint;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
   }
 }
 
@@ -68,8 +506,11 @@ body {
   }
 
   &__title {
-    font-size: 16px;
-    font-weight: 700;
+    font-family: $font-display;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
     color: $text-secondary;
     margin-bottom: 8px;
   }
@@ -107,12 +548,14 @@ body {
   padding: 36px 0 28px;
 
   &__title {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.6px;
+    font-family: $font-display;
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
     color: $text-primary;
     margin-bottom: 6px;
-    line-height: 1.1;
+    line-height: 1;
   }
 
   &__sub {
@@ -134,8 +577,11 @@ body {
     border: none;
     background: transparent;
     color: $text-muted;
-    font-size: 13px;
-    font-weight: 500;
+    font-family: $font-mono;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     cursor: pointer;
     transition: color $duration-fast;
     border-bottom: 1.5px solid transparent;
@@ -146,7 +592,7 @@ body {
     }
 
     &--active {
-      color: $text-primary;
+      color: $accent;
       border-bottom-color: $accent;
     }
   }

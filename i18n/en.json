@@ -193,6 +193,14 @@
   "comments.justNow": "just now",
   "comments.empty": "No comments yet. Be the first!",
 
+  "hero.poweredBy": "POWERED BY SUI NETWORK",
+  "hero.tagline1": "Underground music.",
+  "hero.tagline2": "On-chain ownership.",
+  "hero.desc": "Creators drop exclusive tracks. Fans mint NFTs for permanent access. No middlemen. No takedowns. Just music.",
+  "hero.login": "Sign in with Google",
+  "hero.dropTrack": "Drop a Track",
+  "hero.explore": "Explore Music",
+
   "auth.authenticating": "Authenticating...",
   "create.txDigest": "Tx Digest",
   "create.audioSize": "{size} MB audio",

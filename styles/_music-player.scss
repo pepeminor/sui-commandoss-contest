@@ -6,7 +6,7 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  background: rgba(8, 8, 11, 0.94);
+  background: rgba(5, 5, 8, 0.95);
   backdrop-filter: blur(20px);
   border-top: 0.5px solid $border;
   padding: 10px 20px;
@@ -43,8 +43,11 @@
   }
 
   &__author {
-    font-size: 11px;
+    font-family: $font-mono;
+    font-size: 10px;
+    font-weight: 700;
     color: $text-hint;
+    letter-spacing: 0.03em;
   }
 
   &__controls {
@@ -57,7 +60,7 @@
     border-radius: 50%;
     background: $accent;
     border: none;
-    color: #fff;
+    color: #0a0a0f;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -99,8 +102,9 @@
   }
 
   &__time {
-    font-size: 10px;
-    font-weight: 500;
+    font-family: $font-mono;
+    font-size: 9px;
+    font-weight: 700;
     color: $text-hint;
     font-variant-numeric: tabular-nums;
     flex-shrink: 0;

@@ -33,12 +33,14 @@
   }
 
   &__value {
+    font-family: $font-mono;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     color: $color-sui;
   }
 
   &__value--lg {
+    font-family: $font-mono;
     font-size: 14px;
     font-weight: 700;
     color: $color-sui;
@@ -51,7 +53,7 @@
   }
 
   &__value--mono {
-    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-family: $font-mono;
     font-size: 12px;
     color: $text-muted;
   }
@@ -98,8 +100,11 @@
 
 .create-success {
   &__title {
-    font-size: 20px;
-    font-weight: 800;
+    font-family: $font-display;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: $text-primary;
     margin-bottom: 8px;
   }
@@ -180,9 +185,11 @@
   }
 
   &__title {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.4px;
+    font-family: $font-display;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
     margin-bottom: 6px;
     display: flex;
     align-items: center;
@@ -195,7 +202,7 @@
     justify-content: center;
     width: 24px;
     height: 24px;
-    border-radius: 5px;
+    border-radius: 4px;
     background: $accent-soft;
     color: $accent;
     flex-shrink: 0;
@@ -210,8 +217,11 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
+    font-family: $font-mono;
+    font-size: 11px;
+    font-weight: 700;
     color: $text-hint;
+    letter-spacing: 0.03em;
   }
 
   &__play-btn {
@@ -219,7 +229,7 @@
     height: 42px;
     border-radius: 50%;
     background: $accent;
-    color: #fff;
+    color: #0a0a0f;
     border: none;
     cursor: pointer;
     display: flex;
@@ -267,8 +277,9 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    font-family: $font-mono;
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 700;
   }
 
   &__stats {
@@ -294,10 +305,12 @@
   }
 
   &__stat-label {
-    font-size: 10px;
+    font-family: $font-mono;
+    font-size: 9px;
+    font-weight: 700;
     color: $text-hint;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     margin-top: 2px;
   }
 
@@ -320,10 +333,10 @@
     align-items: center;
     justify-content: center;
     padding: 1px 8px;
-    font-size: 13px;
+    font-family: $font-mono;
+    font-size: 12px;
     font-weight: 700;
     line-height: 22px;
-    font-family: $font-base;
     color: $color-owned;
     background: rgba(93, 202, 165, 0.08);
     border: 0.5px solid rgba(93, 202, 165, 0.18);
@@ -365,9 +378,9 @@
     padding: 10px 16px;
     margin-bottom: 20px;
     border-radius: $radius-md;
-    background: $accent-soft;
-    border: 0.5px solid $accent-border;
-    color: $accent;
+    background: $accent-hot-soft;
+    border: 0.5px solid $accent-hot-border;
+    color: $accent-hot;
     font-weight: 600;
     font-size: 13px;
     letter-spacing: 0.02em;
@@ -396,23 +409,27 @@
   }
 
   &__title {
-    font-size: 18px;
+    font-family: $font-display;
+    font-size: 24px;
     font-weight: 800;
-    letter-spacing: -0.3px;
-    letter-spacing: -0.1px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: $text-primary;
   }
 
   &__clear {
     padding: 5px 14px;
-    font-size: 11px;
-    font-weight: 600;
+    font-family: $font-mono;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: $text-muted;
     background: transparent;
     border: 0.5px solid $border;
     border-radius: 99px;
     cursor: pointer;
-    font-family: $font-base;
+    font-family: $font-mono;
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -449,7 +466,7 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: rgba(13, 13, 18, 0.9);
+    background: rgba(10, 10, 15, 0.9);
     backdrop-filter: blur(8px);
     border: 0.5px solid $border-hover;
     color: $text-secondary;
@@ -499,12 +516,12 @@
   }
 
   &__name {
-    font-size: 13px;
-    font-weight: 500;
+    font-family: $font-mono;
+    font-size: 11px;
+    font-weight: 700;
     color: $text-secondary;
     margin-top: 8px;
-    font-family: $font-base;
-    letter-spacing: -0.1px;
+    letter-spacing: 0.02em;
   }
 
   @media (max-width: 480px) {
@@ -543,9 +560,10 @@
 
   &__btn {
     padding: 5px 12px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    font-family: $font-mono;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     border: 0.5px solid $border;
     border-radius: 99px;
@@ -553,7 +571,6 @@
     color: $text-muted;
     cursor: pointer;
     transition: color $duration-fast, border-color $duration-fast;
-    font-family: $font-base;
 
     &:hover {
       border-color: $border-hover;
@@ -606,8 +623,11 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 12px;
+    font-family: $font-mono;
+    font-size: 11px;
+    font-weight: 700;
     color: $text-hint;
+    letter-spacing: 0.03em;
   }
 
   &__meta-dot {
@@ -634,10 +654,11 @@
   }
 
   &__stat-label {
-    font-size: 9px;
-    font-weight: 600;
+    font-family: $font-mono;
+    font-size: 8px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.07em;
+    letter-spacing: 0.08em;
     color: $text-hint;
   }
 }

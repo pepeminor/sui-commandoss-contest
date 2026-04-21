@@ -1,65 +1,72 @@
-// ─── Color tokens ─────────────────────────────────────────────────────────────
+// ─── Underground Vinyl — Design Tokens ───────────────────────────────────────
 
-// Backgrounds — richer, warmer dark
-$bg-base:         #08080b;
-$bg-card:         rgba(255, 255, 255, 0.018);
-$bg-card-hover:   rgba(255, 255, 255, 0.032);
-$bg-surface:      rgba(255, 255, 255, 0.04);
-$bg-surface-2:    rgba(255, 255, 255, 0.022);
+// Backgrounds — deep black with slight warmth
+$bg-base:         #050508;
+$bg-card:         rgba(255, 255, 255, 0.015);
+$bg-card-hover:   rgba(255, 255, 255, 0.028);
+$bg-surface:      rgba(255, 255, 255, 0.035);
+$bg-surface-2:    rgba(255, 255, 255, 0.02);
 
-// Accent — warm terracotta
-$accent:          #E8623A;
-$accent-hover:    #EF7A55;
-$accent-soft:     rgba(232, 98, 58, 0.1);
-$accent-border:   rgba(232, 98, 58, 0.18);
+// Accent — dirty gold (vinyl label aesthetic)
+$accent:          #D4A84B;
+$accent-hover:    #E0BD6A;
+$accent-soft:     rgba(212, 168, 75, 0.08);
+$accent-border:   rgba(212, 168, 75, 0.2);
 
-// Text — warmer cream palette
-$text-primary:    #ede8e0;
-$text-secondary:  rgba(237, 232, 224, 0.62);
-$text-muted:      rgba(237, 232, 224, 0.4);
-$text-hint:       rgba(237, 232, 224, 0.25);
+// Hot accent — terracotta (CTAs, mint, important actions)
+$accent-hot:      #E8623A;
+$accent-hot-hover:#EF7A55;
+$accent-hot-soft: rgba(232, 98, 58, 0.1);
+$accent-hot-border: rgba(232, 98, 58, 0.22);
+
+// Text — warm parchment
+$text-primary:    #E6D5BC;
+$text-secondary:  rgba(230, 213, 188, 0.6);
+$text-muted:      rgba(230, 213, 188, 0.36);
+$text-hint:       rgba(230, 213, 188, 0.2);
 
 // Borders — ultra-subtle
-$border:          rgba(255, 255, 255, 0.05);
-$border-hover:    rgba(255, 255, 255, 0.09);
-$border-accent:   rgba(232, 98, 58, 0.22);
+$border:          rgba(255, 255, 255, 0.04);
+$border-hover:    rgba(255, 255, 255, 0.08);
+$border-accent:   rgba(212, 168, 75, 0.22);
 
 // Semantic
 $color-owned:       #5DCAA5;
 $color-owned-soft:  rgba(93, 202, 165, 0.06);
 $color-owned-border: rgba(93, 202, 165, 0.2);
-$color-locked:      rgba(237, 232, 224, 0.22);
-$color-sui:         #6FBCF0;
+$color-locked:      rgba(230, 213, 188, 0.2);
+$color-sui:         #4DA2FF;
 $color-error:       #ee6b6b;
 $color-error-soft:  rgba(238, 107, 107, 0.07);
 $color-error-border: rgba(238, 107, 107, 0.16);
 
 // Surfaces
-$bg-menu:           #0d0d12;
+$bg-menu:           #0a0a0f;
 
-// ─── Spacing & Shape ──────────────────────────────────────────────────────────
+// ─── Spacing & Shape — tighter radii for raw feel ────────────────────────────
 
-$radius-sm:  6px;
-$radius-md:  10px;
-$radius-lg:  14px;
-$radius-xl:  20px;
+$radius-sm:  3px;
+$radius-md:  5px;
+$radius-lg:  8px;
+$radius-xl:  12px;
 
-// ─── Typography ───────────────────────────────────────────────────────────────
+// ─── Typography ──────────────────────────────────────────────────────────────
 
-$font-base:    'Plus Jakarta Sans', system-ui, sans-serif;
-$font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+$font-display: var(--font-montserrat), system-ui, sans-serif;
+$font-base:    var(--font-montserrat), system-ui, sans-serif;
+$font-mono:    var(--font-space-mono), 'SF Mono', 'Fira Code', monospace;
 
-// ─── Motion — restrained, smooth ────────────────────────────────────────────
+// ─── Motion — restrained ────────────────────────────────────────────────────
 
 $duration-fast:   120ms;
 $duration-normal: 280ms;
 $ease-out-expo:   cubic-bezier(0.16, 1, 0.3, 1);
 
-// ─── Avatar palette ──────────────────────────────────────────────────────────
+// ─── Avatar palette ─────────────────────────────────────────────────────────
 
 $avatar-colors: (
-  ember:  (bg: rgba(232, 98, 58, 0.15),  text: #F0997B),
+  ember:  (bg: rgba(212, 168, 75, 0.15),  text: #E0BD6A),
   teal:   (bg: rgba(29, 158, 117, 0.15), text: #5DCAA5),
-  coral:  (bg: rgba(216, 90, 48, 0.15),  text: #F0997B),
+  coral:  (bg: rgba(232, 98, 58, 0.15),  text: #F0997B),
   amber:  (bg: rgba(212, 160, 50, 0.15), text: #E8C56E),
 );
